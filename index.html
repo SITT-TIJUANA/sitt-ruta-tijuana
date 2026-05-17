@@ -304,8 +304,12 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#f0ede8;color:var(--
     </div>
   </div>
   <div class="encgr" id="encGr">
-    <div style="font-size:18px;font-weight:700;color:var(--o);margin-bottom:5px">¡Gracias por tu opinión! 🙌</div>
-    <div style="font-size:13px;opacity:.8">Juntos construimos un mejor transporte para Tijuana.</div>
+    <div style="font-size:22px;margin-bottom:6px">🙌</div>
+    <div style="font-size:18px;font-weight:700;color:var(--o);margin-bottom:5px">¡Gracias por tu opinión!</div>
+    <div style="font-size:13px;opacity:.8;margin-bottom:14px">Juntos construimos un mejor transporte para Tijuana.</div>
+    <a href="https://forms.gle/7oH2N7veHtkUmhsBA" target="_blank" style="display:inline-block;background:rgba(255,255,255,.15);color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.4);padding:9px 18px;border-radius:20px;font-size:12px;font-weight:600">
+      📋 Ir a la encuesta oficial completa del SITT
+    </a>
   </div>
 </div>
 
@@ -677,8 +681,11 @@ const ratings=[0,0,0,0,0,0];
 function enviarEnc(){
   if(ratings.every(function(r){return r===0;})){alert('Por favor califica al menos una categoría.');return;}
   const entries=['entry.756012692','entry.1447228189','entry.820140166','entry.1967601653','entry.2025664217','entry.728306715'];
-  const p=ratings.map(function(v,i){return entries[i]+'='+v;}).join('&');
-  window.open('https://docs.google.com/forms/d/e/1FAIpQLSeNudnD__SFG1REtKBFxS0C7gfUES6B51CT2UMI0RpbYM3NHg/viewform?usp=pp_url&'+p,'_blank');
+  const sug=document.getElementById('sug').value||'';
+  const base='https://docs.google.com/forms/d/e/1FAIpQLSeNudnD__SFG1REtKBFxS0C7gfUES6B51CT2UMI0RpbYM3NHg/formResponse';
+  const params=ratings.map(function(v,i){return entries[i]+'='+encodeURIComponent(v);}).join('&')+'&entry.172172373='+encodeURIComponent(sug);
+  // Envío silencioso sin abrir Google Forms
+  fetch(base+'?'+params,{method:'POST',mode:'no-cors'}).then(function(){}).catch(function(){});
   document.getElementById('encForm').style.display='none';
   document.getElementById('encGr').style.display='block';
 }
