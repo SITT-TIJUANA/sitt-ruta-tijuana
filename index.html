@@ -197,7 +197,11 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#f0ede8;color:var(--
 
 <!-- 4. SIMULADOR -->
 <div class="sim">
-  <div class="stit">🕐 Simulador de hora</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div class="stit" style="margin-bottom:0">🕐 Ver a qué hora viene el camión</div>
+    <button onclick="jumpNow()" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">🔄 Hora actual</button>
+  </div>
+  <div style="font-size:11px;color:var(--t2);margin-bottom:8px">Mueve la barra para ver dónde estará el camión a cualquier hora del día</div>
   <div class="srow">
     <label>Hora:</label>
     <input type="range" id="slider" min="0" max="1379" value="360">
@@ -205,7 +209,6 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#f0ede8;color:var(--
   </div>
   <div class="sbtns">
     <button class="sbtn pr" id="btnPlay">▶ Reproducir</button>
-    <button class="sbtn" onclick="jumpNow()" style="background:#E8F8F0;color:#0F6E56;border-color:#1D9E75;font-weight:700">🔄 Actualizar a hora actual</button>
     <button class="sbtn" onclick="setSlider(360)">6:00 AM</button>
     <button class="sbtn" onclick="setSlider(750)">12:30 PM</button>
     <button class="sbtn" onclick="setSlider(1110)">6:30 PM</button>
