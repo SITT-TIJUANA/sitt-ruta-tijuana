@@ -127,6 +127,35 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#f0ede8;color:var(--
 </div>
 <div class="wrap">
 
+<!-- TARIFAS -->
+<div style="background:var(--g);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;color:#fff">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--o);margin-bottom:12px;text-align:center">💳 Tarifas de servicio</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
+    <!-- TARIFA GENERAL -->
+    <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid rgba(255,255,255,.25)">
+      <div style="font-size:13px;font-weight:700;opacity:.9;margin-bottom:6px">🧑 Tarifa General</div>
+      <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1">$14</div>
+      <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:2px">pesos</div>
+      <div style="margin-top:8px;font-size:11px;opacity:.6;line-height:1.4">Público en general</div>
+    </div>
+
+    <!-- TARIFA PREFERENTE -->
+    <div style="background:rgba(201,168,76,.15);border-radius:12px;padding:14px 12px;text-align:center;border:1.5px solid rgba(201,168,76,.5)">
+      <div style="font-size:13px;font-weight:700;color:var(--o);margin-bottom:6px">⭐ Tarifa Preferente</div>
+      <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1">$7</div>
+      <div style="font-size:13px;font-weight:600;opacity:.8;margin-top:2px">pesos</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+        <div style="background:rgba(255,255,255,.1);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600">🎓 Estudiantes</div>
+        <div style="background:rgba(255,255,255,.1);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600">👴 Adultos mayores</div>
+        <div style="background:rgba(255,255,255,.1);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600">♿ Discapacidad</div>
+      </div>
+    </div>
+
+  </div>
+  <div style="margin-top:10px;font-size:11px;opacity:.55;text-align:center">Se requiere identificación para tarifa preferente</div>
+</div>
+
 <!-- 1. PRÓXIMA SALIDA -->
 <div class="prox">
   <div class="prox-badge" id="proxBadge">Próxima salida</div>
@@ -328,6 +357,16 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#f0ede8;color:var(--
 
 <div class="note">🛈 Ubicación estimada por horario. Con GPS instalado en la unidad se mostraría la ubicación real.</div>
 
+<!-- PUNTO NARANJA -->
+<div style="background:#fff;border-radius:var(--r);border:2px solid #E8630A;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px">
+  <div style="font-size:40px;flex-shrink:0">🟠</div>
+  <div>
+    <div style="font-size:14px;font-weight:800;color:#E8630A;margin-bottom:3px">El SITT es Punto Naranja</div>
+    <div style="font-size:12px;color:#555;line-height:1.5">La <b>Terminal Insurgentes</b> es un espacio seguro que apoya a mujeres, adolescentes y niñas en situación de violencia. En caso de emergencia, acude al <b>tercer piso</b> de la terminal para resguardarte.</div>
+    <div style="margin-top:6px;font-size:11px;font-weight:700;color:#E8630A">El Punto es que estemos todas seguras 🧡</div>
+  </div>
+</div>
+
 </div>
 
 <!-- LEAFLET Y SCRIPT AL FINAL -->
@@ -431,6 +470,30 @@ function busIco(label,color,active){
 
 const busA=L.marker([STOPS[0].lat,STOPS[0].lng],{icon:busIco('T-01-023','#1D9E75',false),zIndexOffset:1000}).addTo(map);
 const busB=L.marker([STOPS[0].lat,STOPS[0].lng],{icon:busIco('T-01-015','#378ADD',false),zIndexOffset:1000}).addTo(map);
+
+// Botón 📍 Mi ubicación dentro del mapa
+const BtnUbic=L.Control.extend({
+  onAdd:function(){
+    const btn=L.DomUtil.create('button','');
+    btn.innerHTML='📍 Mi ubicación';
+    btn.style.cssText='background:#7B1D1D;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:7px 10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.35);white-space:nowrap';
+    L.DomEvent.on(btn,'click',function(e){L.DomEvent.stop(e);locateUser();});
+    return btn;
+  }
+});
+new BtnUbic({position:'topright'}).addTo(map);
+
+// Botón 🗺️ Ampliar mapa dentro del mapa
+const BtnRuta=L.Control.extend({
+  onAdd:function(){
+    const btn=L.DomUtil.create('button','');
+    btn.innerHTML='🗺️ Ampliar mapa';
+    btn.style.cssText='background:#378ADD;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:7px 10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.35);white-space:nowrap;margin-top:5px';
+    L.DomEvent.on(btn,'click',function(e){L.DomEvent.stop(e);verRuta();});
+    return btn;
+  }
+});
+new BtnRuta({position:'topright'}).addTo(map);
 
 // ── LÓGICA ─────────────────────────────────────────────────────────────────
 function getBus(now,deps,durs){
@@ -539,18 +602,29 @@ function calcETA(){
   }
   const aA=arr(DA,DUA),aB=arr(DB,DUB);
   function fmt(a){
-    if(!a)return{t:'Sin más viajes',m:'por hoy',ok:false};
+    if(!a)return{t:'Sin más viajes hoy',m:'',ok:false};
     const d=Math.round(a-simMin);
-    if(d<=0)return{t:'¡Ahora!',m:'en la parada',ok:true};
-    if(d<2)return{t:'~1 min',m:'llegando',ok:true};
+    if(d<=0)return{t:'¡Ya está aquí!',m:'El camión está en tu parada',ok:true};
+    if(d<=2)return{t:'¡Llegando!',m:'Menos de 2 minutos',ok:true};
+    // Formato legible: horas y minutos
+    let tiempo='';
+    if(d>=60){const h=Math.floor(d/60),m=d%60;tiempo=h+' hora'+(h>1?'s':'')+(m>0?' '+m+' min':'');}
+    else{tiempo=d+' minuto'+(d!==1?'s':'');}
     const h=Math.floor(a/60)%24,mm=a%60,ap=h<12?'a.m.':'p.m.',hh=h===0?12:h>12?h-12:h;
-    return{t:'~'+d+' min',m:'a las '+hh+':'+(mm.toString().padStart(2,'0'))+' '+ap,ok:d<=15};
+    const hora='a las '+hh+':'+(mm.toString().padStart(2,'0'))+' '+ap;
+    return{t:'Llega en '+tiempo,m:hora,ok:d<=20};
   }
   const fA=fmt(aA),fB=fmt(aB);
   document.getElementById('etaRes').style.display='block';
   setEl('etaLbl','📍 '+STOPS[idx].name);
+  // Mostrar con nombre completo del camión
   setEl('etaTA',fA.t);setEl('etaMA',fA.m);
   setEl('etaTB',fB.t);setEl('etaMB',fB.m);
+  // Cambiar etiqueta de unidad a más descriptivo
+  const cuA=document.querySelector('#etaCA .ecu');
+  const cuB=document.querySelector('#etaCB .ecu');
+  if(cuA)cuA.textContent='🚌 Camión T-01-023';
+  if(cuB)cuB.textContent='🚌 Camión T-01-015';
   document.getElementById('etaCA').className='ecd'+(fA.ok?' ok':'');
   document.getElementById('etaCB').className='ecd'+(fB.ok?' ok':'');
 }
@@ -697,12 +771,13 @@ function enviarEnc(){
   const sug=document.getElementById('sug').value||'';
   const genEl=document.querySelector('input[name="genero"]:checked');
   const gen=genEl?genEl.value:'';
-  const base='https://docs.google.com/forms/d/e/1FAIpQLSeNudnD__SFG1REtKBFxS0C7gfUES6B51CT2UMI0RpbYM3NHg/formResponse';
-  const params=ratings.map(function(v,i){return entries[i]+'='+encodeURIComponent(v);}).join('&')
-    +'&entry.172172373='+encodeURIComponent(sug)
-    +'&entry.236904433='+encodeURIComponent(gen);
-  // Envío silencioso sin abrir Google Forms
-  fetch(base+'?'+params,{method:'POST',mode:'no-cors'}).then(function(){}).catch(function(){});
+  // Abrir Google Forms pre-llenado
+  const formBase='https://docs.google.com/forms/d/e/1FAIpQLSeNudnD__SFG1REtKBFxS0C7gfUES6B51CT2UMI0RpbYM3NHg/viewform';
+  const formEntries=['entry.756012692','entry.1447228189','entry.820140166','entry.1967601653','entry.2025664217','entry.728306715'];
+  let formUrl=formBase+'?entry.236904433='+encodeURIComponent(gen);
+  ratings.forEach(function(v,i){formUrl+='&'+formEntries[i]+'='+encodeURIComponent(v);});
+  if(sug)formUrl+='&entry.172172373='+encodeURIComponent(sug);
+  window.open(formUrl,'_blank');
   document.getElementById('encForm').style.display='none';
   document.getElementById('encGr').style.display='block';
 }
