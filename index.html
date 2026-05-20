@@ -2,6 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7B1D1D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SITT T101">
+<link rel="apple-touch-icon" href="icon-192.png">
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-PMPPMLG45Q"></script>
 <script>
@@ -896,6 +904,40 @@ function goBack(){
   if(fb)fb.style.display='none';
 }
 
+function salirSinCalificar(btn){
+  // Cerrar modal
+  const modal=btn.closest('div[style*="inset"]');
+  if(modal)document.body.removeChild(modal);
+  // Intentar cerrar
+  window.close();
+  // Si no cierra (navegador móvil), mostrar pantalla de despedida
+  setTimeout(function(){
+    const despedida=document.createElement('div');
+    despedida.style.cssText='position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#4a1010,#7B1D1D);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;animation:fadeIn .3s ease';
+    despedida.innerHTML=`
+      <div style="font-size:60px;margin-bottom:16px;animation:bounce 1s ease-in-out 3">👋</div>
+      <div style="font-size:24px;font-weight:900;color:#fff;margin-bottom:8px">¡Hasta pronto!</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:28px">
+        Gracias por usar la app del SITT.<br>
+        Para cerrar, presiona el botón<br>
+        <b style="color:var(--o)">Inicio</b> o <b style="color:var(--o)">Atrás</b> de tu celular.
+      </div>
+      <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:14px 20px;margin-bottom:20px">
+        <div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:8px">O cierra esta pestaña manualmente</div>
+        <div style="display:flex;justify-content:center;gap:16px;font-size:28px">
+          <span>⬅️</span><span>🏠</span><span>⬜</span>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:6px">Atrás · Inicio · Recientes</div>
+      </div>
+      <button onclick="this.closest('div[style*=inset]').remove()" 
+        style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:20px;padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer">
+        ← Volver a la app
+      </button>
+    `;
+    document.body.appendChild(despedida);
+  },300);
+}
+
 function salirApp(){
   // Modal personalizado
   const modal=document.createElement('div');
@@ -910,7 +952,7 @@ function salirApp(){
           style="background:#7B1D1D;color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer">
           ⭐ Sí, quiero calificar el servicio
         </button>
-        <button onclick="document.body.removeChild(this.closest('[style*=inset]'));window.close()"
+        <button onclick="salirSinCalificar(this)"
           style="background:#f4f4f2;color:#666;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:600;cursor:pointer">
           🚪 Salir sin calificar
         </button>
@@ -1566,6 +1608,87 @@ jumpNow();
 update();
 updateProx();
 
+</script>
+<script>
+// Registrar Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      console.log('SW registrado');
+    }).catch(function(err){
+      console.log('SW error:',err);
+    });
+  });
+}
+
+// Banner de instalación
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredPrompt=e;
+  // Mostrar banner personalizado después de 3 segundos
+  setTimeout(function(){
+    if(deferredPrompt)mostrarBannerInstalar();
+  },3000);
+});
+
+function mostrarBannerInstalar(){
+  const banner=document.createElement('div');
+  banner.id='installBanner';
+  banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#fff;border-top:3px solid #7B1D1D;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.15);animation:fadeUp .4s ease';
+  banner.innerHTML=`
+    <img src="icon-192.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0" alt="SITT">
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:800;color:#7B1D1D">Instalar app SITT T101</div>
+      <div style="font-size:11px;color:#666;margin-top:1px">Agrégala a tu pantalla de inicio para acceder rápido</div>
+    </div>
+    <button onclick="instalarApp()" style="background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
+      📲 Instalar
+    </button>
+    <button onclick="document.getElementById('installBanner').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:0 4px">✕</button>
+  `;
+  document.body.appendChild(banner);
+}
+
+function instalarApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result){
+      if(result.outcome==='accepted'){
+        console.log('App instalada');
+      }
+      deferredPrompt=null;
+      const b=document.getElementById('installBanner');
+      if(b)b.remove();
+    });
+  }
+}
+
+// Para iOS — mostrar instrucciones
+const esIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+const esStandalone=window.navigator.standalone;
+if(esIOS&&!esStandalone){
+  setTimeout(function(){
+    const banner=document.createElement('div');
+    banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#fff;border-top:3px solid #7B1D1D;padding:14px 16px;box-shadow:0 -4px 20px rgba(0,0,0,.15);animation:fadeUp .4s ease';
+    banner.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <img src="icon-192.png" style="width:40px;height:40px;border-radius:10px" alt="SITT">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#7B1D1D">Instalar app SITT T101</div>
+          <div style="font-size:11px;color:#666">Para acceder rápido desde tu iPhone</div>
+        </div>
+        <button onclick="this.closest('div[style]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;margin-left:auto">✕</button>
+      </div>
+      <div style="background:#f4f4f2;border-radius:10px;padding:10px 12px;font-size:12px;color:#444;line-height:1.7">
+        1. Toca el botón <b>Compartir</b> ⬆️ de Safari<br>
+        2. Selecciona <b>"Agregar a pantalla de inicio"</b><br>
+        3. Toca <b>"Agregar"</b> ✓
+      </div>
+    `;
+    document.body.appendChild(banner);
+  },3000);
+}
 </script>
 </body>
 </html>
