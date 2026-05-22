@@ -35,6 +35,8 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
   position:fixed;inset:0;z-index:9999;
   background:var(--gd);
   display:flex;flex-direction:column;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   transition:opacity .6s ease, transform .6s ease;
 }
 #splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
@@ -54,7 +56,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
   position:relative;z-index:2;
   display:flex;flex-direction:column;
   justify-content:space-between;
-  height:100%;padding:0;
+  min-height:100%;padding:0;
 }
 /* Header de splash */
 .splash-header{
