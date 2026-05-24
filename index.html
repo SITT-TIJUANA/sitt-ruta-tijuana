@@ -1613,7 +1613,7 @@ function activarAdmin(){
   adminTaps++;
   clearTimeout(adminTimer);
   adminTimer=setTimeout(function(){adminTaps=0;},2000);
-  if(adminTaps>=5){
+  if(adminTaps>=3){
     adminTaps=0;
     const pass=prompt('🔐 Contraseña:');
     if(pass==='SITT2024'){
