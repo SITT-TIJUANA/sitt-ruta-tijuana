@@ -1609,36 +1609,45 @@ function populateStops(){
 }
 // ── MODO ADMIN ─────────────────────────────
 let adminTaps=0,adminTimer=null;
+
 function activarAdmin(){
   adminTaps++;
+
   clearTimeout(adminTimer);
-  adminTimer=setTimeout(function(){adminTaps=0;},2000);
-  if(adminTaps>=1){
+
+  adminTimer=setTimeout(function(){
     adminTaps=0;
+  },2000);
+
+  if(adminTaps>=1){
+
+    adminTaps=0;
+
     const pass=prompt('🔐 Contraseña:');
+
     if(pass==='SITT2024'){
+
       const panel=document.createElement('div');
+
       panel.style.cssText='position:fixed;bottom:80px;right:16px;z-index:9999;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);border:2px solid #7B1D1D;min-width:200px';
+
       panel.innerHTML=`
-        <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:10px">🔧 Panel Admin</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px">T-01-023 (Verde)</div>
-        <button onclick="window._pauseA=!window._pauseA;this.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar T-023';this.style.background=window._pauseA?'#1D9E75':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          ⏸ Pausar T-023
-        </button>
-        <div style="font-size:11px;color:#666;margin-bottom:6px">T-01-015 (Azul)</div>
-        <button onclick="window._pauseB=!window._pauseB;this.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar T-015';this.style.background=window._pauseB?'#378ADD':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          ⏸ Pausar T-015
-        </button>
-        <button onclick="this.closest('div[style]').remove()"
-          style="width:100%;background:#f4f4f2;color:#666;border:none;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">
+        <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:10px">
+          🔧 Panel Admin
+        </div>
+
+        <button onclick="this.closest('div').remove()"
+          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:10px;cursor:pointer">
           Cerrar
         </button>
       `;
+
       document.body.appendChild(panel);
+
     } else if(pass!==null){
+
       alert('❌ Contraseña incorrecta');
+
     }
   }
 }
