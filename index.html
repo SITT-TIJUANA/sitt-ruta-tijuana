@@ -2,6 +2,50 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<!-- Firebase para control admin en tiempo real -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script>
+// CONFIGURACIÓN FIREBASE - reemplaza con tus datos
+const firebaseConfig = {
+  apiKey: "AIzaSyCbrg6vWloTE01N_2eIBkwV1I2jj08SmDY",
+  authDomain: "sitt-t101.firebaseapp.com",
+  databaseURL: "https://sitt-t101-default-rtdb.firebaseio.com",
+  projectId: "sitt-t101",
+  storageBucket: "sitt-t101.firebasestorage.app",
+  messagingSenderId: "500457349977",
+  appId: "1:500457349977:web:851ddfd371921312e92248"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Escuchar cambios en tiempo real
+db.ref('admin').on('value', function(snap){
+  var d = snap.val() || {};
+  window._pauseA  = !!d.pauseA;
+  window._pauseB  = !!d.pauseB;
+  window._overrideA = d.overrideA != null ? d.overrideA : null;
+  window._overrideB = d.overrideB != null ? d.overrideB : null;
+  window._msgA    = d.msgA || null;
+  window._msgB    = d.msgB || null;
+  window._swapAB  = !!d.swapAB;
+});
+
+// Guardar cambios a Firebase (solo admin)
+function adminSave(){
+  db.ref('admin').set({
+    pauseA:  !!window._pauseA,
+    pauseB:  !!window._pauseB,
+    overrideA: window._overrideA,
+    overrideB: window._overrideB,
+    msgA:    window._msgA || null,
+    msgB:    window._msgB || null,
+    swapAB:  !!window._swapAB
+  });
+}
+function adminLoad(){ /* Firebase lo maneja automático */ }
+</script>
+
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7B1D1D">
@@ -605,8 +649,37 @@
 </div><!-- /app -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-// Admin directo en HTML
+<<script>
+// ═══════════════════════════════════════════
+// PANEL ADMIN — SITT T101
+// Estado persiste en localStorage
+// ═══════════════════════════════════════════
+
+// Cargar estado guardado
+function adminLoad(){
+  try{
+    var d=JSON.parse(localStorage.getItem('sittAdmin')||'{}');
+    window._pauseA=!!d.pauseA;
+    window._pauseB=!!d.pauseB;
+    window._overrideA=d.overrideA!=null?d.overrideA:null;
+    window._overrideB=d.overrideB!=null?d.overrideB:null;
+    window._msgA=d.msgA||null;
+    window._msgB=d.msgB||null;
+    window._swapAB=!!d.swapAB;
+  }catch(e){}
+}
+function adminSave(){
+  try{
+    localStorage.setItem('sittAdmin',JSON.stringify({
+      pauseA:window._pauseA,pauseB:window._pauseB,
+      overrideA:window._overrideA,overrideB:window._overrideB,
+      msgA:window._msgA,msgB:window._msgB,
+      swapAB:window._swapAB
+    }));
+  }catch(e){}
+}
+adminLoad(); // cargar al inicio
+
 let _aTaps=0,_aTimer=null;
 function activarAdmin(){
   _aTaps++;
@@ -614,105 +687,153 @@ function activarAdmin(){
   _aTimer=setTimeout(function(){_aTaps=0;},2000);
   if(_aTaps>=3){
     _aTaps=0;
-    const pass=prompt('🔐 Contraseña:');
-    if(pass==='SITT2024'){
-      const panel=document.createElement('div');
-      panel.style.cssText='position:fixed;bottom:80px;right:16px;z-index:99999;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);border:2px solid #7B1D1D;min-width:200px';
-      panel.innerHTML=`
-        <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:10px">🔧 Panel Admin</div>
-        <div style="max-height:70vh;overflow-y:auto;padding-right:4px">
+    const pass=prompt('🔐 Contraseña admin:');
+    if(pass!=='SITT2024'){if(pass!==null)alert('❌ Contraseña incorrecta');return;}
+    mostrarPanelAdmin();
+  }
+}
 
-        <!-- ═══ T-01-023 ═══ -->
-        <div style="background:#f9eaea;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #7B1D1D">
-          <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:8px">🚌 T-01-023</div>
+function mostrarPanelAdmin(){
+  // Quitar panel anterior si existe
+  var old=document.getElementById('_adminPanel');
+  if(old)old.remove();
 
-          <!-- No salió -->
-          <button onclick="window._pauseA=true;window._overrideA=0;window._msgA='⚠️ No salió · Esperando próxima salida';this.style.background='#E74C3C';alert('✅ T-023 marcada como NO SALIÓ');"
-            style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
-            🚫 No salió / Problema
+  var stops=typeof STOPS!=='undefined'?STOPS:[];
+  var stopsOpts=stops.map(function(s,i){return '<option value="'+i+'">'+s.n+'. '+s.name+'</option>';}).join('');
+
+  var panel=document.createElement('div');
+  panel.id='_adminPanel';
+  panel.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px';
+  panel.innerHTML=`
+    <div style="background:#fff;border-radius:20px;width:100%;max-width:380px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.4)">
+      <div style="background:#7B1D1D;color:#fff;padding:14px 18px;border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:15px;font-weight:800">🔧 Panel Admin SITT</div>
+        <button onclick="document.getElementById('_adminPanel').remove()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <div style="padding:14px">
+
+        <!-- ESTADO ACTUAL -->
+        <div id="_adminStatus" style="background:#f4f4f2;border-radius:10px;padding:10px;margin-bottom:12px;font-size:11px;color:#555">
+          Cargando estado...
+        </div>
+
+        <!-- ══ T-01-023 ══ -->
+        <div style="background:#fdf0f0;border-radius:12px;padding:12px;margin-bottom:10px;border:1.5px solid #e8b4b4">
+          <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:8px">🚌 T-01-023 (Verde)</div>
+          
+          <button onclick="adminSetA('noSalio')" style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            🚫 No salió / Fuera de servicio
           </button>
-
-          <!-- Pausar/Reanudar -->
-          <button id="_btnPauseA" onclick="window._pauseA=!window._pauseA;window._msgA=null;this.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar en parada actual';this.style.background=window._pauseA?'#1D9E75':'#7B1D1D';"
-            style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+          <button id="_btnPA" onclick="adminSetA('toggle')" style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
             ⏸ Pausar en parada actual
           </button>
-
-          <!-- Fijar estación -->
-          <select id="_selStA" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
-            <option value="">— Mover a estación —</option>
+          <div style="font-size:11px;color:#666;margin-bottom:4px">📍 Mover a estación:</div>
+          <select id="_sA" style="width:100%;padding:8px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:6px">
+            <option value="">— Selecciona parada —</option>
+            ${stopsOpts}
           </select>
-          <button onclick="var s=document.getElementById('_selStA').value;if(s!==''){window._overrideA=parseInt(s);window._pauseA=false;window._msgA=null;alert('✅ T-023 movida a parada '+(parseInt(s)+1));}else{alert('Selecciona una parada');};"
-            style="width:100%;background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
-            📍 Poner en esa estación y continuar
+          <button onclick="adminSetA('move')" style="width:100%;background:#1D9E75;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
+            ✅ Poner aquí y continuar recorrido
           </button>
-          <button onclick="window._overrideA=null;window._pauseA=false;window._msgA=null;alert('✅ T-023 en modo automático');"
-            style="width:100%;background:#f4f4f2;color:#555;border:1px solid #ccc;border-radius:8px;padding:6px;font-size:11px;cursor:pointer">
-            🔄 Modo automático
+          <button onclick="adminSetA('auto')" style="width:100%;background:#eee;color:#555;border:none;border-radius:8px;padding:7px;font-size:11px;cursor:pointer">
+            🔄 Modo automático (horario normal)
           </button>
         </div>
 
-        <!-- ═══ T-01-015 ═══ -->
-        <div style="background:#e8f1fb;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #378ADD">
-          <div style="font-size:13px;font-weight:800;color:#185FA5;margin-bottom:8px">🚌 T-01-015</div>
-
-          <button onclick="window._pauseB=true;window._overrideB=0;window._msgB='⚠️ No salió · Esperando próxima salida';this.style.background='#E74C3C';alert('✅ T-015 marcada como NO SALIÓ');"
-            style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
-            🚫 No salió / Problema
+        <!-- ══ T-01-015 ══ -->
+        <div style="background:#eff5fc;border-radius:12px;padding:12px;margin-bottom:10px;border:1.5px solid #a8c8f0">
+          <div style="font-size:13px;font-weight:800;color:#185FA5;margin-bottom:8px">🚌 T-01-015 (Azul)</div>
+          
+          <button onclick="adminSetB('noSalio')" style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            🚫 No salió / Fuera de servicio
           </button>
-
-          <button id="_btnPauseB" onclick="window._pauseB=!window._pauseB;window._msgB=null;this.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar en parada actual';this.style.background=window._pauseB?'#378ADD':'#7B1D1D';"
-            style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+          <button id="_btnPB" onclick="adminSetB('toggle')" style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
             ⏸ Pausar en parada actual
           </button>
-
-          <select id="_selStB" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
-            <option value="">— Mover a estación —</option>
+          <div style="font-size:11px;color:#666;margin-bottom:4px">📍 Mover a estación:</div>
+          <select id="_sB" style="width:100%;padding:8px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:6px">
+            <option value="">— Selecciona parada —</option>
+            ${stopsOpts}
           </select>
-          <button onclick="var s=document.getElementById('_selStB').value;if(s!==''){window._overrideB=parseInt(s);window._pauseB=false;window._msgB=null;alert('✅ T-015 movida a parada '+(parseInt(s)+1));}else{alert('Selecciona una parada');};"
-            style="width:100%;background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
-            📍 Poner en esa estación y continuar
+          <button onclick="adminSetB('move')" style="width:100%;background:#378ADD;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
+            ✅ Poner aquí y continuar recorrido
           </button>
-          <button onclick="window._overrideB=null;window._pauseB=false;window._msgB=null;alert('✅ T-015 en modo automático');"
-            style="width:100%;background:#f4f4f2;color:#555;border:1px solid #ccc;border-radius:8px;padding:6px;font-size:11px;cursor:pointer">
-            🔄 Modo automático
+          <button onclick="adminSetB('auto')" style="width:100%;background:#eee;color:#555;border:none;border-radius:8px;padding:7px;font-size:11px;cursor:pointer">
+            🔄 Modo automático (horario normal)
           </button>
         </div>
 
-        <!-- ═══ INTERCAMBIAR NOMBRES ═══ -->
-        <div style="background:#fff8e7;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #f0d070">
-          <div style="font-size:12px;font-weight:800;color:#7a5c00;margin-bottom:6px">🔀 Intercambiar unidades</div>
-          <div style="font-size:11px;color:#8a6a00;margin-bottom:8px">Si hoy salió primero T-015, intercambia los nombres para que la app lo muestre correcto.</div>
-          <button onclick="window._swapAB=!window._swapAB;this.textContent=window._swapAB?'🔀 Intercambiadas (toca para revertir)':'🔀 Intercambiar T-023 ↔ T-015';this.style.background=window._swapAB?'#f0a500':'#7a5c00';alert(window._swapAB?'✅ Intercambiadas: T-015 sale primero':'✅ Orden normal');"
-            style="width:100%;background:#7a5c00;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer">
+        <!-- ══ INTERCAMBIAR ══ -->
+        <div style="background:#fff8e7;border-radius:12px;padding:12px;margin-bottom:10px;border:1.5px solid #f0d070">
+          <div style="font-size:12px;font-weight:800;color:#7a5c00;margin-bottom:6px">🔀 Intercambiar nombres de unidades</div>
+          <div style="font-size:11px;color:#8a6a00;margin-bottom:8px">Si hoy T-015 salió primero, intercambia para que la app muestre el orden correcto.</div>
+          <button id="_btnSwap" onclick="adminSwap()" style="width:100%;background:#7a5c00;color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer">
             🔀 Intercambiar T-023 ↔ T-015
           </button>
         </div>
 
-        <!-- ═══ RESETEAR TODO ═══ -->
-        <button onclick="window._pauseA=false;window._pauseB=false;window._overrideA=null;window._overrideB=null;window._msgA=null;window._msgB=null;window._swapAB=false;alert('✅ Todo reseteado a modo automático');"
-          style="width:100%;background:#555;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          ⚡ Resetear todo
+        <!-- ══ RESETEAR TODO ══ -->
+        <button onclick="adminReset()" style="width:100%;background:#333;color:#fff;border:none;border-radius:10px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px">
+          ⚡ Resetear todo al automático
         </button>
-        <button onclick="this.closest('div[style*=fixed]').remove()"
-          style="width:100%;background:#f4f4f2;color:#666;border:none;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">Cerrar</button>
 
-        </div>
-        <script>
-        (function(){
-          var stops=typeof STOPS!=='undefined'?STOPS:[];
-          ['_selStA','_selStB'].forEach(function(id){
-            var sel=document.getElementById(id);
-            if(!sel)return;
-            stops.forEach(function(s,i){
-              var o=document.createElement('option');
-              o.value=i;
-              o.textContent=s.n+'. '+s.name;
-              sel.appendChild(o);
-            });
-          });
-        })();
-        </script>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(panel);
+  adminUpdateStatus();
+  adminUpdateBtns();
+}
+
+function adminUpdateStatus(){
+  var el=document.getElementById('_adminStatus');
+  if(!el)return;
+  var lines=[];
+  if(window._swapAB)lines.push('🔀 Unidades intercambiadas');
+  if(window._pauseA)lines.push('⏸ T-023: PAUSADA'+(window._msgA?' — '+window._msgA:''));
+  else if(window._overrideA!=null)lines.push('📍 T-023: fijada en parada '+(window._overrideA+1));
+  else lines.push('✅ T-023: automática');
+  if(window._pauseB)lines.push('⏸ T-015: PAUSADA'+(window._msgB?' — '+window._msgB:''));
+  else if(window._overrideB!=null)lines.push('📍 T-015: fijada en parada '+(window._overrideB+1));
+  else lines.push('✅ T-015: automática');
+  el.innerHTML='<b>Estado actual:</b><br>'+lines.join('<br>');
+}
+function adminUpdateBtns(){
+  var btnA=document.getElementById('_btnPA');
+  if(btnA){btnA.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar en parada actual';btnA.style.background=window._pauseA?'#1D9E75':'#7B1D1D';}
+  var btnB=document.getElementById('_btnPB');
+  if(btnB){btnB.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar en parada actual';btnB.style.background=window._pauseB?'#378ADD':'#7B1D1D';}
+  var btnS=document.getElementById('_btnSwap');
+  if(btnS){btnS.textContent=window._swapAB?'🔀 Intercambiadas — Revertir':'🔀 Intercambiar T-023 ↔ T-015';btnS.style.background=window._swapAB?'#f0a500':'#7a5c00';}
+}
+
+function adminSetA(action){
+  if(action==='noSalio'){window._pauseA=true;window._overrideA=0;window._msgA='⚠️ No salió';}
+  else if(action==='toggle'){window._pauseA=!window._pauseA;window._msgA=null;}
+  else if(action==='move'){var s=document.getElementById('_sA');if(!s||s.value===''){alert('Selecciona una parada');return;}window._overrideA=parseInt(s.value);window._pauseA=false;window._msgA=null;}
+  else if(action==='auto'){window._pauseA=false;window._overrideA=null;window._msgA=null;}
+  adminSave();adminUpdateStatus();adminUpdateBtns();
+}
+function adminSetB(action){
+  if(action==='noSalio'){window._pauseB=true;window._overrideB=0;window._msgB='⚠️ No salió';}
+  else if(action==='toggle'){window._pauseB=!window._pauseB;window._msgB=null;}
+  else if(action==='move'){var s=document.getElementById('_sB');if(!s||s.value===''){alert('Selecciona una parada');return;}window._overrideB=parseInt(s.value);window._pauseB=false;window._msgB=null;}
+  else if(action==='auto'){window._pauseB=false;window._overrideB=null;window._msgB=null;}
+  adminSave();adminUpdateStatus();adminUpdateBtns();
+}
+function adminSwap(){
+  window._swapAB=!window._swapAB;
+  adminSave();adminUpdateStatus();adminUpdateBtns();
+}
+function adminReset(){
+  window._pauseA=false;window._pauseB=false;
+  window._overrideA=null;window._overrideB=null;
+  window._msgA=null;window._msgB=null;
+  window._swapAB=false;
+  adminSave();adminUpdateStatus();adminUpdateBtns();
+  alert('✅ Todo reseteado');
+}
+</script>
       `;
       document.body.appendChild(panel);
     }else if(pass!==null){alert('❌ Contraseña incorrecta');}
