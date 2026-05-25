@@ -271,8 +271,15 @@ function plain(m){m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mm=m%60,ap=h<1
 function setEl(id,val,prop){const e=document.getElementById(id);if(e){if(prop)e[prop]=val;else e.textContent=val;}}
 
 function update(){
-  const sA=window._pauseA?{on:false}:(window._overrideA!=null?Object.assign(getBus(simMin,DA,DUA),{on:true,si:window._overrideA}):getBus(simMin,DA,DUA));
-const sB=window._pauseB?{on:false}:(window._overrideB!=null?Object.assign(getBus(simMin,DB,DUB),{on:true,si:window._overrideB}):getBus(simMin,DB,DUB));
+  // Admin overrides
+var _rawA=window._pauseA?{on:false}:(window._overrideA!=null?Object.assign({},getBus(simMin,DA,DUA),{on:true,si:window._overrideA}):getBus(simMin,DA,DUA));
+var _rawB=window._pauseB?{on:false}:(window._overrideB!=null?Object.assign({},getBus(simMin,DB,DUB),{on:true,si:window._overrideB}):getBus(simMin,DB,DUB));
+// Intercambiar si está activo
+const sA=window._swapAB?_rawB:_rawA;
+const sB=window._swapAB?_rawA:_rawB;
+// Mensajes especiales
+if(window._msgA)setEl('stA',window._msgA);
+if(window._msgB)setEl('stB',window._msgB);
   // Bus A
   if(sA.on){
     busA.setLatLng([sA.lat,sA.lng]);busA.setIcon(busIco('T-01-023','#1D9E75',true));
