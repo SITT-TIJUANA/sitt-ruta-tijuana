@@ -620,39 +620,85 @@ function activarAdmin(){
       panel.style.cssText='position:fixed;bottom:80px;right:16px;z-index:99999;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);border:2px solid #7B1D1D;min-width:200px';
       panel.innerHTML=`
         <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:10px">🔧 Panel Admin</div>
-        <!-- T-01-023 -->
-        <div style="font-size:11px;font-weight:700;color:#7B1D1D;margin-bottom:4px">🚌 T-01-023</div>
-        <button id="_btnPauseA" onclick="window._pauseA=!window._pauseA;this.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar T-023';this.style.background=window._pauseA?'#1D9E75':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">⏸ Pausar T-023</button>
-        <select id="_selStA" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
-          <option value="">— Fijar parada T-023 —</option>
-        </select>
-        <button onclick="var s=document.getElementById('_selStA').value;if(s!==''){window._overrideA=parseInt(s);alert('✅ T-023 fijada en parada '+s);}else{window._overrideA=null;alert('✅ T-023 en modo automático');}"
-          style="width:100%;background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px">
-          📍 Fijar posición T-023
-        </button>
+        <div style="max-height:70vh;overflow-y:auto;padding-right:4px">
 
-        <!-- T-01-015 -->
-        <div style="font-size:11px;font-weight:700;color:#378ADD;margin-bottom:4px">🚌 T-01-015</div>
-        <button id="_btnPauseB" onclick="window._pauseB=!window._pauseB;this.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar T-015';this.style.background=window._pauseB?'#378ADD':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">⏸ Pausar T-015</button>
-        <select id="_selStB" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
-          <option value="">— Fijar parada T-015 —</option>
-        </select>
-        <button onclick="var s=document.getElementById('_selStB').value;if(s!==''){window._overrideB=parseInt(s);alert('✅ T-015 fijada en parada '+s);}else{window._overrideB=null;alert('✅ T-015 en modo automático');}"
-          style="width:100%;background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:10px">
-          📍 Fijar posición T-015
-        </button>
+        <!-- ═══ T-01-023 ═══ -->
+        <div style="background:#f9eaea;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #7B1D1D">
+          <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:8px">🚌 T-01-023</div>
 
-        <button onclick="window._overrideA=null;window._overrideB=null;alert('✅ Ambas en modo automático');"
-          style="width:100%;background:#fff8e7;color:#7a5c00;border:1.5px solid #f0d070;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          🔄 Resetear posiciones
+          <!-- No salió -->
+          <button onclick="window._pauseA=true;window._overrideA=0;window._msgA='⚠️ No salió · Esperando próxima salida';this.style.background='#E74C3C';alert('✅ T-023 marcada como NO SALIÓ');"
+            style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            🚫 No salió / Problema
+          </button>
+
+          <!-- Pausar/Reanudar -->
+          <button id="_btnPauseA" onclick="window._pauseA=!window._pauseA;window._msgA=null;this.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar en parada actual';this.style.background=window._pauseA?'#1D9E75':'#7B1D1D';"
+            style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            ⏸ Pausar en parada actual
+          </button>
+
+          <!-- Fijar estación -->
+          <select id="_selStA" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
+            <option value="">— Mover a estación —</option>
+          </select>
+          <button onclick="var s=document.getElementById('_selStA').value;if(s!==''){window._overrideA=parseInt(s);window._pauseA=false;window._msgA=null;alert('✅ T-023 movida a parada '+(parseInt(s)+1));}else{alert('Selecciona una parada');};"
+            style="width:100%;background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
+            📍 Poner en esa estación y continuar
+          </button>
+          <button onclick="window._overrideA=null;window._pauseA=false;window._msgA=null;alert('✅ T-023 en modo automático');"
+            style="width:100%;background:#f4f4f2;color:#555;border:1px solid #ccc;border-radius:8px;padding:6px;font-size:11px;cursor:pointer">
+            🔄 Modo automático
+          </button>
+        </div>
+
+        <!-- ═══ T-01-015 ═══ -->
+        <div style="background:#e8f1fb;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #378ADD">
+          <div style="font-size:13px;font-weight:800;color:#185FA5;margin-bottom:8px">🚌 T-01-015</div>
+
+          <button onclick="window._pauseB=true;window._overrideB=0;window._msgB='⚠️ No salió · Esperando próxima salida';this.style.background='#E74C3C';alert('✅ T-015 marcada como NO SALIÓ');"
+            style="width:100%;background:#c0392b;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            🚫 No salió / Problema
+          </button>
+
+          <button id="_btnPauseB" onclick="window._pauseB=!window._pauseB;window._msgB=null;this.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar en parada actual';this.style.background=window._pauseB?'#378ADD':'#7B1D1D';"
+            style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:6px">
+            ⏸ Pausar en parada actual
+          </button>
+
+          <select id="_selStB" style="width:100%;padding:7px;border-radius:8px;border:1.5px solid #ccc;font-size:12px;margin-bottom:4px">
+            <option value="">— Mover a estación —</option>
+          </select>
+          <button onclick="var s=document.getElementById('_selStB').value;if(s!==''){window._overrideB=parseInt(s);window._pauseB=false;window._msgB=null;alert('✅ T-015 movida a parada '+(parseInt(s)+1));}else{alert('Selecciona una parada');};"
+            style="width:100%;background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;border-radius:8px;padding:7px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px">
+            📍 Poner en esa estación y continuar
+          </button>
+          <button onclick="window._overrideB=null;window._pauseB=false;window._msgB=null;alert('✅ T-015 en modo automático');"
+            style="width:100%;background:#f4f4f2;color:#555;border:1px solid #ccc;border-radius:8px;padding:6px;font-size:11px;cursor:pointer">
+            🔄 Modo automático
+          </button>
+        </div>
+
+        <!-- ═══ INTERCAMBIAR NOMBRES ═══ -->
+        <div style="background:#fff8e7;border-radius:10px;padding:10px;margin-bottom:10px;border:1.5px solid #f0d070">
+          <div style="font-size:12px;font-weight:800;color:#7a5c00;margin-bottom:6px">🔀 Intercambiar unidades</div>
+          <div style="font-size:11px;color:#8a6a00;margin-bottom:8px">Si hoy salió primero T-015, intercambia los nombres para que la app lo muestre correcto.</div>
+          <button onclick="window._swapAB=!window._swapAB;this.textContent=window._swapAB?'🔀 Intercambiadas (toca para revertir)':'🔀 Intercambiar T-023 ↔ T-015';this.style.background=window._swapAB?'#f0a500':'#7a5c00';alert(window._swapAB?'✅ Intercambiadas: T-015 sale primero':'✅ Orden normal');"
+            style="width:100%;background:#7a5c00;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer">
+            🔀 Intercambiar T-023 ↔ T-015
+          </button>
+        </div>
+
+        <!-- ═══ RESETEAR TODO ═══ -->
+        <button onclick="window._pauseA=false;window._pauseB=false;window._overrideA=null;window._overrideB=null;window._msgA=null;window._msgB=null;window._swapAB=false;alert('✅ Todo reseteado a modo automático');"
+          style="width:100%;background:#555;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:8px">
+          ⚡ Resetear todo
         </button>
-        <button onclick="this.closest('div[style]').remove()"
+        <button onclick="this.closest('div[style*=fixed]').remove()"
           style="width:100%;background:#f4f4f2;color:#666;border:none;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">Cerrar</button>
 
+        </div>
         <script>
-        // Poblar selectores con paradas
         (function(){
           var stops=typeof STOPS!=='undefined'?STOPS:[];
           ['_selStA','_selStB'].forEach(function(id){
