@@ -183,7 +183,11 @@ let uLat=null, uLng=null;
 
 // ── MAPA ───────────────────────────────────────────────────────────────────
 const map=L.map('map').setView([32.505,-116.975],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
+  attribution:'© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom:20,
+  minZoom:10
+}).addTo(map);
 L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#ddd',weight:6,opacity:.6}).addTo(map);
 L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#7B1D1D',weight:4,opacity:.9}).addTo(map);
 const trA=L.polyline([],{color:'#1D9E75',weight:6,opacity:.95}).addTo(map);
