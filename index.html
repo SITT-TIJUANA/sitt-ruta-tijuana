@@ -163,8 +163,8 @@ function adminLoad(){ /* Firebase lo maneja automático */ }
   </div>
 
   <!-- ── SECCIÓN 1: MAPA Y UBICACIÓN ── -->
-  <div id="sec-mapa" class="section-page">
-    <div class="wrap">
+  <div id="sec-mapa" class="section-page" style="background:#f0ede8">
+    <div class="wrap" style="padding:0;max-width:100%">
 
       <!-- CARRUSEL: 3 cards informativas -->
       <div style="position:relative;margin:0 -10px 14px;padding:0 10px">
@@ -216,7 +216,20 @@ function adminLoad(){ /* Firebase lo maneja automático */ }
         </div>
       </div>
 
+      </div><!-- end map wrapper -->
+      <!-- PANEL INFERIOR ESTILO MAPS -->
+      <div class="maps-panel">
+        <div class="maps-handle"></div>
+        <!-- Tabs de navegación rápida -->
+        <div class="maps-tabs" style="margin-bottom:12px">
+          <button class="maps-tab active">🗺️ Rastreador</button>
+          <button class="maps-tab" onclick="document.getElementById('mapsContent').scrollTo({top:document.getElementById('mapsETA').offsetTop-10,behavior:'smooth'})">🔍 Mi parada</button>
+          <button class="maps-tab" onclick="document.getElementById('mapsContent').scrollTo({top:document.getElementById('mapsBuses').offsetTop-10,behavior:'smooth'})">🚌 Unidades</button>
+        </div>
+        <div id="mapsContent" style="overflow-y:auto;max-height:50vh">
+
       <!-- ¿Cuándo llega? — SEPARADO ABAJO -->
+      <div id="mapsETA">
       <div class="sec" style="margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <div class="stit" style="margin-bottom:0">🔍 ¿Cuándo llega a mi parada?</div>
@@ -251,9 +264,9 @@ function adminLoad(){ /* Firebase lo maneja automático */ }
         </button>
       </div>
 
-      <!-- Mapa -->
+      <!-- Mapa FULL SCREEN -->
       <div style="position:relative;margin-bottom:12px">
-        <div id="map" style="width:100%;height:320px;border-radius:var(--r);border:2px solid var(--g);background:#e8e0d8"></div>
+        <div id="map" style="width:100%;height:40vh;max-height:480px;min-height:240px;border-radius:0;border:none;border-bottom:3px solid var(--g);background:#e8e0d8"></div>
         <!-- En vivo + Actualizar — esquina inferior izquierda -->
         <div style="position:absolute;bottom:10px;left:10px;z-index:500;display:flex;flex-direction:column;gap:6px">
           <div style="background:rgba(0,0,0,.55);backdrop-filter:blur(8px);color:#fff;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px;border:1px solid rgba(255,255,255,.2)">
@@ -268,6 +281,7 @@ function adminLoad(){ /* Firebase lo maneja automático */ }
       </div>
 
       <!-- CARRUSEL: Simulador + Unidades -->
+      <div id="mapsBuses">
       <div style="position:relative;margin:0 -10px 14px;padding:0 10px">
         <div id="busCarousel" style="display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth">
 
@@ -344,6 +358,10 @@ function adminLoad(){ /* Firebase lo maneja automático */ }
       </div>
 
     </div>
+      </div><!-- end mapsBuses -->
+        </div><!-- end mapsContent -->
+      </div><!-- end maps-panel -->
+    </div><!-- end wrap -->
   </div>
 
   <!-- ── SECCIÓN 2: INFORMACIÓN ── -->
