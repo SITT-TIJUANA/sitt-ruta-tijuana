@@ -1,7 +1,7 @@
 
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function mapaSwitchTab(idx,btn){
-  [0,1,2].forEach(function(i){
+  [0,1].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
     if(t)t.style.display=i===idx?'block':'none';
   });
@@ -90,12 +90,14 @@ function initMapaSheet(){
   mapaSheetSet('mid');
 }
 
-// Conecta el buscador flotante con el tab "Mi parada" y abre el sheet
+// Conecta el buscador flotante con el panel de resultados flotante
 function handleStopSearch(){
   calcETA();
-  var tabs=document.querySelectorAll('.mtab');
-  if(tabs[1])mapaSwitchTab(1,tabs[1]);
-  mapaSheetSet('mid');
+}
+function closeSearchResults(){
+  var sel=document.getElementById('esel');
+  if(sel)sel.value='';
+  calcETA();
 }
 window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
@@ -130,8 +132,6 @@ function openSection(sec){
         map.eachLayer(function(layer){if(layer.redraw)layer.redraw();});
       }
       jumpNow();update();updateProx();
-      initCarousel();
-      initBusCarousel();
     },350);
     setTimeout(function(){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
@@ -463,8 +463,7 @@ function updateProx(){
 function calcETA(){
   const idx=parseInt(document.getElementById('esel').value);
   if(isNaN(idx)){
-    document.getElementById('etaRes').style.display='none';
-    const ee=document.getElementById('etaEmpty');if(ee)ee.style.display='block';
+    document.getElementById('mapa-search-results').style.display='none';
     return;
   }
   if(!STOPS[idx])return;
@@ -514,8 +513,7 @@ function calcETA(){
   }
 
   const fA=smartFmt(DA,DUA),fB=smartFmt(DB,DUB);
-  document.getElementById('etaRes').style.display='block';
-  const ee0=document.getElementById('etaEmpty');if(ee0)ee0.style.display='none';
+  document.getElementById('mapa-search-results').style.display='block';
   setEl('etaLbl','📍 '+STOPS[idx].name);
   setEl('etaTA',fA.t);setEl('etaMA',fA.m);
   setEl('etaTB',fB.t);setEl('etaMB',fB.m);
@@ -816,35 +814,6 @@ function enviarWSP(){
   setTimeout(function(){mostrarConfirm();},500);
 }
 
-// ── CARRUSEL DOTS ─────────────────────────────────────────────────────────
-function initBusCarousel(){
-  const c=document.getElementById('busCarousel');
-  if(!c)return;
-  const dots=document.querySelectorAll('.bdot');
-  c.addEventListener('scroll',function(){
-    const idx=Math.round(c.scrollLeft/(c.offsetWidth*0.88+12));
-    dots.forEach(function(d,i){
-      d.style.background=i===idx?'var(--g)':'#ccc';
-      d.style.width=i===idx?'20px':'8px';
-      d.style.borderRadius='20px';
-    });
-  });
-}
-
-function initCarousel(){
-  const c=document.getElementById('infoCarousel');
-  if(!c)return;
-  const dots=document.querySelectorAll('.cdot');
-  c.addEventListener('scroll',function(){
-    const cardW=c.offsetWidth*0.88+12;
-    const idx=Math.round(c.scrollLeft/cardW);
-    dots.forEach(function(d,i){
-      d.style.background=i===idx?'var(--g)':'#ccc';
-      d.style.width=i===idx?'20px':'8px';
-      d.style.borderRadius='20px';
-    });
-  });
-}
 
 // ── POPULATE STOPS ────────────────────────────────────────────────────────
 function populateStops(){

@@ -131,6 +131,20 @@
         <select id="esel" onchange="handleStopSearch()">
           <option value="">¿Cuándo llega a mi parada?</option>
         </select>
+        <span class="msf-chev">⌄</span>
+      </div>
+
+      <!-- Resultados de búsqueda, flotando bajo el buscador -->
+      <div id="mapa-search-results">
+        <button class="msr-close" onclick="closeSearchResults()" aria-label="Cerrar">✕</button>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:7px;padding-right:22px" id="etaLbl"></div>
+        <div class="ecds">
+          <div class="ecd" id="etaCA"><div class="ecu">T-01-023</div><div class="ect" id="etaTA">–</div><div class="ecl" id="etaMA">–</div></div>
+          <div class="ecd" id="etaCB"><div class="ecu">T-01-015</div><div class="ect" id="etaTB">–</div><div class="ecl" id="etaMB">–</div></div>
+        </div>
+        <div style="margin-top:8px;background:#FFF3E0;border-radius:10px;border-left:4px solid #f0a500;padding:8px 10px;font-size:11px;color:#7a5c00;line-height:1.5">
+          ⏱️ Variación de <b>hasta 15 min</b> · 👉 llega <b>10-15 min antes</b>
+        </div>
       </div>
 
       <!-- Badge en vivo flotante -->
@@ -152,110 +166,60 @@
       <!-- TABS NAVEGACIÓN -->
       <div id="mapa-tabs">
         <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span>Camiones</button>
-        <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">🔍</span>Mi parada</button>
-        <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">⏱️</span>Simulador</button>
+        <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span>Simulador</button>
       </div>
       <!-- CONTENIDO DE TABS -->
       <div id="mapa-content">
-        <div id="mapaTab0"><!-- Carrusel tarjetas info -->
-
-      <!-- CARRUSEL: 3 cards informativas -->
-      <div style="position:relative;margin:0 -10px 14px;padding:0 10px">
-        <div id="infoCarousel" style="display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth">
-
-          <!-- CARD 1: Próxima salida -->
-          <div style="flex:0 0 88%;scroll-snap-align:start;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(123,29,29,.25)">
-            <div class="prox" style="border-radius:16px;margin-bottom:0;min-height:180px">
-              <div class="prox-badge" id="proxBadge">Próxima salida</div>
-              <div class="prox-hora" id="proxHora">--:--</div>
-              <div class="prox-lbl" id="proxLbl">Cargando...</div>
-              <div class="prox-cd" id="proxCd">...</div>
-              <div class="prox-av" id="proxAv"></div>
-              <div class="prox-ult" id="proxUlt"></div>
+        <div id="mapaTab0">
+          <div class="note" style="margin-bottom:12px">⚠️ Ubicación estimada por horario — No es GPS en tiempo real</div>
+          <div id="locCard"></div>
+          <div class="bgrid">
+            <!-- T-01-023 -->
+            <div id="cA">
+              <div class="bc" style="border-radius:16px;height:100%">
+                <div class="bch"><span style="font-size:20px">🚌</span>
+                  <div><div class="bcn">T-01-023</div><div class="bci">Unidad A</div></div>
+                  <span class="bdg er" id="bdgA">En ruta</span>
+                </div>
+                <div class="bsn">Parada actual</div><div class="bss" id="stA">–</div>
+                <div class="bnx">Siguiente: <span id="nxA">–</span></div>
+                <div><div class="bpb"><div class="bpf fa" id="pgA" style="width:0%"></div></div>
+                <div class="bpl"><span>Terminal Insurgentes</span><span id="pglA"></span></div></div>
+                <div style="display:flex;gap:6px;margin-top:10px">
+                  <button class="tbtn" style="background:var(--v);flex:2" onclick="trackBus('A')">📍 Ver en mapa →</button>
+                  <button class="tbtn" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;flex:1;font-size:13px" onclick="refreshBus('A')">🔄</button>
+                </div>
+              </div>
             </div>
-          </div>
-
-          <!-- CARD 2: ¿Dónde estoy? -->
-          <div style="flex:0 0 88%;scroll-snap-align:start;background:#fff;border-radius:16px;border:2px solid var(--g);padding:16px;box-shadow:0 4px 16px rgba(123,29,29,.12)">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-              <span style="font-size:24px">📍</span>
-              <span style="font-size:15px;font-weight:800;color:var(--g)">¿Dónde estoy?</span>
-            </div>
-            <button class="btn-big g" style="width:100%;margin-bottom:10px" onclick="locateUser()">
-              <div class="btn-ico">📍</div>
-              <div><div class="btn-tit g">Ver mi ubicación</div><div class="btn-sub">Toca para ver tu parada más cercana</div></div>
-            </button>
-            <div id="locCard"></div>
-          </div>
-
-          <!-- CARD 3: Ubicación estimada -->
-          <div style="flex:0 0 88%;scroll-snap-align:start;background:#fff8e7;border-radius:16px;border:1.5px solid #f0d070;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)">
-            <div style="display:flex;align-items:flex-start;gap:12px">
-              <div style="font-size:32px;flex-shrink:0">⚠️</div>
-              <div>
-                <div style="font-size:14px;font-weight:800;color:#7a5c00;margin-bottom:8px">Ubicación estimada — No es tiempo real</div>
-                <div style="font-size:12px;color:#8a6a00;line-height:1.8">La posición del camión en el mapa es un <b>estimado calculado por horario</b>, basado en registros reales de recorrido.<br><br>
-                <b>Próximamente</b> se instalará GPS en las unidades para mostrar la ubicación exacta en tiempo real. 🚌📡</div>
+            <!-- T-01-015 -->
+            <div id="cB">
+              <div class="bc" style="border-radius:16px;height:100%">
+                <div class="bch"><span style="font-size:20px">🚌</span>
+                  <div><div class="bcn">T-01-015</div><div class="bci">Unidad B</div></div>
+                  <span class="bdg er" id="bdgB">En ruta</span>
+                </div>
+                <div class="bsn">Parada actual</div><div class="bss" id="stB">–</div>
+                <div class="bnx">Siguiente: <span id="nxB">–</span></div>
+                <div><div class="bpb"><div class="bpf fb" id="pgB" style="width:0%"></div></div>
+                <div class="bpl"><span>Terminal Insurgentes</span><span id="pglB"></span></div></div>
+                <div style="display:flex;gap:6px;margin-top:10px">
+                  <button class="tbtn" style="background:var(--a);flex:2" onclick="trackBus('B')">📍 Ver en mapa →</button>
+                  <button class="tbtn" style="background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;flex:1;font-size:13px" onclick="refreshBus('B')">🔄</button>
+                </div>
               </div>
             </div>
           </div>
-
-        </div>
-        <!-- Dots indicador: 3 -->
-        <div style="display:flex;justify-content:center;gap:7px;margin-top:4px" id="carouselDots">
-          <div style="width:20px;height:8px;border-radius:20px;background:var(--g);transition:all .3s" class="cdot"></div>
-          <div style="width:8px;height:8px;border-radius:50%;background:#ccc;transition:all .3s" class="cdot"></div>
-          <div style="width:8px;height:8px;border-radius:50%;background:#ccc;transition:all .3s" class="cdot"></div>
-        </div>
-      </div>
-
         </div><!-- end mapaTab0 -->
+
         <div id="mapaTab1" style="display:none">
-      <!-- ¿Cuándo llega? — SEPARADO ABAJO -->
-      <div class="sec" style="margin-bottom:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <div class="stit" style="margin-bottom:0">🔍 ¿Cuándo llega a mi parada?</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:4px">
-              <span class="live-dot" style="width:6px;height:6px;border-radius:50%;background:#0F6E56;display:inline-block;animation:pulse 2s infinite;transition:background .3s"></span>
-              En vivo
-            </div>
-            <button onclick="calcETA();this.textContent='✅';setTimeout(()=>this.textContent='🔄',1500)" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">🔄</button>
-          </div>
-        </div>
-        <div id="etaRes" style="display:none">
-          <div style="font-size:12px;color:var(--t2);margin-bottom:7px" id="etaLbl"></div>
-          <div class="ecds">
-            <div class="ecd" id="etaCA"><div class="ecu">T-01-023</div><div class="ect" id="etaTA">–</div><div class="ecl" id="etaMA">–</div></div>
-            <div class="ecd" id="etaCB"><div class="ecu">T-01-015</div><div class="ect" id="etaTB">–</div><div class="ecl" id="etaMB">–</div></div>
-          </div>
-        </div>
-        <div id="etaEmpty" style="text-align:center;padding:18px 8px;color:var(--t2);font-size:12px">
-          👆 Usa el buscador de arriba para elegir tu parada
-        </div>
-        <div style="margin-top:10px;background:#FFF3E0;border-radius:10px;border-left:4px solid #f0a500;padding:10px 12px;font-size:11px;color:#7a5c00;line-height:1.6">
-          ⏱️ Estimado con variación de <b>hasta 15 minutos</b> · 👉 <b>Llega 10-15 min antes</b> a tu parada
-        </div>
-      </div>
-
-        </div><!-- end mapaTab1 -->
-        <div id="mapaTab2" style="display:none">
-      <!-- CARRUSEL: Simulador + Unidades -->
-      <div style="position:relative;margin:0 -10px 14px;padding:0 10px">
-        <div id="busCarousel" style="display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 0 10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth">
-
-          <!-- CARD 1: Simulador -->
-          <div style="flex:0 0 88%;scroll-snap-align:start;background:#fff;border-radius:16px;border:.5px solid var(--b);padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)">
+          <!-- Simulador -->
+          <div style="background:#fff;border-radius:16px;border:.5px solid var(--b);padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <div>
                 <div style="font-size:15px;font-weight:800;color:var(--g)">🕐 Hora actual del camión</div>
                 <div style="font-size:11px;color:var(--t2);margin-top:2px">Se actualiza solo · Mueve la barra para explorar otras horas</div>
               </div>
-              <div style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:6px 12px;font-size:11px;font-weight:700;flex-shrink:0;margin-left:8px;display:flex;align-items:center;gap:4px">
-                <span class="live-dot" style="width:7px;height:7px;border-radius:50%;background:#0F6E56;display:inline-block;animation:pulse 2s infinite;transition:background .3s"></span>
-                En vivo
-              </div>
-              <button onclick="window._userMovedSlider=false;jumpNow();" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
+              <button onclick="window._userMovedSlider=false;jumpNow();" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px">
                 🔄 Hora actual
               </button>
             </div>
@@ -271,52 +235,16 @@
             </div>
           </div>
 
-          <!-- CARD 2: T-01-023 -->
-          <div style="flex:0 0 88%;scroll-snap-align:start" id="cA">
-            <div class="bc" style="border-radius:16px;height:100%">
-              <div class="bch"><span style="font-size:20px">🚌</span>
-                <div><div class="bcn">T-01-023</div><div class="bci">Unidad A</div></div>
-                <span class="bdg er" id="bdgA">En ruta</span>
-              </div>
-              <div class="bsn">Parada actual</div><div class="bss" id="stA">–</div>
-              <div class="bnx">Siguiente: <span id="nxA">–</span></div>
-              <div><div class="bpb"><div class="bpf fa" id="pgA" style="width:0%"></div></div>
-              <div class="bpl"><span>Terminal Insurgentes</span><span id="pglA"></span></div></div>
-              <div style="display:flex;gap:6px;margin-top:10px">
-                <button class="tbtn" style="background:var(--v);flex:2" onclick="trackBus('A')">📍 Ver en mapa →</button>
-                <button class="tbtn" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;flex:1;font-size:13px" onclick="refreshBus('A')">🔄</button>
-              </div>
-            </div>
+          <!-- Horario / Próxima salida -->
+          <div class="prox" style="border-radius:16px;margin-bottom:0">
+            <div class="prox-badge" id="proxBadge">Próxima salida</div>
+            <div class="prox-hora" id="proxHora">--:--</div>
+            <div class="prox-lbl" id="proxLbl">Cargando...</div>
+            <div class="prox-cd" id="proxCd">...</div>
+            <div class="prox-av" id="proxAv"></div>
+            <div class="prox-ult" id="proxUlt"></div>
           </div>
-
-          <!-- CARD 3: T-01-015 -->
-          <div style="flex:0 0 88%;scroll-snap-align:start" id="cB">
-            <div class="bc" style="border-radius:16px;height:100%">
-              <div class="bch"><span style="font-size:20px">🚌</span>
-                <div><div class="bcn">T-01-015</div><div class="bci">Unidad B</div></div>
-                <span class="bdg er" id="bdgB">En ruta</span>
-              </div>
-              <div class="bsn">Parada actual</div><div class="bss" id="stB">–</div>
-              <div class="bnx">Siguiente: <span id="nxB">–</span></div>
-              <div><div class="bpb"><div class="bpf fb" id="pgB" style="width:0%"></div></div>
-              <div class="bpl"><span>Terminal Insurgentes</span><span id="pglB"></span></div></div>
-              <div style="display:flex;gap:6px;margin-top:10px">
-                <button class="tbtn" style="background:var(--a);flex:2" onclick="trackBus('B')">📍 Ver en mapa →</button>
-                <button class="tbtn" style="background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;flex:1;font-size:13px" onclick="refreshBus('B')">🔄</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <!-- Dots: 3 -->
-        <div style="display:flex;justify-content:center;gap:7px;margin-top:4px" id="busCarouselDots">
-          <div style="width:20px;height:8px;border-radius:20px;background:var(--g);transition:all .3s" class="bdot"></div>
-          <div style="width:8px;height:8px;border-radius:50%;background:#ccc;transition:all .3s" class="bdot"></div>
-          <div style="width:8px;height:8px;border-radius:50%;background:#ccc;transition:all .3s" class="bdot"></div>
-        </div>
-      </div>
-
-        </div><!-- end mapaTab2 -->
+        </div><!-- end mapaTab1 -->
       </div><!-- end mapa-content -->
     </div><!-- end mapa-sheet -->
   </div><!-- end sec-mapa -->
