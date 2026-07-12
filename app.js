@@ -7,10 +7,95 @@ function mapaSwitchTab(idx,btn){
   });
   document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
+  // Si el sheet está colapsado, ábrelo a la mitad al tocar un tab
+  var sheet=document.getElementById('mapa-sheet');
+  if(sheet&&sheet.dataset.state==='collapsed'&&typeof mapaSheetSet==='function'){
+    mapaSheetSet('mid');
+  }
   // Si es tab de mapa (0), refresh
   if(idx===0&&typeof map!=='undefined'){
     setTimeout(function(){map.invalidateSize({animate:false});},100);
   }
+}
+
+// ── BOTTOM SHEET ARRASTRABLE ────────────────────────────────────────────────
+function mapaSheetSet(state){
+  var sheet=document.getElementById('mapa-sheet');
+  if(!sheet)return;
+  if(window.matchMedia('(min-width:700px)').matches)return; // en desktop es panel fijo
+  var h;
+  if(state==='collapsed')h=118;
+  else if(state==='expanded')h=Math.round(window.innerHeight*0.88);
+  else{state='mid';h=Math.round(window.innerHeight*0.5);}
+  sheet.dataset.state=state;
+  sheet.style.height=h+'px';
+  setTimeout(function(){if(typeof map!=='undefined')map.invalidateSize({animate:false});},330);
+}
+window.mapaSheetSet=mapaSheetSet;
+
+function initMapaSheet(){
+  var sheet=document.getElementById('mapa-sheet');
+  var handle=document.getElementById('mapa-sheet-handle');
+  if(!sheet||!handle||sheet._sheetInit)return;
+  sheet._sheetInit=true;
+
+  var dragging=false,startY=0,startH=0,moved=false;
+
+  function isDesktop(){return window.matchMedia('(min-width:700px)').matches;}
+
+  function onDown(e){
+    if(isDesktop())return;
+    dragging=true;moved=false;
+    sheet.classList.add('dragging');
+    startY=(e.touches?e.touches[0].clientY:e.clientY);
+    startH=sheet.getBoundingClientRect().height;
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+    document.addEventListener('touchmove',onMove,{passive:false});
+    document.addEventListener('touchend',onUp);
+  }
+  function onMove(e){
+    if(!dragging)return;
+    var y=(e.touches?e.touches[0].clientY:e.clientY);
+    if(Math.abs(startY-y)>6)moved=true;
+    if(e.cancelable)e.preventDefault();
+    var delta=startY-y;
+    var newH=Math.min(window.innerHeight*0.92,Math.max(100,startH+delta));
+    sheet.style.height=newH+'px';
+  }
+  function onUp(){
+    if(!dragging)return;
+    dragging=false;
+    sheet.classList.remove('dragging');
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('touchend',onUp);
+    if(!moved){ // fue un tap, no un arrastre real
+      var cur=sheet.dataset.state;
+      mapaSheetSet(cur==='collapsed'?'mid':cur==='mid'?'expanded':'collapsed');
+      return;
+    }
+    var h=sheet.getBoundingClientRect().height;
+    var vh=window.innerHeight;
+    var mid=vh*0.5,exp=vh*0.88;
+    var dc=Math.abs(h-118),dm=Math.abs(h-mid),de=Math.abs(h-exp);
+    if(dc<=dm&&dc<=de)mapaSheetSet('collapsed');
+    else if(dm<=de)mapaSheetSet('mid');
+    else mapaSheetSet('expanded');
+  }
+  handle.addEventListener('mousedown',onDown);
+  handle.addEventListener('touchstart',onDown,{passive:true});
+
+  mapaSheetSet('mid');
+}
+
+// Conecta el buscador flotante con el tab "Mi parada" y abre el sheet
+function handleStopSearch(){
+  calcETA();
+  var tabs=document.querySelectorAll('.mtab');
+  if(tabs[1])mapaSwitchTab(1,tabs[1]);
+  mapaSheetSet('mid');
 }
 window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
@@ -34,10 +119,8 @@ function openSection(sec){
   document.querySelectorAll('.section-page').forEach(function(s){s.classList.remove('active');});
   document.getElementById('sec-'+sec).classList.add('active');
   document.getElementById('navTitle').textContent = sectionTitles[sec]||'SITT T101';
-  // Mostrar botón flotante solo en sección mapa
-  const fb=document.getElementById('floatRefreshBtn');
-  if(fb)fb.style.display=sec==='mapa'?'block':'none';
   if(sec==='mapa'){
+    initMapaSheet();
     setTimeout(function(){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },50);
@@ -60,8 +143,6 @@ function goBack(){
   document.getElementById('app').style.display='none';
   document.getElementById('splash').style.display='flex';
   document.getElementById('splash').classList.remove('hide');
-  const fb=document.getElementById('floatRefreshBtn');
-  if(fb)fb.style.display='none';
 }
 
 function salirSinCalificar(btn){
@@ -381,7 +462,11 @@ function updateProx(){
 
 function calcETA(){
   const idx=parseInt(document.getElementById('esel').value);
-  if(isNaN(idx)){document.getElementById('etaRes').style.display='none';return;}
+  if(isNaN(idx)){
+    document.getElementById('etaRes').style.display='none';
+    const ee=document.getElementById('etaEmpty');if(ee)ee.style.display='block';
+    return;
+  }
   if(!STOPS[idx])return;
   const isTerminal=idx===0; // Solo Terminal Insurgentes tiene horarios de salida
 
@@ -430,6 +515,7 @@ function calcETA(){
 
   const fA=smartFmt(DA,DUA),fB=smartFmt(DB,DUB);
   document.getElementById('etaRes').style.display='block';
+  const ee0=document.getElementById('etaEmpty');if(ee0)ee0.style.display='none';
   setEl('etaLbl','📍 '+STOPS[idx].name);
   setEl('etaTA',fA.t);setEl('etaMA',fA.m);
   setEl('etaTB',fB.t);setEl('etaMB',fB.m);
@@ -772,41 +858,6 @@ function populateStops(){
     o.textContent=s.n+'. '+s.name;
     sel.appendChild(o);
   });
-}
-// ── MODO ADMIN ─────────────────────────────
-let adminTaps=0,adminTimer=null;
-function activarAdmin(){
-  adminTaps++;
-  clearTimeout(adminTimer);
-  adminTimer=setTimeout(function(){adminTaps=0;},2000);
-  if(adminTaps>=3){
-    adminTaps=0;
-    const pass=prompt('🔐 Contraseña:');
-    if(pass==='SITT2024'){
-      const panel=document.createElement('div');
-      panel.style.cssText='position:fixed;bottom:80px;right:16px;z-index:9999;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);border:2px solid #7B1D1D;min-width:200px';
-      panel.innerHTML=`
-        <div style="font-size:13px;font-weight:800;color:#7B1D1D;margin-bottom:10px">🔧 Panel Admin</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px">T-01-023 (Verde)</div>
-        <button onclick="window._pauseA=!window._pauseA;this.textContent=window._pauseA?'▶ Reanudar T-023':'⏸ Pausar T-023';this.style.background=window._pauseA?'#1D9E75':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          ⏸ Pausar T-023
-        </button>
-        <div style="font-size:11px;color:#666;margin-bottom:6px">T-01-015 (Azul)</div>
-        <button onclick="window._pauseB=!window._pauseB;this.textContent=window._pauseB?'▶ Reanudar T-015':'⏸ Pausar T-015';this.style.background=window._pauseB?'#378ADD':'#7B1D1D'"
-          style="width:100%;background:#7B1D1D;color:#fff;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          ⏸ Pausar T-015
-        </button>
-        <button onclick="this.closest('div[style]').remove()"
-          style="width:100%;background:#f4f4f2;color:#666;border:none;border-radius:10px;padding:8px;font-size:12px;cursor:pointer">
-          Cerrar
-        </button>
-      `;
-      document.body.appendChild(panel);
-    } else if(pass!==null){
-      alert('❌ Contraseña incorrecta');
-    }
-  }
 }
 // ── INIT ───────────────────────────────────────────────────────────────────
 populateStops();
