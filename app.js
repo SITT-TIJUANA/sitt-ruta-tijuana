@@ -1,3 +1,17 @@
+
+// ── MAPA TABS ──────────────────────────────────────────────────────────────
+function mapaSwitchTab(idx,btn){
+  [0,1,2].forEach(function(i){
+    var t=document.getElementById('mapaTab'+i);
+    if(t)t.style.display=i===idx?'block':'none';
+  });
+  document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  // Si es tab de mapa (0), refresh
+  if(idx===0&&typeof map!=='undefined'){
+    setTimeout(function(){map.invalidateSize({animate:false});},100);
+  }
+}
 window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
   gtag('js',new Date());
