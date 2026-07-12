@@ -71,9 +71,9 @@ function initMapaSheet(){
     document.removeEventListener('mouseup',onUp);
     document.removeEventListener('touchmove',onMove);
     document.removeEventListener('touchend',onUp);
-    if(!moved){ // fue un tap, no un arrastre real
+    if(!moved){ // fue un tap, no un arrastre real: toggle simple mostrar/ocultar
       var cur=sheet.dataset.state;
-      mapaSheetSet(cur==='collapsed'?'mid':cur==='mid'?'expanded':'collapsed');
+      mapaSheetSet(cur==='collapsed'?'mid':'collapsed');
       return;
     }
     var h=sheet.getBoundingClientRect().height;
@@ -169,26 +169,22 @@ function mostrarHorarioModal(){
   if(!proxWrap)return;
   const modal=document.createElement('div');
   modal.id='horarioModal';
-  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99997;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:99997;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
   modal.addEventListener('click',function(e){if(e.target===modal)minimizarHorarioModal();});
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:480px;padding:12px 20px 22px;animation:fadeUp .3s ease">
-      <div style="display:flex;justify-content:center;margin-bottom:10px">
-        <div style="width:40px;height:5px;border-radius:20px;background:#e0ddd6"></div>
+    <div class="horario-modal-card">
+      <div class="hmc-shine"></div>
+      <div style="display:flex;justify-content:center;margin-bottom:10px;position:relative">
+        <div style="width:42px;height:5px;border-radius:20px;background:rgba(255,255,255,.35)"></div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px">
-        <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite"></span>
-        <div style="font-size:13px;font-weight:800;color:#7B1D1D;letter-spacing:.04em;text-transform:uppercase">Horario en vivo · Ruta T101</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;position:relative">
+        <span style="width:9px;height:9px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite;box-shadow:0 0 8px #4ade80"></span>
+        <div style="font-size:14px;font-weight:900;color:#F5D77A;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)">✨ Horario en vivo · Ruta T101</div>
       </div>
-      <div id="horarioModalSlot"></div>
-      <div style="display:flex;gap:8px;margin-top:16px">
-        <button onclick="minimizarHorarioModal()" style="flex:2;background:#7B1D1D;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:800;cursor:pointer">
-          ⌄ Minimizar
-        </button>
-        <button onclick="cerrarTodoHorario()" style="flex:1;background:#f4f4f2;color:#777;border:none;border-radius:14px;padding:15px;font-size:13px;font-weight:700;cursor:pointer">
-          Cerrar
-        </button>
-      </div>
+      <div id="horarioModalSlot" style="position:relative"></div>
+      <button onclick="minimizarHorarioModal()" class="hmc-minbtn">
+        ⌄ Minimizar
+      </button>
     </div>
   `;
   document.body.appendChild(modal);
@@ -204,18 +200,7 @@ function minimizarHorarioModal(){
   mostrarChipHorario();
 }
 
-function cerrarTodoHorario(){
-  const proxWrap=document.getElementById('proxCardWrap');
-  const tab1=document.getElementById('mapaTab1');
-  if(proxWrap&&tab1)tab1.appendChild(proxWrap);
-  const modal=document.getElementById('horarioModal');
-  if(modal)modal.remove();
-  cerrarChipHorario();
-  window._horarioDismissed=true;
-}
-
 function mostrarChipHorario(){
-  if(window._horarioDismissed)return;
   if(document.getElementById('horarioChip'))return;
   const wrap=document.getElementById('mapa-map-wrap');
   if(!wrap)return;
@@ -223,9 +208,8 @@ function mostrarChipHorario(){
   chip.id='horarioChip';
   chip.innerHTML=`
     <button onclick="mostrarHorarioModal()" class="hchip-main">
-      <span class="hchip-dot"></span>🕐 Horario
+      <span class="hchip-dot"></span>🕐 <span id="hchipHora">Próxima salida</span>
     </button>
-    <button onclick="cerrarChipHorario();window._horarioDismissed=true" class="hchip-x" aria-label="Cerrar">✕</button>
   `;
   wrap.appendChild(chip);
 }
@@ -272,10 +256,10 @@ function openSection(sec){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },700);
     setTimeout(function(){
-      if(!window._horarioShownOnce&&!window._horarioDismissed){
+      if(!window._horarioShownOnce){
         window._horarioShownOnce=true;
         mostrarHorarioModal();
-      }else if(!window._horarioDismissed&&!document.getElementById('horarioModal')){
+      }else if(!document.getElementById('horarioModal')){
         mostrarChipHorario();
       }
     },500);
@@ -421,8 +405,7 @@ let uLat=null, uLng=null;
 
 // ── MAPA ───────────────────────────────────────────────────────────────────
 const map=L.map('map',{zoomControl:false}).setView([32.505,-116.975],13);
-L.control.zoom({position:'bottomleft'}).addTo(map);
-map.attributionControl.setPosition('bottomleft');
+map.attributionControl.setPrefix(false);
 L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
   attribution:'© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom:20,
@@ -468,29 +451,8 @@ function busIco(label,color,active){
 const busA=L.marker([STOPS[0].lat,STOPS[0].lng],{icon:busIco('T-01-023','#1D9E75',false),zIndexOffset:1000}).addTo(map);
 const busB=L.marker([STOPS[0].lat,STOPS[0].lng],{icon:busIco('T-01-015','#378ADD',false),zIndexOffset:1000}).addTo(map);
 
-// Botón 📍 Mi ubicación dentro del mapa
-const BtnUbic=L.Control.extend({
-  onAdd:function(){
-    const btn=L.DomUtil.create('button','');
-    btn.innerHTML='📍 Mi ubicación';
-    btn.style.cssText='background:#7B1D1D;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:7px 10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.35);white-space:nowrap';
-    L.DomEvent.on(btn,'click',function(e){L.DomEvent.stop(e);locateUser();});
-    return btn;
-  }
-});
-new BtnUbic({position:'topright'}).addTo(map);
-
-// Botón 🗺️ Ampliar mapa dentro del mapa
-const BtnRuta=L.Control.extend({
-  onAdd:function(){
-    const btn=L.DomUtil.create('button','');
-    btn.innerHTML='🗺️ Ampliar mapa';
-    btn.style.cssText='background:#378ADD;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;padding:7px 10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.35);white-space:nowrap;margin-top:5px';
-    L.DomEvent.on(btn,'click',function(e){L.DomEvent.stop(e);verRuta();});
-    return btn;
-  }
-});
-new BtnRuta({position:'topright'}).addTo(map);
+// (Botones "Mi ubicación" / "Ampliar mapa" ya existen como FABs flotantes en el HTML —
+// se quitaron estos controles nativos de Leaflet para no duplicar la función)
 
 // ── LÓGICA ─────────────────────────────────────────────────────────────────
 function getBus(now,deps,durs){
@@ -591,6 +553,7 @@ function updateProx(){
     const c=document.getElementById('proxCd');if(c)c.className='prox-cd';
     setEl('proxAv','Salidas desde Terminal Insurgentes · Blvd. Insurgentes, Col. Azteca');
     setEl('proxUlt','El primer camión de mañana sale a las 6:00 a.m. puntual');
+    setEl('hchipHora','Servicio terminado');
     return;
   }
   const diff=Math.round(next-simMin);
@@ -603,6 +566,7 @@ function updateProx(){
   setEl('proxAv',diff<=2?'⚡ El camión puede salir en cualquier momento':diff<=10?'⚠️ Los camiones no esperan — llega con tiempo':'Los camiones salen puntual · Llega 2-3 min antes');
   const ul=document.getElementById('proxUlt');
   if(ul)ul.innerHTML=!isLast?'Última salida del día: <strong>'+fh(LAST)+'</strong>':'Primera salida mañana: <strong>'+fh(FIRST)+'</strong>';
+  setEl('hchipHora',fh(next));
 }
 
 function calcETA(){
