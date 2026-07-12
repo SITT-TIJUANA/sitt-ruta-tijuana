@@ -163,23 +163,32 @@ function closeSearchResults(){
 
 // ── MODAL DE HORARIO (automático al entrar al mapa) ─────────────────────────
 function mostrarHorarioModal(){
+  cerrarChipHorario();
   if(document.getElementById('horarioModal'))return;
   const proxWrap=document.getElementById('proxCardWrap');
   if(!proxWrap)return;
   const modal=document.createElement('div');
   modal.id='horarioModal';
-  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99997;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99997;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
   modal.addEventListener('click',function(e){if(e.target===modal)minimizarHorarioModal();});
   modal.innerHTML=`
-    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:10px 18px 20px;animation:fadeUp .3s ease">
-      <div style="display:flex;justify-content:center;margin-bottom:8px">
-        <div style="width:38px;height:5px;border-radius:20px;background:#e0ddd6"></div>
+    <div style="background:#fff;border-radius:28px 28px 0 0;width:100%;max-width:480px;padding:12px 20px 22px;animation:fadeUp .3s ease">
+      <div style="display:flex;justify-content:center;margin-bottom:10px">
+        <div style="width:40px;height:5px;border-radius:20px;background:#e0ddd6"></div>
       </div>
-      <div style="font-size:11px;font-weight:700;color:#7B1D1D;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;text-align:center">🕐 Horario en vivo · Ruta T101</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:14px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite"></span>
+        <div style="font-size:13px;font-weight:800;color:#7B1D1D;letter-spacing:.04em;text-transform:uppercase">Horario en vivo · Ruta T101</div>
+      </div>
       <div id="horarioModalSlot"></div>
-      <button onclick="minimizarHorarioModal()" style="width:100%;margin-top:14px;background:#f4f4f2;color:#555;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
-        ⌄ Minimizar
-      </button>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button onclick="minimizarHorarioModal()" style="flex:2;background:#7B1D1D;color:#fff;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:800;cursor:pointer">
+          ⌄ Minimizar
+        </button>
+        <button onclick="cerrarTodoHorario()" style="flex:1;background:#f4f4f2;color:#777;border:none;border-radius:14px;padding:15px;font-size:13px;font-weight:700;cursor:pointer">
+          Cerrar
+        </button>
+      </div>
     </div>
   `;
   document.body.appendChild(modal);
@@ -192,6 +201,38 @@ function minimizarHorarioModal(){
   if(proxWrap&&tab1)tab1.appendChild(proxWrap);
   const modal=document.getElementById('horarioModal');
   if(modal)modal.remove();
+  mostrarChipHorario();
+}
+
+function cerrarTodoHorario(){
+  const proxWrap=document.getElementById('proxCardWrap');
+  const tab1=document.getElementById('mapaTab1');
+  if(proxWrap&&tab1)tab1.appendChild(proxWrap);
+  const modal=document.getElementById('horarioModal');
+  if(modal)modal.remove();
+  cerrarChipHorario();
+  window._horarioDismissed=true;
+}
+
+function mostrarChipHorario(){
+  if(window._horarioDismissed)return;
+  if(document.getElementById('horarioChip'))return;
+  const wrap=document.getElementById('mapa-map-wrap');
+  if(!wrap)return;
+  const chip=document.createElement('div');
+  chip.id='horarioChip';
+  chip.innerHTML=`
+    <button onclick="mostrarHorarioModal()" class="hchip-main">
+      <span class="hchip-dot"></span>🕐 Horario
+    </button>
+    <button onclick="cerrarChipHorario();window._horarioDismissed=true" class="hchip-x" aria-label="Cerrar">✕</button>
+  `;
+  wrap.appendChild(chip);
+}
+
+function cerrarChipHorario(){
+  const chip=document.getElementById('horarioChip');
+  if(chip)chip.remove();
 }
 window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
@@ -231,7 +272,12 @@ function openSection(sec){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },700);
     setTimeout(function(){
-      mostrarHorarioModal();
+      if(!window._horarioShownOnce&&!window._horarioDismissed){
+        window._horarioShownOnce=true;
+        mostrarHorarioModal();
+      }else if(!window._horarioDismissed&&!document.getElementById('horarioModal')){
+        mostrarChipHorario();
+      }
     },500);
   }
 }
@@ -1053,6 +1099,7 @@ const esStandalone=window.navigator.standalone;
 if(esIOS&&!esStandalone){
   setTimeout(function(){
     const banner=document.createElement('div');
+    banner.id='iosInstallBanner';
     banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#fff;border-top:3px solid #7B1D1D;padding:14px 16px;box-shadow:0 -4px 20px rgba(0,0,0,.15);animation:fadeUp .4s ease';
     banner.innerHTML=`
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
@@ -1061,7 +1108,7 @@ if(esIOS&&!esStandalone){
           <div style="font-size:13px;font-weight:800;color:#7B1D1D">Instalar app SITT T101</div>
           <div style="font-size:11px;color:#666">Para acceder rápido desde tu iPhone</div>
         </div>
-        <button onclick="this.closest('div[style]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;margin-left:auto">✕</button>
+        <button onclick="document.getElementById('iosInstallBanner').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;margin-left:auto;flex-shrink:0">✕</button>
       </div>
       <div style="background:#f4f4f2;border-radius:10px;padding:10px 12px;font-size:12px;color:#444;line-height:1.7">
         1. Toca el botón <b>Compartir</b> ⬆️ de Safari<br>

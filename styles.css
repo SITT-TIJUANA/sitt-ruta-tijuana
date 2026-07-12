@@ -156,15 +156,15 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .wrap{max-width:860px;margin:0 auto;padding:12px 10px 28px}
 
 /* === ALL PREVIOUS STYLES === */
-.prox{background:var(--g);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden}
-.prox::before{content:"🚌";position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:52px;opacity:.1}
-.prox-badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 10px;margin-bottom:8px;color:var(--o);border:1px solid rgba(201,168,76,.4)}
-.prox-hora{font-size:40px;font-weight:700;color:var(--o);line-height:1;margin-bottom:3px}
-.prox-lbl{font-size:13px;opacity:.85;margin-bottom:6px}
-.prox-cd{font-size:14px;font-weight:600;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 12px;display:inline-block;margin-bottom:5px}
-.prox-cd.urg{background:rgba(255,200,0,.25);color:#FFD700}
-.prox-av{font-size:11px;opacity:.65;font-style:italic}
-.prox-ult{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.15);font-size:12px;opacity:.8}
+.prox{background:linear-gradient(145deg,#7B1D1D,#5c1515);border-radius:22px;padding:22px 22px 20px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(123,29,29,.25)}
+.prox::before{content:"🚌";position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:76px;opacity:.09}
+.prox-badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;margin-bottom:12px;color:var(--o);border:1px solid rgba(201,168,76,.4)}
+.prox-hora{font-size:56px;font-weight:900;color:var(--o);line-height:1;margin-bottom:6px;letter-spacing:-.01em}
+.prox-lbl{font-size:15px;opacity:.9;margin-bottom:12px;font-weight:600}
+.prox-cd{font-size:19px;font-weight:800;background:rgba(255,255,255,.14);border-radius:12px;padding:10px 16px;display:inline-block;margin-bottom:10px}
+.prox-cd.urg{background:rgba(255,200,0,.28);color:#FFD700;animation:pulse 2s infinite}
+.prox-av{font-size:14px;opacity:.85;font-weight:600;display:block;margin-bottom:10px}
+.prox-ult{margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.18);font-size:15px;opacity:.92;font-weight:600}
 .btns2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .btn-big{background:#fff;border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.1);border:none;width:100%}
 .btn-big.g{border:2.5px solid var(--g)}
@@ -283,6 +283,13 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .mfab{width:44px;height:44px;border-radius:50%;background:#fff;color:#7B1D1D;border:none;box-shadow:0 2px 6px rgba(0,0,0,.1),0 4px 14px rgba(0,0,0,.16);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .15s ease}
 .mfab:active{transform:scale(.92)}
 .mfab.pr{background:#7B1D1D;color:#fff;width:54px;height:54px;font-size:22px;box-shadow:0 3px 10px rgba(123,29,29,.4),0 6px 18px rgba(123,29,29,.28)}
+
+/* Chip flotante de horario (al minimizar el modal) */
+#horarioChip{position:absolute;top:120px;left:14px;z-index:640;display:flex;align-items:stretch;background:#7B1D1D;border-radius:24px;box-shadow:0 4px 14px rgba(123,29,29,.4);overflow:hidden;animation:fadeUp .3s ease}
+.hchip-main{background:none;border:none;color:#fff;font-size:13px;font-weight:800;padding:11px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap}
+.hchip-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite;flex-shrink:0}
+.hchip-x{background:rgba(255,255,255,.15);border:none;border-left:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;padding:11px 13px;cursor:pointer}
+.hchip-x:active{background:rgba(255,255,255,.3)}
 
 /* Bottom sheet arrastrable */
 #mapa-sheet{position:absolute;left:0;right:0;bottom:0;z-index:700;background:#f0ede8;border-radius:20px 20px 0 0;box-shadow:0 -6px 22px rgba(0,0,0,.18);display:flex;flex-direction:column;height:50vh;max-height:92vh;min-height:118px;transition:height .32s cubic-bezier(.25,.8,.25,1);overflow:hidden}
