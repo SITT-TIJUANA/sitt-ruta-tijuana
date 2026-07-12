@@ -128,10 +128,13 @@
       <!-- Buscador flotante arriba -->
       <div id="mapa-search-float">
         <span class="msf-ico">🔍</span>
-        <select id="esel" onchange="handleStopSearch()">
+        <button id="stopSearchBtn" onclick="abrirModalParadas()">
+          <span id="stopSearchLabel">¿Cuándo llega a mi parada?</span>
+        </button>
+        <span class="msf-chev">›</span>
+        <select id="esel" style="display:none">
           <option value="">¿Cuándo llega a mi parada?</option>
         </select>
-        <span class="msf-chev">⌄</span>
       </div>
 
       <!-- Resultados de búsqueda, flotando bajo el buscador -->
@@ -236,13 +239,15 @@
           </div>
 
           <!-- Horario / Próxima salida -->
-          <div class="prox" style="border-radius:16px;margin-bottom:0">
-            <div class="prox-badge" id="proxBadge">Próxima salida</div>
-            <div class="prox-hora" id="proxHora">--:--</div>
-            <div class="prox-lbl" id="proxLbl">Cargando...</div>
-            <div class="prox-cd" id="proxCd">...</div>
-            <div class="prox-av" id="proxAv"></div>
-            <div class="prox-ult" id="proxUlt"></div>
+          <div id="proxCardWrap">
+            <div class="prox" style="border-radius:16px;margin-bottom:0">
+              <div class="prox-badge" id="proxBadge">Próxima salida</div>
+              <div class="prox-hora" id="proxHora">--:--</div>
+              <div class="prox-lbl" id="proxLbl">Cargando...</div>
+              <div class="prox-cd" id="proxCd">...</div>
+              <div class="prox-av" id="proxAv"></div>
+              <div class="prox-ult" id="proxUlt"></div>
+            </div>
           </div>
         </div><!-- end mapaTab1 -->
       </div><!-- end mapa-content -->

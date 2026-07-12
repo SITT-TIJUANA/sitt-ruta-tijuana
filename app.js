@@ -90,14 +90,108 @@ function initMapaSheet(){
   mapaSheetSet('mid');
 }
 
-// Conecta el buscador flotante con el panel de resultados flotante
-function handleStopSearch(){
-  calcETA();
+// ── MODAL DE PARADAS (buscador) ─────────────────────────────────────────────
+function abrirModalParadas(){
+  if(document.getElementById('paradasModal'))return;
+  const modal=document.createElement('div');
+  modal.id='paradasModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99998;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.addEventListener('click',function(e){if(e.target===modal)cerrarModalParadas();});
+
+  const rows=(typeof STOPS!=='undefined'?STOPS:[]).map(function(s,i){
+    return '<button class="parada-row" onclick="elegirParada('+i+')">'+
+      '<span class="pr-num">'+s.n+'</span>'+
+      '<span class="pr-name">'+s.name+'</span>'+
+      '<span class="pr-arrow">›</span>'+
+    '</button>';
+  }).join('');
+
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:82vh;display:flex;flex-direction:column;animation:fadeUp .3s ease">
+      <div style="display:flex;justify-content:center;padding-top:10px;flex-shrink:0">
+        <div style="width:38px;height:5px;border-radius:20px;background:#e0ddd6"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0">
+        <div style="font-size:15px;font-weight:800;color:#7B1D1D">🔍 ¿Cuándo llega a mi parada?</div>
+        <button onclick="cerrarModalParadas()" style="background:#f4f4f2;border:none;border-radius:50%;width:30px;height:30px;font-size:15px;color:#666;cursor:pointer;flex-shrink:0">✕</button>
+      </div>
+      <input type="text" id="paradaFilter" placeholder="Escribe el nombre de tu parada..." oninput="filtrarParadas(this.value)"
+        style="margin:0 18px 10px;padding:12px 14px;border-radius:12px;border:1.5px solid #e0ddd6;font-size:14px;font-family:inherit;flex-shrink:0">
+      <div id="paradasListWrap" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 10px 16px;flex:1">
+        ${rows}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
 }
+
+function filtrarParadas(txt){
+  const q=(txt||'').toLowerCase();
+  document.querySelectorAll('.parada-row').forEach(function(row){
+    const name=row.querySelector('.pr-name').textContent.toLowerCase();
+    row.style.display=name.indexOf(q)>-1?'flex':'none';
+  });
+}
+
+function elegirParada(idx){
+  const sel=document.getElementById('esel');
+  if(sel)sel.value=idx;
+  calcETA();
+  actualizarBotonBusqueda(idx);
+  cerrarModalParadas();
+}
+
+function cerrarModalParadas(){
+  const modal=document.getElementById('paradasModal');
+  if(modal)modal.remove();
+}
+
+function actualizarBotonBusqueda(idx){
+  const lbl=document.getElementById('stopSearchLabel');
+  if(!lbl)return;
+  const s=(typeof STOPS!=='undefined')?STOPS[idx]:null;
+  lbl.textContent=s?(s.n+'. '+s.name):'¿Cuándo llega a mi parada?';
+  lbl.style.color=s?'#2a2a2a':'#555';
+}
+
 function closeSearchResults(){
-  var sel=document.getElementById('esel');
+  const sel=document.getElementById('esel');
   if(sel)sel.value='';
   calcETA();
+  actualizarBotonBusqueda('');
+}
+
+// ── MODAL DE HORARIO (automático al entrar al mapa) ─────────────────────────
+function mostrarHorarioModal(){
+  if(document.getElementById('horarioModal'))return;
+  const proxWrap=document.getElementById('proxCardWrap');
+  if(!proxWrap)return;
+  const modal=document.createElement('div');
+  modal.id='horarioModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99997;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.addEventListener('click',function(e){if(e.target===modal)minimizarHorarioModal();});
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:10px 18px 20px;animation:fadeUp .3s ease">
+      <div style="display:flex;justify-content:center;margin-bottom:8px">
+        <div style="width:38px;height:5px;border-radius:20px;background:#e0ddd6"></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#7B1D1D;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;text-align:center">🕐 Horario en vivo · Ruta T101</div>
+      <div id="horarioModalSlot"></div>
+      <button onclick="minimizarHorarioModal()" style="width:100%;margin-top:14px;background:#f4f4f2;color:#555;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">
+        ⌄ Minimizar
+      </button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById('horarioModalSlot').appendChild(proxWrap);
+}
+
+function minimizarHorarioModal(){
+  const proxWrap=document.getElementById('proxCardWrap');
+  const tab1=document.getElementById('mapaTab1');
+  if(proxWrap&&tab1)tab1.appendChild(proxWrap);
+  const modal=document.getElementById('horarioModal');
+  if(modal)modal.remove();
 }
 window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
@@ -136,6 +230,9 @@ function openSection(sec){
     setTimeout(function(){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },700);
+    setTimeout(function(){
+      mostrarHorarioModal();
+    },500);
   }
 }
 
@@ -277,7 +374,9 @@ let simMin=360, playing=false, playIv=null;
 let uLat=null, uLng=null;
 
 // ── MAPA ───────────────────────────────────────────────────────────────────
-const map=L.map('map').setView([32.505,-116.975],13);
+const map=L.map('map',{zoomControl:false}).setView([32.505,-116.975],13);
+L.control.zoom({position:'bottomleft'}).addTo(map);
+map.attributionControl.setPosition('bottomleft');
 L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
   attribution:'© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom:20,

@@ -258,7 +258,17 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 #mapa-search-float{position:absolute;top:14px;left:14px;right:14px;z-index:650;background:#fff;border-radius:30px;box-shadow:0 2px 6px rgba(0,0,0,.08),0 8px 22px rgba(0,0,0,.16);display:flex;align-items:center;gap:2px;padding:4px 12px 4px 4px}
 #mapa-search-float .msf-ico{width:36px;height:36px;border-radius:50%;background:#f4f1ec;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#7B1D1D}
 #mapa-search-float select{flex:1;border:none;background:none;font-size:14px;font-weight:700;color:#2a2a2a;padding:11px 4px;font-family:inherit;cursor:pointer;-webkit-appearance:none;appearance:none}
-#mapa-search-float .msf-chev{font-size:12px;color:#aaa;flex-shrink:0}
+#mapa-search-float button#stopSearchBtn{flex:1;border:none;background:none;font-size:14px;font-weight:700;color:#555;padding:11px 4px;font-family:inherit;cursor:pointer;text-align:left;min-width:0}
+#mapa-search-float button#stopSearchBtn span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mapa-search-float button#stopSearchBtn:active{opacity:.55}
+#mapa-search-float .msf-chev{font-size:16px;color:#c9a84c;flex-shrink:0;font-weight:800}
+
+/* Filas del modal de paradas */
+.parada-row{width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;border-bottom:1px solid #f0ede8;padding:13px 10px;font-family:inherit;cursor:pointer;text-align:left}
+.parada-row:active{background:#f7f5f2}
+.pr-num{width:26px;height:26px;border-radius:50%;background:#f4f1ec;color:#7B1D1D;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pr-name{flex:1;font-size:14px;color:#2a2a2a;font-weight:600}
+.pr-arrow{color:#ccc;font-size:18px;flex-shrink:0}
 
 /* Panel de resultados flotante, bajo el buscador */
 #mapa-search-results{display:none;position:absolute;top:72px;left:14px;right:14px;z-index:645;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:14px}
