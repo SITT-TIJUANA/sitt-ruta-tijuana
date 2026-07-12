@@ -1,13 +1,21 @@
 // Trabajador de servicios SITT T101
-const CACHE = 'sitt-t101-v2';
+const CACHE = 'sitt-t101-v3';
 
 self.addEventListener('install', function(e) {
-  self.skipWaiting();
+  // NO se activa solo: espera a que el usuario confirme desde el banner
+  // "Nueva versión disponible" (ver app.js -> aplicarActualizacion())
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
       return cache.addAll(['/sitt-ruta-tijuana/', '/sitt-ruta-tijuana/index.html']);
     })
   );
+});
+
+// Mensaje desde la app: el usuario tocó "Actualizar"
+self.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', function(e) {

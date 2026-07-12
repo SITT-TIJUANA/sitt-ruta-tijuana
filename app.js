@@ -865,14 +865,74 @@ jumpNow();
 update();
 updateProx();
 
-// Registrar Service Worker
+// Registrar Service Worker + detectar actualizaciones
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('sw.js').then(function(reg){
       console.log('SW registrado');
+
+      // Si ya había una versión nueva esperando cuando abriste la app
+      if(reg.waiting) mostrarBannerActualizar(reg);
+
+      // Cuando se detecta una descarga de nueva versión
+      reg.addEventListener('updatefound',function(){
+        var nuevo=reg.installing;
+        if(!nuevo)return;
+        nuevo.addEventListener('statechange',function(){
+          if(nuevo.state==='installed'&&navigator.serviceWorker.controller){
+            mostrarBannerActualizar(reg);
+          }
+        });
+      });
+
+      // Revisar si hay versión nueva cada vez que se vuelve a abrir la app
+      document.addEventListener('visibilitychange',function(){
+        if(document.visibilityState==='visible')reg.update();
+      });
+      // Y cada hora si la app se queda abierta
+      setInterval(function(){reg.update();},60*60*1000);
+
     }).catch(function(err){
       console.log('SW error:',err);
     });
+
+    // Cuando el usuario confirma la actualización, recargar una sola vez
+    var recargando=false;
+    navigator.serviceWorker.addEventListener('controllerchange',function(){
+      if(recargando)return;
+      recargando=true;
+      window.location.reload();
+    });
+  });
+}
+
+function mostrarBannerActualizar(reg){
+  if(document.getElementById('updateBanner'))return;
+  var banner=document.createElement('div');
+  banner.id='updateBanner';
+  banner.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1D9E75;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.2);animation:fadeUp .4s ease';
+  banner.innerHTML=`
+    <div style="font-size:22px;flex-shrink:0">🔄</div>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:800">Nueva versión disponible</div>
+      <div style="font-size:11px;opacity:.9;margin-top:1px">Toca para actualizar la app</div>
+    </div>
+    <button onclick="aplicarActualizacion()" style="background:#fff;color:#0F6E56;border:none;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">
+      Actualizar
+    </button>
+  `;
+  document.body.appendChild(banner);
+}
+
+function aplicarActualizacion(){
+  var btn=document.querySelector('#updateBanner button');
+  if(btn){btn.textContent='Actualizando...';btn.disabled=true;}
+  navigator.serviceWorker.getRegistration().then(function(reg){
+    if(reg&&reg.waiting){
+      reg.waiting.postMessage({type:'SKIP_WAITING'});
+    }else{
+      window.location.reload();
+    }
   });
 }
 
