@@ -173,6 +173,7 @@
       <div id="mapa-sheet-handle"><div class="handle-bar"></div><div class="handle-label"><span id="handleLabelText">Ocultar</span><span class="handle-arrow">⌃</span></div></div>
       <!-- TABS NAVEGACIÓN -->
       <div id="mapa-tabs">
+        <div class="tabs-glider" id="tabsGlider"></div>
         <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span>Camiones</button>
         <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span>Simulador</button>
         <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span>Llegar</button>
@@ -195,7 +196,7 @@
                 <div><div class="bpb"><div class="bpf fa" id="pgA" style="width:0%"></div></div>
                 <div class="bpl"><span>Terminal Insurgentes</span><span id="pglA"></span></div></div>
                 <div style="display:flex;gap:6px;margin-top:10px">
-                  <button class="tbtn" style="background:var(--v);flex:2" onclick="trackBus('A')">📍 Ver en mapa →</button>
+                  <button class="tbtn shine-btn green" style="flex:2" onclick="trackBus('A')">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;flex:1;font-size:13px" onclick="refreshBus('A')">🔄</button>
                 </div>
               </div>
@@ -212,7 +213,7 @@
                 <div><div class="bpb"><div class="bpf fb" id="pgB" style="width:0%"></div></div>
                 <div class="bpl"><span>Terminal Insurgentes</span><span id="pglB"></span></div></div>
                 <div style="display:flex;gap:6px;margin-top:10px">
-                  <button class="tbtn" style="background:var(--a);flex:2" onclick="trackBus('B')">📍 Ver en mapa →</button>
+                  <button class="tbtn shine-btn blue" style="flex:2" onclick="trackBus('B')">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;flex:1;font-size:13px" onclick="refreshBus('B')">🔄</button>
                 </div>
               </div>
@@ -237,7 +238,7 @@
             </div>
             <input type="range" id="slider" min="0" max="1379" value="360" style="width:100%;accent-color:var(--g);margin-bottom:10px">
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="sbtn pr" id="btnPlay" style="flex:1">▶ Reproducir</button>
+              <button class="sbtn pr shine-btn" id="btnPlay" style="flex:1">▶ Reproducir</button>
               <button class="sbtn" onclick="setSlider(360)" style="flex:1">6:00 AM</button>
               <button class="sbtn" onclick="setSlider(750)" style="flex:1">12:30 PM</button>
               <button class="sbtn" onclick="setSlider(1110)" style="flex:1">6:30 PM</button>

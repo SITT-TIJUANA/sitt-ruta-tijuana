@@ -183,8 +183,17 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .srow input[type=range]{flex:1;accent-color:var(--g)}
 .sval{font-size:13px;font-weight:700;min-width:44px;text-align:right;color:var(--g)}
 .sbtns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+/* Botón brilloso (estilo Uiverse, adaptado a colores institucionales) */
+.shine-btn{position:relative;transition:transform .2s ease,box-shadow .2s ease;box-shadow:0 8px 18px rgba(0,0,0,.22);padding-block:.65rem;padding-inline:1.3rem;background-color:var(--g);border-radius:9999px;display:flex;align-items:center;justify-content:center;color:#fff;gap:7px;font-weight:800;border:2.5px solid rgba(255,255,255,.35);outline:none;overflow:hidden;font-size:13.5px;cursor:pointer}
+.shine-btn:active{transform:scale(.96)}
+.shine-btn::before{content:"";position:absolute;width:70px;height:100%;background-image:linear-gradient(120deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.85),rgba(255,255,255,0) 70%);top:0;left:-100px;opacity:.7;animation:shineSweepBtn 2.8s ease-in-out infinite}
+@keyframes shineSweepBtn{0%{left:-100px}55%{left:110%}100%{left:110%}}
+.shine-btn.green{background-color:var(--v)}
+.shine-btn.blue{background-color:var(--a)}
+.shine-btn.gold{background:linear-gradient(135deg,#E8C877,#C9A84C);color:#4a1010}
 .sbtn{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:var(--gr);cursor:pointer;color:var(--t2)}
 .sbtn.pr{background:var(--g);color:#fff;border-color:var(--g)}
+.sbtn.shine-btn{border-radius:9999px;padding:9px 16px;font-size:13px}
 .bgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .bc{background:#fff;border-radius:var(--r);border:1.5px solid var(--b);padding:12px}
 .bch{display:flex;align-items:center;gap:7px;margin-bottom:7px}
@@ -202,6 +211,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .fb{background:var(--a)}
 .bpl{font-size:10px;color:var(--t2);margin-top:2px;display:flex;justify-content:space-between}
 .tbtn{display:flex;align-items:center;justify-content:center;gap:5px;color:#fff;border:none;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
+.tbtn.shine-btn{border-radius:9999px;padding:9px 14px;border:2.5px solid rgba(255,255,255,.35);font-weight:800;font-size:12.5px}
 .sec{background:#fff;border-radius:var(--r);border:.5px solid var(--b);padding:12px;margin-bottom:12px}
 .tg{display:flex;flex-wrap:wrap;gap:5px}
 .tp{font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--b);background:var(--gr);color:var(--t2);display:flex;align-items:center;gap:4px}
@@ -366,10 +376,11 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .handle-label{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#a89f92;line-height:1;margin-top:2px;letter-spacing:.02em}
 .handle-arrow{font-size:11px;transition:transform .3s ease}
 #mapa-sheet[data-state="collapsed"] .handle-arrow{transform:rotate(180deg)}
-#mapa-tabs{display:flex;background:transparent;border-bottom:1.5px solid #e0ddd6;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+#mapa-tabs{position:relative;display:flex;background:rgba(255,255,255,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:16px;margin:8px 10px 8px;padding:4px;box-shadow:inset 1px 1px 4px rgba(255,255,255,.5),inset -1px -1px 6px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.1);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 #mapa-tabs::-webkit-scrollbar{display:none}
-.mtab{flex:1;min-width:70px;background:none;border:none;border-bottom:3px solid transparent;padding:8px 4px 9px;font-size:11px;font-weight:700;color:#666;cursor:pointer;text-align:center;white-space:nowrap;transition:all .2s}
-.mtab.on{color:#7B1D1D;border-bottom-color:#7B1D1D}
+.tabs-glider{position:absolute;top:4px;bottom:4px;left:4px;width:calc(33.333% - 5.33px);border-radius:12px;background:linear-gradient(135deg,#C9A84C66,#E8C877);box-shadow:0 0 14px rgba(201,168,76,.55),0 0 8px rgba(255,235,150,.5) inset;transition:transform .5s cubic-bezier(.37,1.95,.66,.56);z-index:1;pointer-events:none}
+.mtab{position:relative;z-index:2;flex:1;min-width:70px;background:none;border:none;padding:9px 4px;font-size:11px;font-weight:700;color:#777;cursor:pointer;text-align:center;white-space:nowrap;transition:color .3s}
+.mtab.on{color:#5c1515}
 .mtab-ico{font-size:17px;display:block;margin-bottom:2px}
 #mapa-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 30px}
 

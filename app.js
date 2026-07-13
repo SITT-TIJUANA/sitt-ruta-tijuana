@@ -7,6 +7,8 @@ function mapaSwitchTab(idx,btn){
   });
   document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
+  var glider=document.getElementById('tabsGlider');
+  if(glider)glider.style.transform='translateX('+(idx*100)+'%)';
   // Si el sheet está colapsado, ábrelo a la mitad al tocar un tab
   var sheet=document.getElementById('mapa-sheet');
   if(sheet&&sheet.dataset.state==='collapsed'&&typeof mapaSheetSet==='function'){
@@ -44,12 +46,13 @@ function initMapaSheet(){
   if(!sheet||!handle||sheet._sheetInit)return;
   sheet._sheetInit=true;
 
-  var dragging=false,startY=0,startH=0,moved=false;
+  var dragging=false,startY=0,startH=0,moved=false,lastToggle=0;
 
   function isDesktop(){return window.matchMedia('(min-width:700px)').matches;}
 
   function onDown(e){
     if(isDesktop())return;
+    if(dragging)return; // evita doble-disparo (touchstart + mousedown sintético)
     dragging=true;moved=false;
     sheet.classList.add('dragging');
     startY=(e.touches?e.touches[0].clientY:e.clientY);
@@ -77,6 +80,9 @@ function initMapaSheet(){
     document.removeEventListener('touchmove',onMove);
     document.removeEventListener('touchend',onUp);
     if(!moved){ // fue un tap, no un arrastre real: toggle simple mostrar/ocultar
+      var now=Date.now();
+      if(now-lastToggle<400)return; // ignora el evento sintético duplicado
+      lastToggle=now;
       var cur=sheet.dataset.state;
       mapaSheetSet(cur==='collapsed'?'mid':'collapsed');
       return;
@@ -187,7 +193,7 @@ function mostrarHorarioModal(){
         <div style="font-size:14px;font-weight:900;color:#F5D77A;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.3)">✨ Horario en vivo · Ruta T101</div>
       </div>
       <div id="horarioModalSlot" style="position:relative"></div>
-      <button onclick="minimizarHorarioModal()" class="hmc-minbtn">
+      <button onclick="minimizarHorarioModal()" class="hmc-minbtn shine-btn gold" style="border-radius:16px">
         ⌄ Minimizar
       </button>
     </div>
@@ -1058,7 +1064,7 @@ function mostrarBannerActualizar(reg){
       <div style="font-size:13px;font-weight:800">Nueva versión disponible</div>
       <div style="font-size:11px;opacity:.9;margin-top:1px">Toca para actualizar la app</div>
     </div>
-    <button onclick="aplicarActualizacion()" style="background:#fff;color:#0F6E56;border:none;border-radius:10px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap">
+    <button onclick="aplicarActualizacion()" class="shine-btn" style="background-color:#0F6E56;padding:10px 18px;font-size:12px;white-space:nowrap">
       Actualizar
     </button>
   `;
