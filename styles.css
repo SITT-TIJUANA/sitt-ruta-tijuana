@@ -329,6 +329,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 
 /* Panel de resultados flotante, bajo el buscador */
 #mapa-search-results{display:none;position:absolute;top:72px;left:14px;right:14px;z-index:645;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:14px}
+.ruta-estacion-info{position:absolute;top:72px;left:14px;right:14px;z-index:646;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:14px;animation:fadeUp .3s ease}
 .msr-close{position:absolute;top:10px;right:10px;background:#f4f1ec;border:none;font-size:12px;font-weight:800;color:#7B1D1D;cursor:pointer;padding:7px 12px 7px 10px;border-radius:20px;display:flex;align-items:center;gap:4px}
 .msr-close span{font-size:12px}
 .msr-close:active{background:#e8e2d8}

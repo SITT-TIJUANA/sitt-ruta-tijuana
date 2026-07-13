@@ -1,3 +1,4 @@
+
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function moverGliderTabs(btn){
   var glider=document.getElementById('tabsGlider');
@@ -1520,6 +1521,21 @@ function trazarRutaAEstacion(idx){
   dibujarRutaHaciaParada(idx);
 }
 
+function mostrarInfoRutaEstacion(nombre,camStr,llegaHora){
+  let box=document.getElementById('rutaEstacionInfo');
+  if(!box){
+    box=document.createElement('div');
+    box.id='rutaEstacionInfo';
+    box.className='ruta-estacion-info';
+    const wrap=document.getElementById('mapa-map-wrap');
+    if(wrap)wrap.appendChild(box);
+  }
+  box.innerHTML=
+    '<button class="msr-close" onclick="document.getElementById(\'rutaEstacionInfo\').remove()"><span>✕</span> Cerrar</button>'+
+    '<div style="font-size:14px;font-weight:800;color:#2f6fd6;margin-bottom:4px">🚶 '+camStr+' caminando</div>'+
+    '<div style="font-size:12px;color:#444">a <b>'+nombre+'</b> · llegarías a las <b>'+llegaHora+'</b></div>';
+}
+
 function dibujarRutaHaciaParada(idx){
   const s=STOPS[idx];
   if(!s||uLat==null)return;
@@ -1535,7 +1551,8 @@ function dibujarRutaHaciaParada(idx){
   if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
   window._routeLine=L.polyline([[uLat,uLng],[s.lat,s.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
   const midLat=(uLat+s.lat)/2,midLng=(uLng+s.lng)/2;
-  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">🚶 '+camStr+'</div>',iconAnchor:[34,14]}),interactive:false}).addTo(map);
+  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">'+camStr+'</div>',iconAnchor:[26,14]}),interactive:false}).addTo(map);
+  mostrarInfoRutaEstacion(s.n+'. '+s.name,camStr,hhmm(simMin+camRaw));
   cerrarInfoEstacion();
   const tabs=document.querySelectorAll('.mtab');
   if(tabs[0])mapaSwitchTab(0,tabs[0]);
