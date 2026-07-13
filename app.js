@@ -32,6 +32,8 @@ function mapaSheetSet(state){
   else{state='mid';h=Math.round(window.innerHeight*0.5);}
   sheet.dataset.state=state;
   sheet.style.height=h+'px';
+  var lbl=document.getElementById('handleLabelText');
+  if(lbl)lbl.textContent=state==='collapsed'?'Mostrar':'Ocultar';
   setTimeout(function(){if(typeof map!=='undefined')map.invalidateSize({animate:false});},330);
 }
 window.mapaSheetSet=mapaSheetSet;
@@ -212,6 +214,7 @@ function mostrarChipHorario(){
   chip.innerHTML=`
     <button onclick="mostrarHorarioModal()" class="hchip-main">
       <span class="hchip-dot"></span>🕐 <span id="hchipHora">Próxima salida</span>
+      <span class="hchip-arrow">⌃</span>
     </button>
   `;
   wrap.appendChild(chip);
