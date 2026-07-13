@@ -366,6 +366,9 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .hchip-main{background:linear-gradient(135deg,#7B1D1D,#5c1515);border:1.5px solid rgba(201,168,76,.5);border-radius:24px;color:#fff;font-size:13px;font-weight:800;padding:11px 16px;display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgba(123,29,29,.4)}
 .hchip-main:active{transform:scale(.96)}
 .hchip-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite;flex-shrink:0;box-shadow:0 0 6px #4ade80}
+.hchip-txt{display:flex;flex-direction:column;gap:1px;line-height:1.1}
+.hchip-badge{font-size:8.5px;font-weight:800;color:#F5D77A;text-transform:uppercase;letter-spacing:.05em}
+.hchip-time{font-size:13.5px;font-weight:800;color:#fff}
 .hchip-arrow{font-size:10px;opacity:.8;margin-left:2px;animation:hchipBounce 1.6s ease-in-out infinite}
 @keyframes hchipBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 
@@ -395,9 +398,13 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 
 @media(min-width:700px){
   #mapa-search-float,#mapa-search-results{max-width:420px}
-  #mapa-fabs{bottom:16px!important}
+  #mapa-fabs{bottom:20px!important;right:calc(380px + 18px)!important}
+  #mapa-live-badge{top:14px}
   #mapa-sheet{top:0;bottom:0;left:auto;right:0;width:380px;height:100%!important;max-height:none;border-radius:0;box-shadow:-4px 0 22px rgba(0,0,0,.12)}
   #mapa-sheet-handle{display:none}
+  #mapa-tabs{margin:14px 14px 10px}
+  #mapa-content{padding:8px 14px 30px}
+  .cll-card,.bc{padding:16px}
 }
 /* ── MODO OSCURO ── */
 body.dark{background:#141210;--gr:#221f1d;--b:#3a3733;--t:#f0ede8;--t2:#b0a89c;--gl:#2e1e1e}

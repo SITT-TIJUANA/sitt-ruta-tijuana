@@ -102,20 +102,28 @@ function initMapaSheet(){
 }
 
 // ── MODAL DE PARADAS (buscador) ─────────────────────────────────────────────
-function getFavStop(){
-  const v=localStorage.getItem('sittFavStop');
-  return v===null?null:parseInt(v,10);
+function getFavStops(){
+  try{const v=JSON.parse(localStorage.getItem('sittFavStops')||'[]');return Array.isArray(v)?v:[];}catch(e){return [];}
 }
 function toggleFavStop(idx,e){
   if(e)e.stopPropagation();
-  const cur=getFavStop();
-  if(cur===idx)localStorage.removeItem('sittFavStop');
-  else localStorage.setItem('sittFavStop',idx);
+  let favs=getFavStops();
+  const pos=favs.indexOf(idx);
+  if(pos>-1){
+    favs.splice(pos,1);
+  }else{
+    if(favs.length>=3){
+      alert('⭐ Ya tienes 3 paradas favoritas.\n\nQuita una (toca su estrella dorada) para agregar otra.');
+      return;
+    }
+    favs.push(idx);
+  }
+  localStorage.setItem('sittFavStops',JSON.stringify(favs));
   renderParadaRows();
   renderFavQuick();
 }
 function buildParadaRow(s,i){
-  const isFav=getFavStop()===i;
+  const isFav=getFavStops().indexOf(i)>-1;
   return '<div class="parada-row">'+
     '<button class="pr-fav'+(isFav?' on':'')+'" onclick="toggleFavStop('+i+',event)" aria-label="Marcar como favorita">'+(isFav?'⭐':'☆')+'</button>'+
     '<button class="pr-main" onclick="elegirParada('+i+')">'+
@@ -136,18 +144,18 @@ function renderParadaRows(){
 function renderFavQuick(){
   const box=document.getElementById('favQuickBox');
   if(!box)return;
-  const fav=getFavStop();
-  const s=(fav!==null&&typeof STOPS!=='undefined')?STOPS[fav]:null;
-  box.innerHTML=s?(
-    '<button class="fav-quick" onclick="elegirParada('+fav+')">'+
-      '<span style="font-size:16px">⭐</span>'+
-      '<span style="flex:1;text-align:left">'+
-        '<span style="display:block;font-size:10px;font-weight:800;color:#a8863a;text-transform:uppercase;letter-spacing:.04em">Tu parada favorita</span>'+
-        '<span style="display:block;font-size:14px;font-weight:800;color:#4a3210">'+s.n+'. '+s.name+'</span>'+
-      '</span>'+
-      '<span class="pr-arrow">›</span>'+
-    '</button>'
-  ):'';
+  const favs=getFavStops();
+  if(!favs.length||typeof STOPS==='undefined'){box.innerHTML='';return;}
+  box.innerHTML='<div style="font-size:10px;font-weight:800;color:#a8863a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;padding-left:2px">⭐ Tus favoritas</div>'+
+    favs.map(function(idx){
+      const s=STOPS[idx];
+      if(!s)return'';
+      return '<button class="fav-quick" onclick="elegirParada('+idx+')">'+
+        '<span style="font-size:16px">⭐</span>'+
+        '<span style="flex:1;text-align:left;font-size:14px;font-weight:800;color:#4a3210">'+s.n+'. '+s.name+'</span>'+
+        '<span class="pr-arrow">›</span>'+
+      '</button>';
+    }).join('');
 }
 
 function abrirModalParadas(){
@@ -165,6 +173,9 @@ function abrirModalParadas(){
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0">
         <div style="font-size:15px;font-weight:800;color:#7B1D1D">🔍 ¿Cuándo llega a mi parada?</div>
         <button onclick="cerrarModalParadas()" style="background:#f4f4f2;border:none;border-radius:20px;padding:7px 14px 7px 12px;font-size:12px;font-weight:800;color:#7B1D1D;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px">✕ Cerrar</button>
+      </div>
+      <div style="margin:0 18px 8px;background:#FFF8E7;border:1px solid #f0d070;border-radius:10px;padding:8px 10px;font-size:11.5px;color:#7a5c00;display:flex;align-items:center;gap:6px;flex-shrink:0">
+        💡 Toca la <span style="color:#C9A84C;font-weight:800">☆ estrella</span> para guardar hasta 3 paradas favoritas
       </div>
       <div id="favQuickBox" style="padding:0 18px;flex-shrink:0"></div>
       <input type="text" id="paradaFilter" placeholder="Escribe el nombre de tu parada..." oninput="filtrarParadas(this.value)"
@@ -191,6 +202,46 @@ function elegirParada(idx){
   calcETA();
   actualizarBotonBusqueda(idx);
   cerrarModalParadas();
+  setTimeout(function(){ofrecerFavorito(idx);},450);
+}
+
+// ── OFRECER AGREGAR A FAVORITOS AL ELEGIR UNA PARADA ─────────────────────────
+function ofrecerFavorito(idx){
+  if(typeof STOPS==='undefined'||!STOPS[idx])return;
+  if(getFavStops().indexOf(idx)>-1)return; // ya es favorita
+  const dismissed=localStorage.getItem('sittFavPromptDismissed');
+  if(dismissed&&(Date.now()-parseInt(dismissed,10))<30*24*60*60*1000)return; // pidió no preguntar, y no ha pasado 1 mes
+  if(document.getElementById('favPrompt'))return;
+  const s=STOPS[idx];
+  const t=document.createElement('div');
+  t.id='favPrompt';
+  t.style.cssText='position:fixed;left:14px;right:14px;bottom:20px;z-index:99999;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.3);border:1.5px solid #E8C877;animation:fadeUp .3s ease;max-width:400px;margin:0 auto';
+  t.innerHTML=
+    '<div style="font-size:13.5px;font-weight:700;color:#333;margin-bottom:10px">⭐ ¿Agregar <b>'+s.n+'. '+s.name+'</b> a tus favoritas?</div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:8px">'+
+      '<button onclick="confirmarFavorito('+idx+')" style="flex:1;background:linear-gradient(135deg,#E8C877,#C9A84C);color:#4a1010;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:800;cursor:pointer">⭐ Sí, agregar</button>'+
+      '<button onclick="cerrarFavPrompt()" style="flex:1;background:#f4f4f2;color:#666;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Ahora no</button>'+
+    '</div>'+
+    '<button onclick="noVolverPreguntarFav()" style="width:100%;background:none;border:none;color:#999;font-size:11.5px;text-decoration:underline;cursor:pointer;padding:4px">No volver a preguntar (1 mes)</button>';
+  document.body.appendChild(t);
+}
+function confirmarFavorito(idx){
+  let favs=getFavStops();
+  if(favs.indexOf(idx)===-1){
+    if(favs.length>=3){
+      cerrarFavPrompt();
+      alert('⭐ Ya tienes 3 paradas favoritas.\n\nQuita una desde el buscador (toca su estrella dorada) para agregar otra.');
+      return;
+    }
+    favs.push(idx);
+    localStorage.setItem('sittFavStops',JSON.stringify(favs));
+  }
+  cerrarFavPrompt();
+}
+function cerrarFavPrompt(){const t=document.getElementById('favPrompt');if(t)t.remove();}
+function noVolverPreguntarFav(){
+  localStorage.setItem('sittFavPromptDismissed',Date.now().toString());
+  cerrarFavPrompt();
 }
 
 function cerrarModalParadas(){
@@ -245,8 +296,8 @@ function mostrarHorarioModal(){
 
 function minimizarHorarioModal(){
   const proxWrap=document.getElementById('proxCardWrap');
-  const tab1=document.getElementById('mapaTab1');
-  if(proxWrap&&tab1)tab1.appendChild(proxWrap);
+  const holder=document.getElementById('proxHiddenHolder');
+  if(proxWrap&&holder)holder.appendChild(proxWrap);
   const modal=document.getElementById('horarioModal');
   if(modal)modal.remove();
   mostrarChipHorario();
@@ -260,7 +311,11 @@ function mostrarChipHorario(){
   chip.id='horarioChip';
   chip.innerHTML=`
     <button onclick="mostrarHorarioModal()" class="hchip-main">
-      <span class="hchip-dot"></span>🕐 <span id="hchipHora">Próxima salida</span>
+      <span class="hchip-dot"></span>
+      <span class="hchip-txt">
+        <span class="hchip-badge">Próxima salida</span>
+        <span class="hchip-time" id="hchipHora">--:--</span>
+      </span>
       <span class="hchip-arrow">⌃</span>
     </button>
   `;
