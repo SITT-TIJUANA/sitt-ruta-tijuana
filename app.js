@@ -1,5 +1,14 @@
 
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
+function moverGliderTabs(btn){
+  var glider=document.getElementById('tabsGlider');
+  var container=document.getElementById('mapa-tabs');
+  if(!glider||!container||!btn)return;
+  var cRect=container.getBoundingClientRect();
+  var bRect=btn.getBoundingClientRect();
+  glider.style.width=bRect.width+'px';
+  glider.style.transform='translateX('+(bRect.left-cRect.left)+'px)';
+}
 function mapaSwitchTab(idx,btn){
   [0,1,2,3,4].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
@@ -7,8 +16,7 @@ function mapaSwitchTab(idx,btn){
   });
   document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  var glider=document.getElementById('tabsGlider');
-  if(glider)glider.style.transform='translateX('+(idx*100)+'%)';
+  moverGliderTabs(btn);
   // Si el sheet está colapsado, ábrelo a la mitad al tocar un tab
   var sheet=document.getElementById('mapa-sheet');
   if(sheet&&sheet.dataset.state==='collapsed'&&typeof mapaSheetSet==='function'){
@@ -326,6 +334,7 @@ function mostrarChipHorario(){
     </button>
   `;
   wrap.appendChild(chip);
+  if(typeof updateProx==='function')updateProx();
 }
 
 function cerrarChipHorario(){
@@ -357,6 +366,10 @@ function openSection(sec){
   if(sec!=='mapa')detenerSeguimientoUbicacion();
   if(sec==='mapa'){
     initMapaSheet();
+    setTimeout(function(){
+      var activo=document.querySelector('.mtab.on');
+      if(activo)moverGliderTabs(activo);
+    },60);
     setTimeout(function(){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },50);
