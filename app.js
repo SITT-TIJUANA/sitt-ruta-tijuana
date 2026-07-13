@@ -364,12 +364,14 @@ function openSection(sec){
       if(typeof map!=='undefined'){
         map.invalidateSize({animate:false});
         map.eachLayer(function(layer){if(layer.redraw)layer.redraw();});
-        verRuta();
       }
       jumpNow();update();updateProx();
     },350);
     setTimeout(function(){
-      if(typeof map!=='undefined')map.invalidateSize({animate:false});
+      if(typeof map!=='undefined'){
+        map.invalidateSize({animate:false});
+        verRuta();
+      }
     },700);
     setTimeout(function(){
       if(!window._horarioShownOnce){
@@ -1337,4 +1339,27 @@ function toggleFullscreenMap(){
   setTimeout(function(){
     if(typeof map!=='undefined')map.invalidateSize({animate:false});
   },60);
+}
+
+// ── NAVEGAR A INFORMACIÓN DESDE EL MAPA ──────────────────────────────────────
+function irAInformacion(){
+  openSection('info');
+}
+
+// ── VER IMAGEN DE RUTA EN GRANDE ─────────────────────────────────────────────
+function ampliarImagenRuta(){
+  if(document.getElementById('rutaLightbox'))return;
+  const modal=document.createElement('div');
+  modal.id='rutaLightbox';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
+  modal.addEventListener('click',function(e){if(e.target===modal)cerrarImagenRuta();});
+  modal.innerHTML=`
+    <button onclick="cerrarImagenRuta()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer">✕ Cerrar</button>
+    <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" style="max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain">
+  `;
+  document.body.appendChild(modal);
+}
+function cerrarImagenRuta(){
+  const m=document.getElementById('rutaLightbox');
+  if(m)m.remove();
 }

@@ -282,26 +282,33 @@
         </div><!-- end mapaTab2 -->
 
         <div id="mapaTab3" style="display:none">
-          <div class="sec" style="margin-bottom:0">
+          <div class="sec" style="margin-bottom:12px">
             <div class="stit">🕐 Horarios — Lunes a Sábado</div>
             <div class="tg-label">🌅 Matutino</div>
             <div class="tg" id="tgAM"></div>
             <div class="tg-label" style="margin-top:12px">🌇 Vespertino</div>
             <div class="tg" id="tgPM"></div>
           </div>
+          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()">
+            ℹ️ Más información del servicio SITT
+          </button>
         </div><!-- end mapaTab3 -->
 
         <div id="mapaTab4" style="display:none">
-          <div class="sec" style="margin-bottom:12px">
+          <div class="sec" style="margin-bottom:12px;position:relative">
             <div class="stit">🗺️ Ruta completa</div>
-            <div id="rutaImgWrap" class="ruta-img-placeholder" style="padding:0;border:none;background:none">
+            <div id="rutaImgWrap" class="ruta-img-placeholder" style="padding:0;border:none;background:none;position:relative">
               <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" loading="lazy">
+              <button class="ruta-ampliar-btn" onclick="ampliarImagenRuta()">⛶ Ver en grande</button>
             </div>
           </div>
-          <div class="sec">
+          <div class="sec" style="margin-bottom:12px">
             <div class="stit">📍 Estaciones (43)</div>
             <div id="stationsListInfo"></div>
           </div>
+          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()">
+            ℹ️ Más información del servicio SITT
+          </button>
         </div><!-- end mapaTab4 -->
       </div><!-- end mapa-content -->
     </div><!-- end mapa-sheet -->

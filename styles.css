@@ -222,6 +222,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .stn-num{width:24px;height:24px;border-radius:50%;background:var(--gl);color:var(--g);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ruta-img-placeholder{border:2px dashed var(--b);border-radius:14px;padding:28px 16px;text-align:center;background:#faf9f7}
 .ruta-img-placeholder img{width:100%;border-radius:12px;display:block}
+.ruta-ampliar-btn{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer}
 .tp{font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--b);background:var(--gr);color:var(--t2);display:flex;align-items:center;gap:4px}
 .tp.past{opacity:.3}
 .tp.cur{background:var(--gl);border-color:var(--g);color:var(--g);font-weight:700}
