@@ -564,7 +564,7 @@ const sMarkers=STOPS.map((s,i)=>{
   const emoji=iconoParada(s.name);
   const ic=L.divIcon({className:'',html:'<div style="position:relative;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+(isT?'#7B1D1D':'#fff')+';border:'+(isT?'3px solid #C9A84C':'2px solid #7B1D1D')+';box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:'+(isT?'13px':'11px')+'">'+emoji+'<span style="position:absolute;bottom:-4px;right:-4px;background:#7B1D1D;color:#fff;font-size:8px;font-weight:800;border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;border:1.3px solid #fff">'+s.n+'</span></div>',iconAnchor:[size/2,size/2]});
   const m=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
-  m.bindPopup('<b style="color:#7B1D1D">'+s.n+'. '+s.name+'</b>');
+  m.on('click',function(){mostrarInfoEstacion(i);});
   return m;
 });
 
@@ -719,8 +719,8 @@ function renderTrips(){
 function renderStationsList(){
   const box=document.getElementById('stationsListInfo');
   if(!box||typeof STOPS==='undefined')return;
-  box.innerHTML=STOPS.map(function(s){
-    return '<div class="stn-row"><span class="stn-num">'+s.n+'</span><span>'+s.name+'</span></div>';
+  box.innerHTML=STOPS.map(function(s,i){
+    return '<div class="stn-row" onclick="verEstacionEnMapa('+i+')" style="cursor:pointer"><span class="stn-num">'+s.n+'</span><span>'+s.name+'</span><span class="pr-arrow">›</span></div>';
   }).join('');
 }
 
@@ -928,10 +928,9 @@ function locateUser(){
   window._geoWatchId=navigator.geolocation.watchPosition(function(pos){
     uLat=pos.coords.latitude;uLng=pos.coords.longitude;
     actualizarMarcadorUsuario(uLat,uLng,pos.coords.accuracy);
-    prepararInfoUbicacion(uLat,uLng);
+    prepararInfoUbicacion(uLat,uLng,primeraVez);
     if(primeraVez){
       restoreFab();
-      map.setView([uLat,uLng],15,{animate:true});
       const tabs=document.querySelectorAll('.mtab');
       if(tabs[2])mapaSwitchTab(2,tabs[2]);
       primeraVez=false;
@@ -956,7 +955,7 @@ function actualizarMarcadorUsuario(lat,lng,accuracy){
 
 // Calcula todo (parada más cercana, tiempo caminando, llegada de camiones)
 // y lo guarda para pintarlo en el tab "Llegar"
-function prepararInfoUbicacion(lat,lng){
+function prepararInfoUbicacion(lat,lng,ajustarVista){
   let minD=Infinity,near=null,ni=0;
   STOPS.forEach((s,i)=>{const d=distM(lat,lng,s.lat,s.lng);if(d<minD){minD=d;near=s;ni=i;}});
   const metros=Math.round(minD),camRaw=Math.round(metros/80);
@@ -987,7 +986,9 @@ function prepararInfoUbicacion(lat,lng){
   window._routeLine=L.polyline([[lat,lng],[near.lat,near.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
   const midLat=(lat+near.lat)/2,midLng=(lng+near.lng)/2;
   window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">'+camStr+'</div>',iconAnchor:[26,14]}),interactive:false}).addTo(map);
-  map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,90]});
+  if(ajustarVista){
+    map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,90]});
+  }
 
   renderComoLlegar();
 }
@@ -1422,4 +1423,68 @@ function ampliarImagenRuta(){
 function cerrarImagenRuta(){
   const m=document.getElementById('rutaLightbox');
   if(m)m.remove();
+}
+
+// ── MODAL DE INFORMACIÓN DE PARADA (al tocarla en el mapa o en la lista) ────
+function mostrarInfoEstacion(idx){
+  const s=STOPS[idx];
+  if(!s)return;
+  cerrarInfoEstacion();
+  const modal=document.createElement('div');
+  modal.id='estacionModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99998;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.addEventListener('click',function(e){if(e.target===modal)cerrarInfoEstacion();});
+  const gm='https://www.google.com/maps/dir/?api=1&destination='+s.lat+','+s.lng;
+  const ub='https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]='+s.lat+'&dropoff[longitude]='+s.lng+'&dropoff[nickname]='+encodeURIComponent(s.name);
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:10px 20px 22px;animation:fadeUp .3s ease;max-height:85vh;overflow-y:auto">
+      <div style="display:flex;justify-content:center;margin-bottom:14px;position:sticky;top:0"><div style="width:38px;height:5px;border-radius:20px;background:#e0ddd6"></div></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:2px solid var(--g)">${iconoParada(s.name)}</div>
+        <div style="min-width:0">
+          <div style="font-size:11px;font-weight:800;color:#a8863a;text-transform:uppercase;letter-spacing:.04em">Parada ${s.n}</div>
+          <div style="font-size:17px;font-weight:800;color:var(--g);line-height:1.2">${s.name}</div>
+        </div>
+      </div>
+      <button onclick="verEstacionEnMapa(${idx})" class="shine-btn" style="width:100%;background-color:var(--g);margin-bottom:14px">📍 Ver en el mapa</button>
+      <div style="font-size:11px;font-weight:800;color:var(--g);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">¿Cómo llegar?</div>
+      <a href="${gm}" target="_blank" rel="noopener" class="cll-card">
+        <div class="cll-ico" style="background:#4285F4">🗺️</div>
+        <div class="cll-info"><div class="cll-title">Google Maps</div><div class="cll-note">Ruta a pie paso a paso, gratis</div></div>
+        <span class="cll-go">Abrir ›</span>
+      </a>
+      <a href="${ub}" target="_blank" rel="noopener" class="cll-card">
+        <div class="cll-ico" style="background:#000">🚕</div>
+        <div class="cll-info"><div class="cll-title">Uber</div><div class="cll-note">Viaje directo a la parada</div></div>
+        <span class="cll-go">Abrir ›</span>
+      </a>
+      <button onclick="abrirDidi(${s.lat},${s.lng})" class="cll-card cll-btn">
+        <div class="cll-ico" style="background:#FF6600">🚖</div>
+        <div class="cll-info"><div class="cll-title">DiDi</div><div class="cll-note">Otra opción de viaje</div></div>
+        <span class="cll-go">Abrir ›</span>
+      </button>
+      <button onclick="cerrarInfoEstacion()" style="width:100%;margin-top:8px;background:#f4f4f2;color:#666;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer">✕ Cerrar</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+function cerrarInfoEstacion(){
+  const m=document.getElementById('estacionModal');
+  if(m)m.remove();
+}
+
+// ── VER UNA ESTACIÓN EN EL MAPA (desde la lista o desde el modal) ───────────
+function verEstacionEnMapa(idx){
+  const s=STOPS[idx];
+  if(!s)return;
+  cerrarInfoEstacion();
+  const tabs=document.querySelectorAll('.mtab');
+  if(tabs[0])mapaSwitchTab(0,tabs[0]);
+  if(typeof mapaSheetSet==='function')mapaSheetSet('collapsed');
+  setTimeout(function(){
+    if(typeof map!=='undefined'){
+      map.invalidateSize({animate:false});
+      map.setView([s.lat,s.lng],17,{animate:true});
+    }
+  },280);
 }

@@ -218,6 +218,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .tg{display:flex;flex-wrap:wrap;gap:5px}
 .tg-label{font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
 .stn-row{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid #f0ede8;font-size:13px}
+.stn-row span:nth-child(2){flex:1}
 .stn-row:last-child{border-bottom:none}
 .stn-num{width:24px;height:24px;border-radius:50%;background:var(--gl);color:var(--g);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ruta-img-placeholder{border:2px dashed var(--b);border-radius:14px;padding:28px 16px;text-align:center;background:#faf9f7}
