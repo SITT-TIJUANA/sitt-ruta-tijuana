@@ -159,7 +159,7 @@
       <div id="mapa-fabs">
         <button class="mfab" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
         <button class="mfab" onclick="map.setView([32.5149,-117.0382],14)" aria-label="Ver ruta">🗺️</button>
-        <button class="mfab pr" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
+        <button class="mfab pr" id="fabLocate" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
       </div>
     </div>
 
@@ -170,6 +170,7 @@
       <div id="mapa-tabs">
         <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span>Camiones</button>
         <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span>Simulador</button>
+        <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span>Llegar</button>
       </div>
       <!-- CONTENIDO DE TABS -->
       <div id="mapa-content">
@@ -250,6 +251,20 @@
             </div>
           </div>
         </div><!-- end mapaTab1 -->
+
+        <div id="mapaTab2" style="display:none">
+          <div id="comoLlegarHeader"></div>
+          <div id="comoLlegarPrompt" style="text-align:center;padding:34px 16px">
+            <div style="font-size:44px;margin-bottom:10px">📍</div>
+            <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:6px">Encuentra cómo llegar</div>
+            <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6">Toca el botón de ubicación en el mapa<br>para ver tus opciones de viaje</div>
+            <button onclick="locateUser()" class="btn-big g" style="margin:0 auto;max-width:260px">
+              <div class="btn-ico">📍</div>
+              <div><div class="btn-tit g">Usar mi ubicación</div><div class="btn-sub">Ver Uber, DiDi y Google Maps</div></div>
+            </button>
+          </div>
+          <div id="comoLlegarOpts" style="display:none"></div>
+        </div><!-- end mapaTab2 -->
       </div><!-- end mapa-content -->
     </div><!-- end mapa-sheet -->
   </div><!-- end sec-mapa -->

@@ -1,7 +1,7 @@
 
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function mapaSwitchTab(idx,btn){
-  [0,1].forEach(function(i){
+  [0,1,2].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
     if(t)t.style.display=i===idx?'block':'none';
   });
@@ -15,6 +15,9 @@ function mapaSwitchTab(idx,btn){
   // Si es tab de mapa (0), refresh
   if(idx===0&&typeof map!=='undefined'){
     setTimeout(function(){map.invalidateSize({animate:false});},100);
+  }
+  if(idx===2&&typeof renderComoLlegar==='function'){
+    renderComoLlegar();
   }
 }
 
@@ -729,14 +732,18 @@ function distM(a,b,c,d){const R=6371000,dL=(c-a)*Math.PI/180,dG=(d-b)*Math.PI/18
 
 function locateUser(){
   if(!navigator.geolocation){alert('Tu dispositivo no soporta geolocalización');return;}
+  const fab=document.getElementById('fabLocate');
+  if(fab){fab.classList.add('mfab-loading');fab.innerHTML='<span class="mfab-spin"></span>';}
+  function restoreFab(){if(fab){fab.classList.remove('mfab-loading');fab.innerHTML='📍';}}
   navigator.geolocation.getCurrentPosition(function(pos){
+    restoreFab();
     uLat=pos.coords.latitude;uLng=pos.coords.longitude;
     if(uMark){map.removeLayer(uMark);map.removeLayer(uCirc);}
     uCirc=L.circle([uLat,uLng],{radius:pos.coords.accuracy,color:'#378ADD',fillColor:'#378ADD',fillOpacity:.1,weight:1}).addTo(map);
     uMark=L.circleMarker([uLat,uLng],{radius:10,color:'#fff',weight:3,fillColor:'#378ADD',fillOpacity:1}).addTo(map);
     map.setView([uLat,uLng],15,{animate:true});
     showLocCard(uLat,uLng);
-  },function(){alert('No se pudo obtener tu ubicación.');}); 
+  },function(){restoreFab();alert('No se pudo obtener tu ubicación.');});
 }
 
 function showLocCard(lat,lng){
@@ -751,6 +758,11 @@ function showLocCard(lat,lng){
   }
   const cam=camRaw;
   const camStr=fmtCam(camRaw);
+  const llegaHora=hhmm(simMin+camRaw);
+
+  // Guardar para el tab "Cómo llegar"
+  window._nearStop=near;window._userLL=[lat,lng];window._camStr=camStr;
+
   function nextArr(deps,durs){
     for(let i=0;i<deps.length;i++){
       const eta=deps[i]+(SM[ni]/100*(durs[i]||82));
@@ -766,25 +778,70 @@ function showLocCard(lat,lng){
       '<div style="font-size:14px;font-weight:800;color:'+tc+';margin-bottom:6px">'+(llega?'✅ ¡SÍ LLEGAS!':'⚠️ ¡APÚRATE!')+' '+label+'</div>'+
       '<div style="font-size:13px;color:#444;line-height:1.8">🚌 Llega en <b style="font-size:15px;color:'+tc+'">'+mins+' min</b><br>🚶 Tú en <b style="font-size:15px">~'+camStr+'</b> caminando</div></div>';
   }
-  const gm='https://www.google.com/maps/dir/?api=1&origin='+lat+','+lng+'&destination='+near.lat+','+near.lng+'&travelmode=walking';
-  const ub='https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]='+near.lat+'&dropoff[longitude]='+near.lng+'&dropoff[nickname]='+encodeURIComponent(near.name);
   const card=document.getElementById('locCard');
   card.style.display='block';
   card.innerHTML=
-    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">'+
-      '<div><div style="font-size:10px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.05em">📍 Estás cerca de</div>'+
-      '<div style="font-size:16px;font-weight:800;color:#7B1D1D;margin-top:3px">'+near.n+'. '+near.name+'</div>'+
-      '<div style="font-size:12px;color:#666;margin-top:2px">A <b>'+metros+' metros</b> · ~<b>'+camStr+'</b> caminando</div></div>'+
-      '<button onclick="hideLocCard()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#999">✕</button>'+
+    '<div class="rc-card">'+
+      '<button onclick="hideLocCard()" class="rc-close">✕</button>'+
+      '<div class="rc-walkrow">'+
+        '<div class="rc-walkico">🚶</div>'+
+        '<div><div class="rc-walktime">'+camStr+'</div>'+
+        '<div class="rc-arr">Llegada estimada: <b>'+llegaHora+'</b></div></div>'+
+      '</div>'+
+      '<div class="rc-dest">📍 <b>'+near.n+'. '+near.name+'</b> · '+metros+' m</div>'+
     '</div>'+
     busRow(aA,'T-01-023')+busRow(aB,'T-01-015')+
-    '<div style="margin-top:12px"><div style="font-size:11px;font-weight:700;color:#666;margin-bottom:7px;text-transform:uppercase">¿Cómo llegar a la parada?</div>'+
-    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
-      '<a href="'+gm+'" target="_blank" style="flex:1;min-width:110px;background:#4285F4;color:#fff;text-decoration:none;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-align:center">🗺️ Google Maps</a>'+
-      '<a href="'+ub+'" target="_blank" style="flex:1;min-width:90px;background:#000;color:#fff;text-decoration:none;padding:10px;border-radius:10px;font-size:13px;font-weight:700;text-align:center">🚕 Uber</a>'+
-      '<button onclick="abrirDidi('+near.lat+','+near.lng+')" style="flex:1;min-width:90px;background:#FF6600;color:#fff;border:none;padding:10px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">🚖 DiDi</button>'+
-    '</div></div>';
+    '<button onclick="irAComoLlegar()" class="rc-more">🚕 Ver cómo llegar — Uber, DiDi, Maps →</button>';
+
   if(uMark)uMark.bindPopup('<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small>').openPopup();
+
+  // Trazar ruta punteada hacia la parada + burbuja de tiempo, estilo Maps
+  if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
+  if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
+  window._routeLine=L.polyline([[lat,lng],[near.lat,near.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
+  const midLat=(lat+near.lat)/2,midLng=(lng+near.lng)/2;
+  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">🚶 '+camStr+'</div>',iconAnchor:[34,14]}),interactive:false}).addTo(map);
+  map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,70]});
+}
+
+function irAComoLlegar(){
+  const tabs=document.querySelectorAll('.mtab');
+  if(tabs[2])mapaSwitchTab(2,tabs[2]);
+}
+
+function renderComoLlegar(){
+  const near=window._nearStop,ll=window._userLL;
+  const prompt=document.getElementById('comoLlegarPrompt');
+  const opts=document.getElementById('comoLlegarOpts');
+  const head=document.getElementById('comoLlegarHeader');
+  if(!near||!ll){
+    if(prompt)prompt.style.display='block';
+    if(opts)opts.style.display='none';
+    if(head)head.innerHTML='';
+    return;
+  }
+  if(prompt)prompt.style.display='none';
+  if(opts)opts.style.display='block';
+  const lat=ll[0],lng=ll[1];
+  const gm='https://www.google.com/maps/dir/?api=1&origin='+lat+','+lng+'&destination='+near.lat+','+near.lng+'&travelmode=walking';
+  const ub='https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]='+near.lat+'&dropoff[longitude]='+near.lng+'&dropoff[nickname]='+encodeURIComponent(near.name);
+  if(head)head.innerHTML='<div class="cll-dest">📍 Yendo a <b>'+near.n+'. '+near.name+'</b> · '+(window._camStr||'')+' caminando</div>';
+  if(opts)opts.innerHTML=
+    '<a href="'+gm+'" target="_blank" rel="noopener" class="cll-card">'+
+      '<div class="cll-ico" style="background:#4285F4">🗺️</div>'+
+      '<div class="cll-info"><div class="cll-title">Google Maps</div><div class="cll-note">Ruta a pie paso a paso, gratis</div></div>'+
+      '<span class="cll-go">Abrir ›</span>'+
+    '</a>'+
+    '<a href="'+ub+'" target="_blank" rel="noopener" class="cll-card">'+
+      '<div class="cll-ico" style="background:#000">🚕</div>'+
+      '<div class="cll-info"><div class="cll-title">Uber</div><div class="cll-note">Viaje directo a la parada, paga con tarjeta</div></div>'+
+      '<span class="cll-go">Abrir ›</span>'+
+    '</a>'+
+    '<button onclick="abrirDidi('+near.lat+','+near.lng+')" class="cll-card cll-btn">'+
+      '<div class="cll-ico" style="background:#FF6600">🚖</div>'+
+      '<div class="cll-info"><div class="cll-title">DiDi</div><div class="cll-note">Otra opción de viaje, compara el precio</div></div>'+
+      '<span class="cll-go">Abrir ›</span>'+
+    '</button>';
 }
 
 function abrirDidi(lat,lng){
@@ -847,7 +904,11 @@ function enviarEnc(){
   document.getElementById('encGr').style.display='block';
 }
 
-function hideLocCard(){var c=document.getElementById('locCard');if(c)c.style.display='none';}
+function hideLocCard(){
+  var c=document.getElementById('locCard');if(c)c.style.display='none';
+  if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
+  if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
+}
 function refreshBus(u){
   jumpNow();
   update();
