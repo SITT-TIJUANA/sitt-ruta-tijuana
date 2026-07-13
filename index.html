@@ -126,9 +126,14 @@
       <div id="map" style="background:#e8e0d8"></div>
 
       <!-- Buscador flotante arriba -->
-      <div id="mapa-search-float">
-        <span class="msf-ico">🔍</span>
-        <button id="stopSearchBtn" onclick="abrirModalParadas()">
+      <div id="mapa-search-float" class="input">
+        <svg viewBox="0 0 24 24" fill="none" class="msf-svg">
+          <path d="M11 4.5v3M9.5 6h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M18.2 8.3v2M17.2 9.3h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M16 3.2v1.8M15.1 4.1h1.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm9 2-4.35-4.35" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <button id="stopSearchBtn" class="search" onclick="abrirModalParadas()">
           <span id="stopSearchLabel">¿Cuándo llega a mi parada?</span>
         </button>
         <span class="msf-chev">›</span>
