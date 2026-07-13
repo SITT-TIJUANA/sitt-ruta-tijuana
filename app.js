@@ -118,7 +118,7 @@ function abrirModalParadas(){
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0">
         <div style="font-size:15px;font-weight:800;color:#7B1D1D">🔍 ¿Cuándo llega a mi parada?</div>
-        <button onclick="cerrarModalParadas()" style="background:#f4f4f2;border:none;border-radius:50%;width:30px;height:30px;font-size:15px;color:#666;cursor:pointer;flex-shrink:0">✕</button>
+        <button onclick="cerrarModalParadas()" style="background:#f4f4f2;border:none;border-radius:20px;padding:7px 14px 7px 12px;font-size:12px;font-weight:800;color:#7B1D1D;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px">✕ Cerrar</button>
       </div>
       <input type="text" id="paradaFilter" placeholder="Escribe el nombre de tu parada..." oninput="filtrarParadas(this.value)"
         style="margin:0 18px 10px;padding:12px 14px;border-radius:12px;border:1.5px solid #e0ddd6;font-size:14px;font-family:inherit;flex-shrink:0">
@@ -529,7 +529,7 @@ if(window._msgB)setEl('stB',window._msgB);
   renderTrips();
   const sel=document.getElementById('esel');
   if(sel&&sel.value!=='')calcETA();
-  if(uLat!==null)showLocCard(uLat,uLng);
+  if(uLat!==null)prepararInfoUbicacion(uLat,uLng);
 }
 
 function renderTrips(){
@@ -682,8 +682,8 @@ function autoRefresh(){
     // Actualizar ETA si hay parada seleccionada
     const sel=document.getElementById('esel');
     if(sel&&sel.value!=='')calcETA();
-    // Actualizar locCard si hay ubicación
-    if(typeof uLat!=='undefined'&&uLat!==null)showLocCard(uLat,uLng);
+    // Actualizar info de ubicación si hay una activa
+    if(typeof uLat!=='undefined'&&uLat!==null)prepararInfoUbicacion(uLat,uLng);
     // Flash sutil en indicador en vivo
     const dots=document.querySelectorAll('.live-dot');
     dots.forEach(function(d){
@@ -745,27 +745,26 @@ function locateUser(){
     uCirc=L.circle([uLat,uLng],{radius:pos.coords.accuracy,color:'#378ADD',fillColor:'#378ADD',fillOpacity:.1,weight:1}).addTo(map);
     uMark=L.circleMarker([uLat,uLng],{radius:10,color:'#fff',weight:3,fillColor:'#378ADD',fillOpacity:1}).addTo(map);
     map.setView([uLat,uLng],15,{animate:true});
-    showLocCard(uLat,uLng);
+    prepararInfoUbicacion(uLat,uLng);
+    // Ir directo al tab "Llegar" con toda la información junta
+    const tabs=document.querySelectorAll('.mtab');
+    if(tabs[2])mapaSwitchTab(2,tabs[2]);
   },function(){restoreFab();alert('No se pudo obtener tu ubicación.');});
 }
 
-function showLocCard(lat,lng){
+// Calcula todo (parada más cercana, tiempo caminando, llegada de camiones)
+// y lo guarda para pintarlo en el tab "Llegar"
+function prepararInfoUbicacion(lat,lng){
   let minD=Infinity,near=null,ni=0;
   STOPS.forEach((s,i)=>{const d=distM(lat,lng,s.lat,s.lng);if(d<minD){minD=d;near=s;ni=i;}});
   const metros=Math.round(minD),camRaw=Math.round(metros/80);
-  // Formato legible para tiempo caminando
   function fmtCam(min){
     if(min<60)return min+' min';
     const h=Math.floor(min/60),m=min%60;
     return h+' hora'+(h>1?'s':'')+(m>0?' '+m+' min':'');
   }
-  const cam=camRaw;
   const camStr=fmtCam(camRaw);
   const llegaHora=hhmm(simMin+camRaw);
-
-  // Guardar para el tab "Cómo llegar"
-  window._nearStop=near;window._userLL=[lat,lng];window._camStr=camStr;
-
   function nextArr(deps,durs){
     for(let i=0;i<deps.length;i++){
       const eta=deps[i]+(SM[ni]/100*(durs[i]||82));
@@ -773,28 +772,10 @@ function showLocCard(lat,lng){
     }return null;
   }
   const aA=nextArr(DA,DUA),aB=nextArr(DB,DUB);
-  function busRow(arr,label){
-    if(!arr)return'<div style="margin-top:8px;padding:10px;border-radius:8px;background:#f5f5f5;font-size:13px;color:#999">😴 '+label+': Sin más viajes hoy</div>';
-    const mins=Math.round(arr-simMin),llega=cam<=mins;
-    const bg=llega?'#E8F8F0':'#FEF0EF',bc=llega?'#1D9E75':'#E74C3C',tc=llega?'#0F6E56':'#C0392B';
-    return'<div style="margin-top:8px;padding:12px;border-radius:10px;background:'+bg+';border:2px solid '+bc+'">'+
-      '<div style="font-size:14px;font-weight:800;color:'+tc+';margin-bottom:6px">'+(llega?'✅ ¡SÍ LLEGAS!':'⚠️ ¡APÚRATE!')+' '+label+'</div>'+
-      '<div style="font-size:13px;color:#444;line-height:1.8">🚌 Llega en <b style="font-size:15px;color:'+tc+'">'+mins+' min</b><br>🚶 Tú en <b style="font-size:15px">~'+camStr+'</b> caminando</div></div>';
-  }
-  const card=document.getElementById('locCard');
-  card.style.display='block';
-  card.innerHTML=
-    '<div class="rc-card">'+
-      '<button onclick="hideLocCard()" class="rc-close">✕</button>'+
-      '<div class="rc-walkrow">'+
-        '<div class="rc-walkico">🚶</div>'+
-        '<div><div class="rc-walktime">'+camStr+'</div>'+
-        '<div class="rc-arr">Llegada estimada: <b>'+llegaHora+'</b></div></div>'+
-      '</div>'+
-      '<div class="rc-dest">📍 <b>'+near.n+'. '+near.name+'</b> · '+metros+' m</div>'+
-    '</div>'+
-    busRow(aA,'T-01-023')+busRow(aB,'T-01-015')+
-    '<button onclick="irAComoLlegar()" class="rc-more">🚕 Ver cómo llegar — Uber, DiDi, Maps →</button>';
+
+  window._nearStop=near;window._userLL=[lat,lng];window._camStr=camStr;
+  window._camRaw=camRaw;window._llegaHora=llegaHora;window._metros=metros;
+  window._busEtaA=aA;window._busEtaB=aB;
 
   if(uMark)uMark.bindPopup('<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small>').openPopup();
 
@@ -804,12 +785,9 @@ function showLocCard(lat,lng){
   window._routeLine=L.polyline([[lat,lng],[near.lat,near.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
   const midLat=(lat+near.lat)/2,midLng=(lng+near.lng)/2;
   window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">🚶 '+camStr+'</div>',iconAnchor:[34,14]}),interactive:false}).addTo(map);
-  map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,70]});
-}
+  map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,90]});
 
-function irAComoLlegar(){
-  const tabs=document.querySelectorAll('.mtab');
-  if(tabs[2])mapaSwitchTab(2,tabs[2]);
+  renderComoLlegar();
 }
 
 function renderComoLlegar(){
@@ -826,10 +804,35 @@ function renderComoLlegar(){
   if(prompt)prompt.style.display='none';
   if(opts)opts.style.display='block';
   const lat=ll[0],lng=ll[1];
+  const camStr=window._camStr,camRaw=window._camRaw,cam=camRaw;
+  const aA=window._busEtaA,aB=window._busEtaB;
+
+  function busRow(arr,label){
+    if(!arr)return'<div class="cll-busrow" style="background:#f5f5f5;color:#999"><span>😴</span> '+label+': Sin más viajes hoy</div>';
+    const mins=Math.round(arr-simMin),llega=cam<=mins;
+    const bg=llega?'#E8F8F0':'#FEF0EF',bc=llega?'#1D9E75':'#E74C3C',tc=llega?'#0F6E56':'#C0392B';
+    return'<div class="cll-busrow" style="background:'+bg+';border:2px solid '+bc+'">'+
+      '<div style="font-size:13.5px;font-weight:800;color:'+tc+';margin-bottom:5px">'+(llega?'✅ ¡SÍ LLEGAS!':'⚠️ ¡APÚRATE!')+' — '+label+'</div>'+
+      '<div style="font-size:13px;color:#444;line-height:1.7">🚌 El camión llega en <b style="font-size:14.5px;color:'+tc+'">'+mins+' min</b> a esa parada</div></div>';
+  }
+
+  if(head)head.innerHTML=
+    '<div class="cll-summary">'+
+      '<div class="cll-walkrow">'+
+        '<div class="cll-walkico">🚶</div>'+
+        '<div><div class="cll-walktime">'+camStr+' caminando</div>'+
+        '<div class="cll-arr">Llegarías ahí a las <b>'+window._llegaHora+'</b></div></div>'+
+      '</div>'+
+      '<div class="cll-stopnote">📍 Esta es tu parada más cercana a donde estás ahora:</div>'+
+      '<div class="cll-stopname">'+near.n+'. '+near.name+' <span class="cll-dist">· '+window._metros+' m</span></div>'+
+    '</div>'+
+    '<div class="cll-bustitle">🚌 ¿El camión llega antes que tú?</div>'+
+    busRow(aA,'T-01-023')+busRow(aB,'T-01-015');
+
   const gm='https://www.google.com/maps/dir/?api=1&origin='+lat+','+lng+'&destination='+near.lat+','+near.lng+'&travelmode=walking';
   const ub='https://m.uber.com/ul/?action=setPickup&pickup=my_location&dropoff[latitude]='+near.lat+'&dropoff[longitude]='+near.lng+'&dropoff[nickname]='+encodeURIComponent(near.name);
-  if(head)head.innerHTML='<div class="cll-dest">📍 Yendo a <b>'+near.n+'. '+near.name+'</b> · '+(window._camStr||'')+' caminando</div>';
   if(opts)opts.innerHTML=
+    '<div class="cll-bustitle" style="margin-top:14px">🚕 ¿Cómo quieres llegar a la parada?</div>'+
     '<a href="'+gm+'" target="_blank" rel="noopener" class="cll-card">'+
       '<div class="cll-ico" style="background:#4285F4">🗺️</div>'+
       '<div class="cll-info"><div class="cll-title">Google Maps</div><div class="cll-note">Ruta a pie paso a paso, gratis</div></div>'+
@@ -907,11 +910,7 @@ function enviarEnc(){
   document.getElementById('encGr').style.display='block';
 }
 
-function hideLocCard(){
-  var c=document.getElementById('locCard');if(c)c.style.display='none';
-  if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
-  if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
-}
+
 function refreshBus(u){
   jumpNow();
   update();

@@ -139,7 +139,7 @@
 
       <!-- Resultados de búsqueda, flotando bajo el buscador -->
       <div id="mapa-search-results">
-        <button class="msr-close" onclick="closeSearchResults()" aria-label="Cerrar">✕</button>
+        <button class="msr-close" onclick="closeSearchResults()"><span>✕</span> Cerrar</button>
         <div style="font-size:12px;color:var(--t2);margin-bottom:7px;padding-right:22px" id="etaLbl"></div>
         <div class="ecds">
           <div class="ecd" id="etaCA"><div class="ecu">T-01-023</div><div class="ect" id="etaTA">–</div><div class="ecl" id="etaMA">–</div></div>
@@ -176,7 +176,7 @@
       <div id="mapa-content">
         <div id="mapaTab0">
           <div class="note" style="margin-bottom:12px">⚠️ Ubicación estimada por horario — No es GPS en tiempo real</div>
-          <div id="locCard"></div>
+          <div id="locCard" style="display:none"></div>
           <div class="bgrid">
             <!-- T-01-023 -->
             <div id="cA">
