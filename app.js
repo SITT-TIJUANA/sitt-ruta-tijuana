@@ -374,6 +374,29 @@ function openSection(sec){
       }
     },700);
     setTimeout(function(){
+      if(typeof map!=='undefined'){
+        map.invalidateSize({animate:false});
+        verRuta();
+      }
+    },1200);
+    // Respaldo extra para celulares donde el layout tarda más en asentarse
+    setTimeout(function(){
+      if(typeof map!=='undefined'){
+        map.invalidateSize({animate:false});
+        verRuta();
+      }
+    },1300);
+    // Y en cuanto el panel termine su animación de apertura, ajustar una vez más
+    var sheetEl=document.getElementById('mapa-sheet');
+    if(sheetEl&&!sheetEl._verRutaListener){
+      sheetEl._verRutaListener=true;
+      sheetEl.addEventListener('transitionend',function(){
+        if(typeof map!=='undefined'){
+          map.invalidateSize({animate:false});
+        }
+      });
+    }
+    setTimeout(function(){
       if(!window._horarioShownOnce){
         window._horarioShownOnce=true;
         mostrarHorarioModal();
@@ -537,13 +560,40 @@ const trB=L.polyline([],{color:'#378ADD',weight:6,opacity:.95}).addTo(map);
 
 const sMarkers=STOPS.map((s,i)=>{
   const isT=s.name.startsWith('TERMINAL');
-  const ic=L.divIcon({className:'',html:'<div style="width:'+(isT?15:8)+'px;height:'+(isT?15:8)+'px;border-radius:50%;background:'+(isT?'#7B1D1D':'#fff')+';border:'+(isT?'3px solid #C9A84C':'2px solid #7B1D1D')+';box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconAnchor:[isT?7:4,isT?7:4]});
+  const size=isT?26:20;
+  const emoji=iconoParada(s.name);
+  const ic=L.divIcon({className:'',html:'<div style="position:relative;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+(isT?'#7B1D1D':'#fff')+';border:'+(isT?'3px solid #C9A84C':'2px solid #7B1D1D')+';box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:'+(isT?'13px':'11px')+'">'+emoji+'<span style="position:absolute;bottom:-4px;right:-4px;background:#7B1D1D;color:#fff;font-size:8px;font-weight:800;border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;border:1.3px solid #fff">'+s.n+'</span></div>',iconAnchor:[size/2,size/2]});
   const m=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
   m.bindPopup('<b style="color:#7B1D1D">'+s.n+'. '+s.name+'</b>');
   return m;
 });
 
-function busIco(label,color,active){
+function calcularRumbo(lat1,lng1,lat2,lng2){
+  const toRad=d=>d*Math.PI/180,toDeg=r=>r*180/Math.PI;
+  const dLng=toRad(lng2-lng1);
+  const y=Math.sin(dLng)*Math.cos(toRad(lat2));
+  const x=Math.cos(toRad(lat1))*Math.sin(toRad(lat2))-Math.sin(toRad(lat1))*Math.cos(toRad(lat2))*Math.cos(dLng);
+  return (toDeg(Math.atan2(y,x))+360)%360;
+}
+
+function iconoParada(name){
+  const n=name.toUpperCase();
+  if(n.includes('TERMINAL'))return'🚏';
+  if(n.includes('HOSPITAL')||n.includes('CLINICA')||n.includes('CLÍNICA')||n.includes('CRUZ ROJA'))return'🏥';
+  if(n.includes('PALACIO')||n.includes('MUNICIPAL')||n.includes('AYUNTAMIENTO'))return'🏛️';
+  if(n.includes('GARITA')||n.includes('PUERTA MEXICO')||n.includes('PUERTA MÉXICO'))return'🛂';
+  if(n.includes('CAMIONERA')||n.includes('CENTRAL'))return'🚌';
+  if(n.includes('IGLESIA')||n.includes('TEMPLO')||n.includes('SEMINARIO'))return'⛪';
+  if(n.includes('PARQUE')||n.includes('ZARAGOZA'))return'🌳';
+  if(n.includes('PLAZA')||n.includes('MERCADO'))return'🛍️';
+  if(n.includes('ESCUELA')||n.includes('CREA')||n.includes('UNIVERSIDAD'))return'🏫';
+  if(n.includes('DEPORTIVA')||n.includes('UNIDAD DEPORTIVA'))return'⚽';
+  if(n.includes('CAZADORA')||n.includes('DIANA'))return'🗽';
+  if(n.includes('AMISTAD')||n.includes('CHAPARRAL'))return'🤝';
+  return'📍';
+}
+
+function busIco(label,color,active,bearing){
   const op=active?'1':'0.4';
   const uc=label.includes('023')?'#1D9E75':'#378ADD';
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="70" height="38" viewBox="0 0 70 38">'
@@ -564,7 +614,8 @@ function busIco(label,color,active){
     +'<rect x="11" y="4" width="17" height="5" rx="1" fill="#922B21"/>'
     +'<text x="19.5" y="8.2" font-size="3.2" fill="#FFD700" text-anchor="middle" font-family="sans-serif" font-weight="bold">ZONA CENTRO</text>'
     +'</svg>';
-  return L.divIcon({className:'',html:'<div style="opacity:'+op+';filter:drop-shadow(0 2px 5px rgba(0,0,0,.4));text-align:center">'+svg+'<div style="background:'+uc+';color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;border:1.5px solid #fff;margin-top:1px;display:inline-block">'+label+'</div></div>',iconAnchor:[35,42]});
+  const flecha=active?'<svg width="24" height="24" viewBox="0 0 24 24" style="margin:0 auto 2px;display:block;transform:rotate('+(bearing||0)+'deg);filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))"><path d="M12 1.5 L20.5 19 L12 14.8 L3.5 19 Z" fill="'+uc+'" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>':'';
+  return L.divIcon({className:'',html:'<div style="opacity:'+op+';filter:drop-shadow(0 2px 5px rgba(0,0,0,.4));text-align:center">'+flecha+svg+'<div style="background:'+uc+';color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:8px;border:1.5px solid #fff;margin-top:1px;display:inline-block">'+label+'</div></div>',iconAnchor:[35,active?65:42]});
 }
 
 const busA=L.marker([STOPS[0].lat,STOPS[0].lng],{icon:busIco('T-01-023','#1D9E75',false),zIndexOffset:1000}).addTo(map);
@@ -607,7 +658,9 @@ if(window._msgA)setEl('stA',window._msgA);
 if(window._msgB)setEl('stB',window._msgB);
   // Bus A
   if(sA.on){
-    busA.setLatLng([sA.lat,sA.lng]);busA.setIcon(busIco('T-01-023','#1D9E75',true));
+    busA.setLatLng([sA.lat,sA.lng]);
+    var rumboA=calcularRumbo(STOPS[sA.si].lat,STOPS[sA.si].lng,STOPS[Math.min(sA.si+1,STOPS.length-1)].lat,STOPS[Math.min(sA.si+1,STOPS.length-1)].lng);
+    busA.setIcon(busIco('T-01-023','#1D9E75',true,rumboA));
     setEl('stA',STOPS[sA.si].name);setEl('nxA',STOPS[Math.min(sA.si+1,STOPS.length-1)].name);
     setEl('pgA','width:'+sA.prog+'%','style');setEl('pglA',sA.prog+'%');
     const b=document.getElementById('bdgA');if(b)b.style.display='inline-block';
@@ -624,7 +677,9 @@ if(window._msgB)setEl('stB',window._msgB);
   }
   // Bus B
   if(sB.on){
-    busB.setLatLng([sB.lat,sB.lng]);busB.setIcon(busIco('T-01-015','#378ADD',true));
+    busB.setLatLng([sB.lat,sB.lng]);
+    var rumboB=calcularRumbo(STOPS[sB.si].lat,STOPS[sB.si].lng,STOPS[Math.min(sB.si+1,STOPS.length-1)].lat,STOPS[Math.min(sB.si+1,STOPS.length-1)].lng);
+    busB.setIcon(busIco('T-01-015','#378ADD',true,rumboB));
     setEl('stB',STOPS[sB.si].name);setEl('nxB',STOPS[Math.min(sB.si+1,STOPS.length-1)].name);
     setEl('pgB','width:'+sB.prog+'%','style');setEl('pglB',sB.prog+'%');
     const b=document.getElementById('bdgB');if(b)b.style.display='inline-block';
@@ -1347,16 +1402,21 @@ function irAInformacion(){
 }
 
 // ── VER IMAGEN DE RUTA EN GRANDE ─────────────────────────────────────────────
+function preguntarAmpliarRuta(){
+  if(confirm('¿Quieres ver la imagen de la ruta completa, en pantalla grande?')){
+    ampliarImagenRuta();
+  }
+}
 function ampliarImagenRuta(){
-  if(document.getElementById('rutaLightbox'))return;
+  cerrarImagenRuta();
   const modal=document.createElement('div');
   modal.id='rutaLightbox';
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
-  modal.addEventListener('click',function(e){if(e.target===modal)cerrarImagenRuta();});
   modal.innerHTML=`
-    <button onclick="cerrarImagenRuta()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer">✕ Cerrar</button>
-    <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" style="max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain">
+    <button onclick="cerrarImagenRuta()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;z-index:2">✕ Cerrar</button>
+    <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" style="max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain;position:relative;z-index:1">
   `;
+  modal.addEventListener('click',function(e){if(e.target===modal)cerrarImagenRuta();});
   document.body.appendChild(modal);
 }
 function cerrarImagenRuta(){
