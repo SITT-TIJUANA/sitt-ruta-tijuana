@@ -638,15 +638,27 @@ if(window._msgB)setEl('stB',window._msgB);
 }
 
 function renderTrips(){
-  const g=document.getElementById('tg');if(!g)return;g.innerHTML='';
-  DA.forEach((d,i)=>{
-    const dur=DUA[i],on=simMin>=d&&simMin<=(d+dur),past=simMin>(d+dur);
-    g.innerHTML+='<div class="tp'+(on?' cur':past?' past':'')+'"><span class="td da"></span>'+hhmm(d)+' <small>T-023</small></div>';
-  });
-  DB.forEach((d,i)=>{
-    const dur=DUB[i],on=simMin>=d&&simMin<=(d+dur),past=simMin>(d+dur);
-    g.innerHTML+='<div class="tp'+(on?' cur':past?' past':'')+'"><span class="td db"></span>'+hhmm(d)+' <small>T-015</small></div>';
-  });
+  const gAM=document.getElementById('tgAM'),gPM=document.getElementById('tgPM');
+  if(!gAM||!gPM)return;
+  gAM.innerHTML='';gPM.innerHTML='';
+  const MEDIODIA=720; // 12:00 p.m.
+  function pintar(deps,durs,claseUnidad,etiqueta){
+    deps.forEach((d,i)=>{
+      const dur=durs[i],on=simMin>=d&&simMin<=(d+dur),past=simMin>(d+dur);
+      const html='<div class="tp'+(on?' cur':past?' past':'')+'"><span class="td '+claseUnidad+'"></span>'+hhmm(d)+' <small>'+etiqueta+'</small></div>';
+      if(d<MEDIODIA)gAM.innerHTML+=html;else gPM.innerHTML+=html;
+    });
+  }
+  pintar(DA,DUA,'da','T-023');
+  pintar(DB,DUB,'db','T-015');
+}
+
+function renderStationsList(){
+  const box=document.getElementById('stationsListInfo');
+  if(!box||typeof STOPS==='undefined')return;
+  box.innerHTML=STOPS.map(function(s){
+    return '<div class="stn-row"><span class="stn-num">'+s.n+'</span><span>'+s.name+'</span></div>';
+  }).join('');
 }
 
 function updateProx(){
@@ -934,13 +946,18 @@ function renderComoLlegar(){
   const camStr=window._camStr,camRaw=window._camRaw,cam=camRaw;
   const aA=window._busEtaA,aB=window._busEtaB;
 
+  function fmtMin(m){
+    if(m<60)return m+' min';
+    const h=Math.floor(m/60),r=m%60;
+    return h+' hora'+(h>1?'s':'')+(r>0?' '+r+' min':'');
+  }
   function busRow(arr,label){
     if(!arr)return'<div class="cll-busrow" style="background:#f5f5f5;color:#999"><span>😴</span> '+label+': Sin más viajes hoy</div>';
     const mins=Math.round(arr-simMin),llega=cam<=mins;
     const bg=llega?'#E8F8F0':'#FEF0EF',bc=llega?'#1D9E75':'#E74C3C',tc=llega?'#0F6E56':'#C0392B';
     return'<div class="cll-busrow" style="background:'+bg+';border:2px solid '+bc+'">'+
       '<div style="font-size:13.5px;font-weight:800;color:'+tc+';margin-bottom:5px">'+(llega?'✅ ¡SÍ LLEGAS!':'⚠️ ¡APÚRATE!')+' — '+label+'</div>'+
-      '<div style="font-size:13px;color:#444;line-height:1.7">🚌 El camión llega en <b style="font-size:14.5px;color:'+tc+'">'+mins+' min</b> a esa parada</div></div>';
+      '<div style="font-size:13px;color:#444;line-height:1.7">🚌 El camión llega en <b style="font-size:14.5px;color:'+tc+'">'+fmtMin(mins)+'</b> a esa parada</div></div>';
   }
 
   if(head)head.innerHTML=
@@ -1129,6 +1146,7 @@ function populateStops(){
 }
 // ── INIT ───────────────────────────────────────────────────────────────────
 populateStops();
+renderStationsList();
 jumpNow();
 update();
 updateProx();
