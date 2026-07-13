@@ -1,9 +1,7 @@
 // Trabajador de servicios SITT T101
-const CACHE = 'sitt-t101-v3';
+const CACHE = 'sitt-t101-v4';
 
 self.addEventListener('install', function(e) {
-  // NO se activa solo: espera a que el usuario confirme desde el banner
-  // "Nueva versión disponible" (ver app.js -> aplicarActualizacion())
   e.waitUntil(
     caches.open(CACHE).then(function(cache) {
       return cache.addAll(['/sitt-ruta-tijuana/', '/sitt-ruta-tijuana/index.html']);
@@ -31,10 +29,18 @@ self.addEventListener('activate', function(e) {
   );
 });
 
+// RED PRIMERO: siempre intenta traer la versión más reciente del servidor
+// y actualiza la copia guardada. Si no hay internet, usa la copia guardada
+// como respaldo. Esto evita que la app se quede pegada en una versión vieja.
 self.addEventListener('fetch', function(e) {
+  if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function(response) {
-      return response || fetch(e.request);
+    fetch(e.request).then(function(response) {
+      const copy = response.clone();
+      caches.open(CACHE).then(function(cache) { cache.put(e.request, copy); });
+      return response;
+    }).catch(function() {
+      return caches.match(e.request);
     })
   );
 });
