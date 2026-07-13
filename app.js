@@ -261,6 +261,7 @@ function openSection(sec){
       if(typeof map!=='undefined'){
         map.invalidateSize({animate:false});
         map.eachLayer(function(layer){if(layer.redraw)layer.redraw();});
+        verRuta();
       }
       jumpNow();update();updateProx();
     },350);

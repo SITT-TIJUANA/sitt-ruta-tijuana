@@ -163,7 +163,7 @@
       <!-- Botones flotantes (FABs) -->
       <div id="mapa-fabs">
         <button class="mfab" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
-        <button class="mfab" onclick="map.setView([32.5149,-117.0382],14)" aria-label="Ver ruta">🗺️</button>
+        <button class="mfab" onclick="verRuta()" aria-label="Ver ruta completa">🗺️</button>
         <button class="mfab pr" id="fabLocate" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
       </div>
     </div>
