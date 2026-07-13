@@ -1,4 +1,3 @@
-
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function moverGliderTabs(btn){
   var glider=document.getElementById('tabsGlider');
@@ -944,8 +943,14 @@ function locateUser(){
     prepararInfoUbicacion(uLat,uLng,primeraVez);
     if(primeraVez){
       restoreFab();
-      const tabs=document.querySelectorAll('.mtab');
-      if(tabs[2])mapaSwitchTab(2,tabs[2]);
+      if(window._pendingRouteStop!=null){
+        const pend=window._pendingRouteStop;
+        window._pendingRouteStop=null;
+        dibujarRutaHaciaParada(pend);
+      }else{
+        const tabs=document.querySelectorAll('.mtab');
+        if(tabs[2])mapaSwitchTab(2,tabs[2]);
+      }
       primeraVez=false;
     }
   },function(){restoreFab();alert('No se pudo obtener tu ubicación.');},{enableHighAccuracy:true,maximumAge:5000});
@@ -1459,7 +1464,7 @@ function mostrarInfoEstacion(idx){
           <div style="font-size:17px;font-weight:800;color:var(--g);line-height:1.2">${s.name}</div>
         </div>
       </div>
-      <button onclick="verEstacionEnMapa(${idx})" class="shine-btn" style="width:100%;background-color:var(--g);margin-bottom:14px">📍 Ver en el mapa</button>
+      <button onclick="trazarRutaAEstacion(${idx})" class="shine-btn" style="width:100%;background-color:var(--g);margin-bottom:14px">🧭 Trazar ruta y ver tiempo</button>
       <div style="font-size:11px;font-weight:800;color:var(--g);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">¿Cómo llegar?</div>
       <a href="${gm}" target="_blank" rel="noopener" class="cll-card">
         <div class="cll-ico" style="background:#4285F4">🗺️</div>
@@ -1498,6 +1503,47 @@ function verEstacionEnMapa(idx){
     if(typeof map!=='undefined'){
       map.invalidateSize({animate:false});
       map.setView([s.lat,s.lng],17,{animate:true});
+    }
+  },280);
+}
+
+// ── TRAZAR RUTA DE MI UBICACIÓN A UNA ESTACIÓN ELEGIDA ───────────────────────
+function trazarRutaAEstacion(idx){
+  const s=STOPS[idx];
+  if(!s)return;
+  if(uLat==null||uLng==null){
+    cerrarInfoEstacion();
+    window._pendingRouteStop=idx;
+    locateUser();
+    return;
+  }
+  dibujarRutaHaciaParada(idx);
+}
+
+function dibujarRutaHaciaParada(idx){
+  const s=STOPS[idx];
+  if(!s||uLat==null)return;
+  const metros=Math.round(distM(uLat,uLng,s.lat,s.lng));
+  const camRaw=Math.round(metros/80);
+  function fmtCam(min){
+    if(min<60)return min+' min';
+    const h=Math.floor(min/60),m=min%60;
+    return h+' hora'+(h>1?'s':'')+(m>0?' '+m+' min':'');
+  }
+  const camStr=fmtCam(camRaw);
+  if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
+  if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
+  window._routeLine=L.polyline([[uLat,uLng],[s.lat,s.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
+  const midLat=(uLat+s.lat)/2,midLng=(uLng+s.lng)/2;
+  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">🚶 '+camStr+'</div>',iconAnchor:[34,14]}),interactive:false}).addTo(map);
+  cerrarInfoEstacion();
+  const tabs=document.querySelectorAll('.mtab');
+  if(tabs[0])mapaSwitchTab(0,tabs[0]);
+  if(typeof mapaSheetSet==='function')mapaSheetSet('collapsed');
+  setTimeout(function(){
+    if(typeof map!=='undefined'){
+      map.invalidateSize({animate:false});
+      map.fitBounds(L.latLngBounds([[uLat,uLng],[s.lat,s.lng]]),{padding:[70,90]});
     }
   },280);
 }
