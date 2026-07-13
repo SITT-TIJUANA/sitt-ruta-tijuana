@@ -102,20 +102,60 @@ function initMapaSheet(){
 }
 
 // ── MODAL DE PARADAS (buscador) ─────────────────────────────────────────────
+function getFavStop(){
+  const v=localStorage.getItem('sittFavStop');
+  return v===null?null:parseInt(v,10);
+}
+function toggleFavStop(idx,e){
+  if(e)e.stopPropagation();
+  const cur=getFavStop();
+  if(cur===idx)localStorage.removeItem('sittFavStop');
+  else localStorage.setItem('sittFavStop',idx);
+  renderParadaRows();
+  renderFavQuick();
+}
+function buildParadaRow(s,i){
+  const isFav=getFavStop()===i;
+  return '<div class="parada-row">'+
+    '<button class="pr-fav'+(isFav?' on':'')+'" onclick="toggleFavStop('+i+',event)" aria-label="Marcar como favorita">'+(isFav?'⭐':'☆')+'</button>'+
+    '<button class="pr-main" onclick="elegirParada('+i+')">'+
+      '<span class="pr-num">'+s.n+'</span>'+
+      '<span class="pr-name">'+s.name+'</span>'+
+      '<span class="pr-arrow">›</span>'+
+    '</button>'+
+  '</div>';
+}
+function renderParadaRows(){
+  const wrap=document.getElementById('paradasListWrap');
+  if(!wrap)return;
+  const stops=(typeof STOPS!=='undefined'?STOPS:[]);
+  wrap.innerHTML=stops.map(function(s,i){return buildParadaRow(s,i);}).join('');
+  const filt=document.getElementById('paradaFilter');
+  if(filt&&filt.value)filtrarParadas(filt.value);
+}
+function renderFavQuick(){
+  const box=document.getElementById('favQuickBox');
+  if(!box)return;
+  const fav=getFavStop();
+  const s=(fav!==null&&typeof STOPS!=='undefined')?STOPS[fav]:null;
+  box.innerHTML=s?(
+    '<button class="fav-quick" onclick="elegirParada('+fav+')">'+
+      '<span style="font-size:16px">⭐</span>'+
+      '<span style="flex:1;text-align:left">'+
+        '<span style="display:block;font-size:10px;font-weight:800;color:#a8863a;text-transform:uppercase;letter-spacing:.04em">Tu parada favorita</span>'+
+        '<span style="display:block;font-size:14px;font-weight:800;color:#4a3210">'+s.n+'. '+s.name+'</span>'+
+      '</span>'+
+      '<span class="pr-arrow">›</span>'+
+    '</button>'
+  ):'';
+}
+
 function abrirModalParadas(){
   if(document.getElementById('paradasModal'))return;
   const modal=document.createElement('div');
   modal.id='paradasModal';
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99998;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
   modal.addEventListener('click',function(e){if(e.target===modal)cerrarModalParadas();});
-
-  const rows=(typeof STOPS!=='undefined'?STOPS:[]).map(function(s,i){
-    return '<button class="parada-row" onclick="elegirParada('+i+')">'+
-      '<span class="pr-num">'+s.n+'</span>'+
-      '<span class="pr-name">'+s.name+'</span>'+
-      '<span class="pr-arrow">›</span>'+
-    '</button>';
-  }).join('');
 
   modal.innerHTML=`
     <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:82vh;display:flex;flex-direction:column;animation:fadeUp .3s ease">
@@ -126,14 +166,15 @@ function abrirModalParadas(){
         <div style="font-size:15px;font-weight:800;color:#7B1D1D">🔍 ¿Cuándo llega a mi parada?</div>
         <button onclick="cerrarModalParadas()" style="background:#f4f4f2;border:none;border-radius:20px;padding:7px 14px 7px 12px;font-size:12px;font-weight:800;color:#7B1D1D;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:4px">✕ Cerrar</button>
       </div>
+      <div id="favQuickBox" style="padding:0 18px;flex-shrink:0"></div>
       <input type="text" id="paradaFilter" placeholder="Escribe el nombre de tu parada..." oninput="filtrarParadas(this.value)"
-        style="margin:0 18px 10px;padding:12px 14px;border-radius:12px;border:1.5px solid #e0ddd6;font-size:14px;font-family:inherit;flex-shrink:0">
-      <div id="paradasListWrap" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 10px 16px;flex:1">
-        ${rows}
-      </div>
+        style="margin:10px 18px 10px;padding:12px 14px;border-radius:12px;border:1.5px solid #e0ddd6;font-size:14px;font-family:inherit;flex-shrink:0">
+      <div id="paradasListWrap" style="overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 10px 16px;flex:1"></div>
     </div>
   `;
   document.body.appendChild(modal);
+  renderFavQuick();
+  renderParadaRows();
 }
 
 function filtrarParadas(txt){
@@ -882,9 +923,9 @@ setInterval(tick,1000);tick();
 function toggleMenu(id){const m=document.getElementById(id);if(m)m.style.display=m.style.display==='none'?'block':'none';}
 function compartirApp(){
   toggleMenu('qrAppMenu');
-  const d={title:'SITT Tijuana – Ruta T101',text:'🚌 Sigue la Ruta T101 del SITT Tijuana en tiempo real.',url:'https://sitt-ruta-t101.netlify.app'};
+  const d={title:'SITT Tijuana – Ruta T101',text:'🚌 Sigue la Ruta T101 del SITT Tijuana en tiempo real.',url:'https://sitt-tijuana.github.io/sitt-ruta-tijuana/'};
   if(navigator.share)navigator.share(d).catch(function(){});
-  else navigator.clipboard.writeText(d.url).then(function(){alert('¡Link copiado! 📋');}). catch(function(){prompt('Copia este link:','https://sitt-ruta-t101.netlify.app');});
+  else navigator.clipboard.writeText(d.url).then(function(){alert('¡Link copiado! 📋');}). catch(function(){prompt('Copia este link:','https://sitt-tijuana.github.io/sitt-ruta-tijuana/');});
 }
 function guardarQRApp(){toggleMenu('qrAppMenu');const a=document.createElement('a');a.href=document.getElementById('qrAppImg').src;a.download='SITT-App-QR.jpg';a.click();}
 function compartirEnc(){toggleMenu('qrEncMenu');const d={title:'Encuesta SITT',text:'Califica el servicio del SITT Tijuana Ruta T101.',url:'https://forms.gle/7oH2N7veHtkUmhsBA'};if(navigator.share)navigator.share(d).catch(function(){});else navigator.clipboard.writeText(d.url).then(function(){alert('¡Link copiado!');}).catch(function(){});}
@@ -1152,4 +1193,37 @@ if(esIOS&&!esStandalone){
     `;
     document.body.appendChild(banner);
   },3000);
+}
+
+// ── MODO OSCURO ──────────────────────────────────────────────────────────────
+function toggleDarkMode(){
+  const on=document.body.classList.toggle('dark');
+  localStorage.setItem('sittDark',on?'1':'0');
+  const btn=document.getElementById('darkToggleBtn');
+  if(btn)btn.textContent=on?'☀️':'🌙';
+}
+(function initDarkMode(){
+  if(localStorage.getItem('sittDark')==='1'){
+    document.body.classList.add('dark');
+    const btn=document.getElementById('darkToggleBtn');
+    if(btn)btn.textContent='☀️';
+  }
+})();
+
+// ── COMPARTIR VIAJE EN VIVO ──────────────────────────────────────────────────
+function compartirViaje(u){
+  const s=u==='A'?getBus(simMin,DA,DUA):getBus(simMin,DB,DUB);
+  const nombre=u==='A'?'T-01-023':'T-01-015';
+  const link='https://sitt-tijuana.github.io/sitt-ruta-tijuana/';
+  let msg;
+  if(s.on){
+    msg='🚌 Voy en el camión '+nombre+' de la Ruta T101 (SITT Tijuana). Sigue mi viaje en vivo aquí: '+link;
+  }else{
+    msg='🚌 Te comparto la Ruta T101 del SITT Tijuana, para que veas cuándo llega tu camión: '+link;
+  }
+  if(navigator.share){
+    navigator.share({title:'Ruta T101 SITT',text:msg}).catch(function(){});
+  }else{
+    window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+  }
 }

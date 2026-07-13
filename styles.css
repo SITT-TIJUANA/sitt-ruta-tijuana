@@ -147,6 +147,8 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .app-nav-back:hover{background:rgba(255,255,255,.25)}
 .app-nav-title{font-size:14px;font-weight:700;color:#fff;flex:1}
 .app-nav-time{font-size:13px;font-weight:700;color:var(--o);font-variant-numeric:tabular-nums}
+.app-nav-dark{background:rgba(255,255,255,.14);border:none;border-radius:50%;width:32px;height:32px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;transition:transform .2s}
+.app-nav-dark:active{transform:scale(.88)}
 
 /* Sections */
 .section-page{display:none;animation:fadeIn .4s ease}
@@ -304,11 +306,18 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 #mapa-search-float .msf-chev{position:absolute;right:18px;top:50%;translate:0 -50%;font-size:16px;color:var(--o);font-weight:800;pointer-events:none;z-index:2}
 
 /* Filas del modal de paradas */
-.parada-row{width:100%;display:flex;align-items:center;gap:12px;background:none;border:none;border-bottom:1px solid #f0ede8;padding:13px 10px;font-family:inherit;cursor:pointer;text-align:left}
-.parada-row:active{background:#f7f5f2}
+.parada-row{display:flex;align-items:stretch;border-bottom:1px solid #f0ede8}
+.pr-fav{background:none;border:none;font-size:17px;padding:0 10px;cursor:pointer;color:#ccc;flex-shrink:0;display:flex;align-items:center}
+.pr-fav.on{color:#C9A84C}
+.pr-fav:active{transform:scale(.85)}
+.pr-main{flex:1;display:flex;align-items:center;gap:12px;background:none;border:none;padding:13px 10px 13px 2px;font-family:inherit;cursor:pointer;text-align:left}
+.pr-main:active{background:#f7f5f2}
 .pr-num{width:26px;height:26px;border-radius:50%;background:#f4f1ec;color:#7B1D1D;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pr-name{flex:1;font-size:14px;color:#2a2a2a;font-weight:600}
 .pr-arrow{color:#ccc;font-size:18px;flex-shrink:0}
+
+/* Acceso rápido a la parada favorita */
+.fav-quick{width:100%;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#FFF6DE,#FBECC0);border:1.5px solid #E8C877;border-radius:14px;padding:12px 14px;cursor:pointer;font-family:inherit;margin-bottom:4px}
 
 /* Panel de resultados flotante, bajo el buscador */
 #mapa-search-results{display:none;position:absolute;top:72px;left:14px;right:14px;z-index:645;background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.18);padding:14px}
@@ -390,3 +399,33 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
   #mapa-sheet{top:0;bottom:0;left:auto;right:0;width:380px;height:100%!important;max-height:none;border-radius:0;box-shadow:-4px 0 22px rgba(0,0,0,.12)}
   #mapa-sheet-handle{display:none}
 }
+/* ── MODO OSCURO ── */
+body.dark{background:#141210;--gr:#221f1d;--b:#3a3733;--t:#f0ede8;--t2:#b0a89c;--gl:#2e1e1e}
+body.dark #app{background:#141210}
+body.dark #splash{background:linear-gradient(160deg,#4a1010,#221f1d)}
+body.dark .section-page{background:#141210;color:#f0ede8}
+body.dark #sec-mapa{background:#141210}
+body.dark #mapa-sheet{background:#1c1a17}
+body.dark #mapa-sheet-handle .handle-bar{background:#4a453e}
+body.dark .handle-label{color:#8a8479}
+body.dark #mapa-tabs{background:rgba(30,27,24,.6)}
+body.dark .mtab{color:#a89f92}
+body.dark .mtab.on{color:#F5D77A}
+body.dark #mapa-content{color:#f0ede8}
+body.dark .note{background:#332a12;border-color:#5c4a1a;color:#e0c878}
+body.dark #mapa-search-float .search{background:linear-gradient(#241f1f,#241f1f) padding-box,linear-gradient(120deg,var(--v),var(--o)) border-box;color:#f0ede8}
+body.dark #mapa-search-float .search span{color:#f0ede8}
+body.dark #mapa-search-results{background:#221f1d;color:#f0ede8}
+body.dark .msr-close{background:#3a3733;color:#F5D77A}
+body.dark .bc{background:#1c1a17;color:#f0ede8;border-color:#3a3733}
+body.dark .bsn{color:#a89f92}
+body.dark .bss{color:#f0ede8}
+body.dark .bnx{color:#a89f92}
+body.dark .cll-card{background:#1c1a17;border-color:#3a3733}
+body.dark .cll-title{color:#f0ede8}
+body.dark .cll-bustitle{color:#F5D77A}
+body.dark #comoLlegarPrompt{color:#f0ede8}
+body.dark .sec{background:#1c1a17}
+body.dark .stit{color:#F5D77A}
+body.dark input,body.dark select{background:#221f1d;color:#f0ede8;border-color:#3a3733}
+body.dark .app-nav-dark{background:rgba(255,255,255,.1)}
