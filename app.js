@@ -348,6 +348,7 @@ function openSection(sec){
   document.querySelectorAll('.section-page').forEach(function(s){s.classList.remove('active');});
   document.getElementById('sec-'+sec).classList.add('active');
   document.getElementById('navTitle').textContent = sectionTitles[sec]||'SITT T101';
+  if(sec!=='mapa')detenerSeguimientoUbicacion();
   if(sec==='mapa'){
     initMapaSheet();
     setTimeout(function(){
@@ -379,6 +380,7 @@ function goBack(){
   document.getElementById('app').style.display='none';
   document.getElementById('splash').style.display='flex';
   document.getElementById('splash').classList.remove('hide');
+  detenerSeguimientoUbicacion();
 }
 
 function salirSinCalificar(btn){
@@ -675,7 +677,7 @@ function updateProx(){
   setEl('proxAv',diff<=2?'⚡ El camión puede salir en cualquier momento':diff<=10?'⚠️ Los camiones no esperan — llega con tiempo':'Los camiones salen puntual · Llega 2-3 min antes');
   const ul=document.getElementById('proxUlt');
   if(ul)ul.innerHTML=!isLast?'Última salida del día: <strong>'+fh(LAST)+'</strong>':'Primera salida mañana: <strong>'+fh(FIRST)+'</strong>';
-  setEl('hchipHora',fh(next));
+  setEl('hchipHora',diff<60?('En '+Math.max(diff,0)+' min'):fh(next));
 }
 
 function calcETA(){
@@ -841,18 +843,40 @@ function locateUser(){
   const fab=document.getElementById('fabLocate');
   if(fab){fab.classList.add('mfab-loading');fab.innerHTML='<span class="mfab-spin"></span>';}
   function restoreFab(){if(fab){fab.classList.remove('mfab-loading');fab.innerHTML='📍';}}
-  navigator.geolocation.getCurrentPosition(function(pos){
-    restoreFab();
+
+  if(window._geoWatchId!=null){
+    navigator.geolocation.clearWatch(window._geoWatchId);
+    window._geoWatchId=null;
+  }
+
+  let primeraVez=true;
+  window._geoWatchId=navigator.geolocation.watchPosition(function(pos){
     uLat=pos.coords.latitude;uLng=pos.coords.longitude;
-    if(uMark){map.removeLayer(uMark);map.removeLayer(uCirc);}
-    uCirc=L.circle([uLat,uLng],{radius:pos.coords.accuracy,color:'#378ADD',fillColor:'#378ADD',fillOpacity:.1,weight:1}).addTo(map);
-    uMark=L.circleMarker([uLat,uLng],{radius:10,color:'#fff',weight:3,fillColor:'#378ADD',fillOpacity:1}).addTo(map);
-    map.setView([uLat,uLng],15,{animate:true});
+    actualizarMarcadorUsuario(uLat,uLng,pos.coords.accuracy);
     prepararInfoUbicacion(uLat,uLng);
-    // Ir directo al tab "Llegar" con toda la información junta
-    const tabs=document.querySelectorAll('.mtab');
-    if(tabs[2])mapaSwitchTab(2,tabs[2]);
-  },function(){restoreFab();alert('No se pudo obtener tu ubicación.');});
+    if(primeraVez){
+      restoreFab();
+      map.setView([uLat,uLng],15,{animate:true});
+      const tabs=document.querySelectorAll('.mtab');
+      if(tabs[2])mapaSwitchTab(2,tabs[2]);
+      primeraVez=false;
+    }
+  },function(){restoreFab();alert('No se pudo obtener tu ubicación.');},{enableHighAccuracy:true,maximumAge:5000});
+}
+
+function detenerSeguimientoUbicacion(){
+  if(window._geoWatchId!=null){
+    navigator.geolocation.clearWatch(window._geoWatchId);
+    window._geoWatchId=null;
+  }
+}
+
+// Ícono de "vas caminando" en tu posición real (se mueve solo con el GPS)
+function actualizarMarcadorUsuario(lat,lng,accuracy){
+  if(uMark)map.removeLayer(uMark);
+  if(uCirc)map.removeLayer(uCirc);
+  uCirc=L.circle([lat,lng],{radius:accuracy||30,color:'#378ADD',fillColor:'#378ADD',fillOpacity:.1,weight:1}).addTo(map);
+  uMark=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="walker-icon">🚶</div>',iconSize:[34,34],iconAnchor:[17,17]}),zIndexOffset:500}).addTo(map);
 }
 
 // Calcula todo (parada más cercana, tiempo caminando, llegada de camiones)
@@ -887,7 +911,7 @@ function prepararInfoUbicacion(lat,lng){
   if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
   window._routeLine=L.polyline([[lat,lng],[near.lat,near.lng]],{color:'#4285F4',weight:4,opacity:.85,dashArray:'2,10',lineCap:'round'}).addTo(map);
   const midLat=(lat+near.lat)/2,midLng=(lng+near.lng)/2;
-  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">🚶 '+camStr+'</div>',iconAnchor:[34,14]}),interactive:false}).addTo(map);
+  window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">'+camStr+'</div>',iconAnchor:[26,14]}),interactive:false}).addTo(map);
   map.fitBounds(L.latLngBounds([[lat,lng],[near.lat,near.lng]]),{padding:[70,90]});
 
   renderComoLlegar();
@@ -1281,4 +1305,12 @@ function compartirViaje(u){
   }else{
     window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
   }
+}
+
+// ── PANTALLA COMPLETA DEL MAPA ──────────────────────────────────────────────
+function toggleFullscreenMap(){
+  document.body.classList.toggle('map-fullscreen');
+  setTimeout(function(){
+    if(typeof map!=='undefined')map.invalidateSize({animate:false});
+  },60);
 }
