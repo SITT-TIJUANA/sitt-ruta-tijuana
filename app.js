@@ -1,7 +1,7 @@
 
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function mapaSwitchTab(idx,btn){
-  [0,1,2].forEach(function(i){
+  [0,1,2,3,4].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
     if(t)t.style.display=i===idx?'block':'none';
   });
@@ -20,6 +20,12 @@ function mapaSwitchTab(idx,btn){
   }
   if(idx===2&&typeof renderComoLlegar==='function'){
     renderComoLlegar();
+  }
+  if(idx===3&&typeof renderTrips==='function'){
+    renderTrips();
+  }
+  if(idx===4&&typeof renderStationsList==='function'){
+    renderStationsList();
   }
 }
 
