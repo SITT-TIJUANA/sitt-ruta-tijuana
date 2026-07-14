@@ -521,3 +521,30 @@ body.dark .tip-txt{color:#c8c0b4}
 .tarifa-badge.gold{background:rgba(201,168,76,.2);box-shadow:inset 0 0 0 1px rgba(201,168,76,.4),0 0 16px rgba(201,168,76,.25)}
 .quien-badge{width:40px;height:40px;margin:0 auto;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:19px}
 .quien-badge.gold{background:rgba(201,168,76,.18)}
+
+/* ── PANEL DE ACCESIBILIDAD ── */
+.acces-opt{flex:1;padding:12px 4px;border-radius:12px;border:1.5px solid var(--b);background:var(--gr);color:var(--t);font-weight:800;cursor:pointer;font-family:inherit}
+.acces-opt.on{background:var(--g);border-color:var(--g);color:#fff}
+.acces-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f0ede8}
+.acces-row-tit{font-size:13.5px;font-weight:700;color:var(--t)}
+.acces-row-sub{font-size:11px;color:var(--t2);margin-top:1px}
+.acces-switch{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.acces-switch input{opacity:0;width:0;height:0}
+.acces-slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:26px;transition:.25s}
+.acces-slider::before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.acces-switch input:checked+.acces-slider{background:var(--g)}
+.acces-switch input:checked+.acces-slider::before{transform:translateX(20px)}
+
+/* Tamaño de texto (zoom para respetar el layout px existente) */
+body.text-chico #app,body.text-chico #splash{zoom:.88}
+body.text-grande #app,body.text-grande #splash{zoom:1.18}
+
+/* Alto contraste */
+body.alto-contraste{--t2:#000;--b:#000}
+body.alto-contraste .sec,body.alto-contraste .bc,body.alto-contraste .cll-card{border:2px solid #000!important}
+body.alto-contraste .note{border-width:2px!important;color:#000!important}
+body.alto-contraste .tp{border-width:2px!important}
+
+/* Botones de leer en voz alta: ocultos hasta que se activen */
+.voz-btn{display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--gl);color:var(--g);border:none;font-size:14px;cursor:pointer;flex-shrink:0}
+body.leer-voz .voz-btn{display:flex}

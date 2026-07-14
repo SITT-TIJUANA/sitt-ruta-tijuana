@@ -123,6 +123,7 @@
   <div class="app-nav">
     <button class="app-nav-back" onclick="goBack()" id="txtNavInicio">← Inicio</button>
     <div class="app-nav-title" id="navTitle">SITT T101</div>
+    <button class="app-nav-dark" id="accesibilidadBtn" onclick="abrirPanelAccesibilidad()" aria-label="Accesibilidad" style="font-size:12px;font-weight:900">Aa</button>
     <button class="app-nav-dark" id="darkToggleBtn" onclick="toggleDarkMode()" aria-label="Modo oscuro">🌙</button>
     <div class="app-nav-time" id="navClock">--:--</div>
   </div>
@@ -199,7 +200,9 @@
           <div class="bgrid">
             <!-- T-01-023 -->
             <div id="cA">
-              <div class="bc" style="border-radius:16px;height:100%">
+              <div class="bc" style="border-radius:16px;height:100%;position:relative">
+                <button class="voz-btn" style="position:absolute;top:12px;right:12px" onclick="leerTexto('busReadableA')" aria-label="Leer en voz alta">🔊</button>
+                <div id="busReadableA">
                 <div class="bch"><span style="font-size:20px">🚌</span>
                   <div><div class="bcn">T-01-023</div><div class="bci" id="txtUnidadA">Unidad A</div></div>
                   <span class="bdg er" id="bdgA">En ruta</span>
@@ -208,6 +211,7 @@
                 <div class="bnx"><span id="txtSiguiente1">Siguiente:</span> <span id="nxA">–</span></div>
                 <div><div class="bpb"><div class="bpf fa" id="pgA" style="width:0%"></div></div>
                 <div class="bpl"><span id="txtTerminal1">Terminal Insurgentes</span><span id="pglA"></span></div></div>
+                </div>
                 <div style="display:flex;gap:6px;margin-top:10px">
                   <button class="tbtn shine-btn green" style="flex:2" onclick="trackBus('A')" id="txtVerMapa1">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;flex:1;font-size:13px" onclick="refreshBus('A')">🔄</button>
@@ -217,7 +221,9 @@
             </div>
             <!-- T-01-015 -->
             <div id="cB">
-              <div class="bc" style="border-radius:16px;height:100%">
+              <div class="bc" style="border-radius:16px;height:100%;position:relative">
+                <button class="voz-btn" style="position:absolute;top:12px;right:12px" onclick="leerTexto('busReadableB')" aria-label="Leer en voz alta">🔊</button>
+                <div id="busReadableB">
                 <div class="bch"><span style="font-size:20px">🚌</span>
                   <div><div class="bcn">T-01-015</div><div class="bci" id="txtUnidadB">Unidad B</div></div>
                   <span class="bdg er" id="bdgB">En ruta</span>
@@ -226,6 +232,7 @@
                 <div class="bnx"><span id="txtSiguiente2">Siguiente:</span> <span id="nxB">–</span></div>
                 <div><div class="bpb"><div class="bpf fb" id="pgB" style="width:0%"></div></div>
                 <div class="bpl"><span id="txtTerminal2">Terminal Insurgentes</span><span id="pglB"></span></div></div>
+                </div>
                 <div style="display:flex;gap:6px;margin-top:10px">
                   <button class="tbtn shine-btn blue" style="flex:2" onclick="trackBus('B')" id="txtVerMapa2">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;flex:1;font-size:13px" onclick="refreshBus('B')">🔄</button>
@@ -264,13 +271,16 @@
         <!-- Guarda la tarjeta "Próxima salida" cuando está minimizada (no se muestra en ningún tab) -->
         <div id="proxHiddenHolder" style="display:none">
           <div id="proxCardWrap">
-            <div class="prox" style="border-radius:16px;margin-bottom:0">
-              <div class="prox-badge" id="proxBadge">Próxima salida</div>
-              <div class="prox-hora" id="proxHora">--:--</div>
-              <div class="prox-lbl" id="proxLbl">Cargando...</div>
-              <div class="prox-cd" id="proxCd">...</div>
-              <div class="prox-av" id="proxAv"></div>
-              <div class="prox-ult" id="proxUlt"></div>
+            <div class="prox" style="border-radius:16px;margin-bottom:0;position:relative">
+              <button class="voz-btn" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);color:#fff" onclick="leerTexto('proxReadable')" aria-label="Leer en voz alta">🔊</button>
+              <div id="proxReadable">
+                <div class="prox-badge" id="proxBadge">Próxima salida</div>
+                <div class="prox-hora" id="proxHora">--:--</div>
+                <div class="prox-lbl" id="proxLbl">Cargando...</div>
+                <div class="prox-cd" id="proxCd">...</div>
+                <div class="prox-av" id="proxAv"></div>
+                <div class="prox-ult" id="proxUlt"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -337,8 +347,8 @@
     <div class="info-hero reveal">
       <div class="info-hero-overlay"></div>
       <div class="info-hero-txt">
-        <div class="info-hero-tag">Transporte seguro, accesible y eficiente</div>
-        <div class="info-hero-title">¡Muévete<br>con <span style="color:var(--o)">SITT</span>!</div>
+        <div class="info-hero-tag" id="txtInfoHeroTag">Transporte seguro, accesible y eficiente</div>
+        <div class="info-hero-title" id="txtInfoHeroTitle">¡Muévete<br>con <span style="color:var(--o)">SITT</span>!</div>
       </div>
     </div>
 
@@ -348,38 +358,38 @@
       <div class="reveal tarifas-card">
         <div class="tarifas-shine"></div>
         <div style="font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--o);margin-bottom:18px;text-align:center;position:relative;display:flex;align-items:center;justify-content:center;gap:8px">
-          <span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>💳 Tarifas de servicio<span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>
+          <span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>💳 <span id="txtTarifasServicio">Tarifas de servicio</span><span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;position:relative">
           <div class="tarifa-box">
             <div class="tarifa-badge">👤</div>
-            <div style="font-size:11.5px;font-weight:800;opacity:.85;margin:8px 0 4px;letter-spacing:.05em">TARIFA GENERAL</div>
+            <div style="font-size:11.5px;font-weight:800;opacity:.85;margin:8px 0 4px;letter-spacing:.05em" id="txtTarifaGeneral">TARIFA GENERAL</div>
             <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 16px rgba(201,168,76,.5)">$14</div>
             <div style="font-size:11.5px;opacity:.6;margin-top:3px">pesos</div>
           </div>
           <div class="tarifa-box pref">
             <div class="tarifa-badge gold">⭐</div>
-            <div style="font-size:11.5px;font-weight:800;color:var(--o);margin:8px 0 4px;letter-spacing:.05em">TARIFA PREFERENTE</div>
+            <div style="font-size:11.5px;font-weight:800;color:var(--o);margin:8px 0 4px;letter-spacing:.05em" id="txtTarifaPreferente">TARIFA PREFERENTE</div>
             <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 16px rgba(201,168,76,.5)">$7</div>
             <div style="font-size:11.5px;opacity:.6;margin-top:3px">pesos</div>
           </div>
         </div>
 
         <div style="border-top:1px solid rgba(201,168,76,.25);padding-top:14px;margin-bottom:14px;position:relative">
-          <div style="font-size:10.5px;opacity:.7;text-align:center;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase">¿Quién paga $7? — Con credencial vigente en mano</div>
+          <div style="font-size:10.5px;opacity:.7;text-align:center;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase" id="txtQuienPaga">¿Quién paga $7? — Con credencial vigente en mano</div>
           <div style="display:flex;justify-content:space-around;gap:8px">
             <div style="text-align:center;flex:1">
               <div class="quien-badge">🎓</div>
-              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Estudiantes</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px" id="txtEstudiantes2">Estudiantes</div>
             </div>
             <div style="text-align:center;flex:1">
               <div class="quien-badge">👴</div>
-              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Adultos mayores</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px" id="txtAdultosMayores2">Adultos mayores</div>
             </div>
             <div style="text-align:center;flex:1">
               <div class="quien-badge">♿</div>
-              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Discapacidad</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px" id="txtDiscapacidad2">Discapacidad</div>
             </div>
           </div>
         </div>
@@ -387,7 +397,7 @@
         <div style="background:rgba(0,0,0,.18);border-radius:14px;padding:14px;border:1px solid rgba(201,168,76,.3);position:relative">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
             <div class="quien-badge gold" style="width:44px;height:44px;font-size:22px">🪙</div>
-            <span style="font-size:12.5px;font-weight:700;line-height:1.5">Pago exacto en monedas<br><span style="font-weight:400;opacity:.75">No se aceptan billetes · No se da cambio</span></span>
+            <span style="font-size:12.5px;font-weight:700;line-height:1.5" id="txtPagoExacto">Pago exacto en monedas<br><span style="font-weight:400;opacity:.75" id="txtNoBilletes">No se aceptan billetes · No se da cambio</span></span>
           </div>
           <div style="display:flex;gap:9px;justify-content:center">
             <span class="coin-chip">$1</span><span class="coin-chip">$2</span><span class="coin-chip">$5</span><span class="coin-chip">$10</span>
@@ -397,65 +407,65 @@
 
       <!-- Accesibilidad -->
       <div class="sec reveal">
-        <div class="stit">♿ Un transporte para todos</div>
+        <div class="stit" id="txtTransporteTodos">♿ Un transporte para todos</div>
         <div class="acc-grid">
           <div class="acc-card">
             <div class="acc-ico">🚌</div>
-            <div class="acc-tit">Mayor capacidad</div>
-            <div class="acc-txt">Unidades grandes para mover a más personas</div>
+            <div class="acc-tit" id="txtMayorCapacidad">Mayor capacidad</div>
+            <div class="acc-txt" id="txtMayorCapacidadTxt">Unidades grandes para mover a más personas</div>
           </div>
           <div class="acc-card">
             <div class="acc-ico">♿</div>
-            <div class="acc-tit">Accesibilidad universal</div>
-            <div class="acc-txt">Diseñado para personas con discapacidad, adultos mayores y todos los usuarios</div>
+            <div class="acc-tit" id="txtAccUniversal">Accesibilidad universal</div>
+            <div class="acc-txt" id="txtAccUniversalTxt">Diseñado para personas con discapacidad, adultos mayores y todos los usuarios</div>
           </div>
           <div class="acc-card">
             <div class="acc-ico">🎓</div>
-            <div class="acc-tit">Tarifa preferente</div>
-            <div class="acc-txt">Beneficios especiales para estudiantes, adultos mayores y personas con discapacidad</div>
+            <div class="acc-tit" id="txtTarifaPref">Tarifa preferente</div>
+            <div class="acc-txt" id="txtTarifaPrefTxt">Beneficios especiales para estudiantes, adultos mayores y personas con discapacidad</div>
           </div>
           <div class="acc-card">
             <div class="acc-ico">🛡️</div>
-            <div class="acc-tit">Seguridad y comodidad</div>
-            <div class="acc-txt">Choferes capacitados, unidades modernas y viajes más seguros</div>
+            <div class="acc-tit" id="txtSegComodidad">Seguridad y comodidad</div>
+            <div class="acc-txt" id="txtSegComodidadTxt">Choferes capacitados, unidades modernas y viajes más seguros</div>
           </div>
         </div>
       </div>
 
       <!-- Info Terminal -->
       <div class="sec reveal">
-        <div class="stit">🏁 Punto de salida</div>
+        <div class="stit" id="txtPuntoSalida">🏁 Punto de salida</div>
         <div style="display:flex;align-items:center;gap:10px">
           <div style="font-size:28px">🚌</div>
           <div>
-            <div style="font-size:14px;font-weight:700;color:var(--g)">Terminal Insurgentes</div>
+            <div style="font-size:14px;font-weight:700;color:var(--g)" id="txtTerminalIns">Terminal Insurgentes</div>
             <div style="font-size:12px;color:var(--t2);margin-top:2px">Blvd. Insurgentes s/n · Col. Azteca · C.P. 2224 · Tijuana, B.C.</div>
           </div>
         </div>
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-          <span style="background:var(--vl);color:#0F6E56;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:600">Primera: 6:00 a.m.</span>
-          <span style="background:var(--gl);color:var(--g);font-size:12px;padding:3px 10px;border-radius:20px;font-weight:600">Última: 6:30 p.m.</span>
-          <span style="background:var(--gr);color:var(--t2);font-size:12px;padding:3px 10px;border-radius:20px">12 salidas al día</span>
+          <span style="background:var(--vl);color:#0F6E56;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:600" id="txtPrimeraSal">Primera: 6:00 a.m.</span>
+          <span style="background:var(--gl);color:var(--g);font-size:12px;padding:3px 10px;border-radius:20px;font-weight:600" id="txtUltimaSal">Última: 6:30 p.m.</span>
+          <span style="background:var(--gr);color:var(--t2);font-size:12px;padding:3px 10px;border-radius:20px" id="txt12Salidas">12 salidas al día</span>
         </div>
       </div>
 
       <!-- Horarios de referencia -->
       <div class="sec reveal">
-        <div class="stit">🕐 Horarios de salida — Lunes a Sábado</div>
-        <div style="font-size:11px;color:var(--t2);margin-bottom:10px">*Todos los horarios son de salida en Terminal Insurgentes</div>
-        <div class="tg-label">🌅 Matutino</div>
+        <div class="stit" id="txtHorariosSalidaTit">🕐 Horarios de salida — Lunes a Sábado</div>
+        <div style="font-size:11px;color:var(--t2);margin-bottom:10px" id="txtTodosHorarios">*Todos los horarios son de salida en Terminal Insurgentes</div>
+        <div class="tg-label" id="txtMatutino2">🌅 Matutino</div>
         <div class="ref-grid">
           <span class="ref-chip am">6:00 a.m.</span><span class="ref-chip am">7:00 a.m.</span>
           <span class="ref-chip am">8:00 a.m.</span><span class="ref-chip am">9:00 a.m.</span>
           <span class="ref-chip am">10:00 a.m.</span><span class="ref-chip am">11:00 a.m.</span>
         </div>
-        <div class="tg-label" style="margin-top:12px">🌇 Vespertino</div>
+        <div class="tg-label" style="margin-top:12px" id="txtVespertino2">🌇 Vespertino</div>
         <div class="ref-grid">
           <span class="ref-chip pm">12:00 p.m.</span><span class="ref-chip pm">1:00 p.m.</span>
           <span class="ref-chip pm">2:30 p.m.</span><span class="ref-chip pm">4:00 p.m.</span>
           <span class="ref-chip pm">5:00 p.m.</span><span class="ref-chip pm">6:30 p.m.</span>
         </div>
-        <button class="shine-btn" style="width:100%;background-color:var(--g);margin-top:14px" onclick="openSection('mapa');setTimeout(()=>{const t=document.querySelectorAll('.mtab')[3];if(t)mapaSwitchTab(3,t);},650)">
+        <button class="shine-btn" style="width:100%;background-color:var(--g);margin-top:14px" onclick="openSection('mapa');setTimeout(()=>{const t=document.querySelectorAll('.mtab')[3];if(t)mapaSwitchTab(3,t);},650)" id="txtVerHorariosVivo">
           🗺️ Ver horarios en vivo en el mapa
         </button>
       </div>
@@ -464,57 +474,57 @@
       <div style="background:#fff;border-radius:var(--r);border:2px solid #E8630A;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px" class="reveal">
         <div style="font-size:40px;flex-shrink:0">🟠</div>
         <div>
-          <div style="font-size:14px;font-weight:800;color:#E8630A;margin-bottom:3px">El SITT es Punto Naranja</div>
-          <div style="font-size:12px;color:#555;line-height:1.5">La <b>Terminal Insurgentes</b> es un espacio seguro. En caso de emergencia, acude al <b>edificio SITT</b>.</div>
-          <div style="margin-top:6px;font-size:11px;font-weight:700;color:#E8630A">El Punto es que estemos todas seguras 🧡</div>
+          <div style="font-size:14px;font-weight:800;color:#E8630A;margin-bottom:3px" id="txtPuntoNaranjaTit">El SITT es Punto Naranja</div>
+          <div style="font-size:12px;color:#555;line-height:1.5" id="txtPuntoNaranjaTxt">La <b>Terminal Insurgentes</b> es un espacio seguro. En caso de emergencia, acude al <b>edificio SITT</b>.</div>
+          <div style="margin-top:6px;font-size:11px;font-weight:700;color:#E8630A" id="txtPuntoNaranjaFrase">El Punto es que estemos todas seguras 🧡</div>
         </div>
       </div>
 
       <!-- Tips de seguridad -->
       <div class="sec reveal">
-        <div class="stit">🛡️ Tips de seguridad en el transporte público</div>
+        <div class="stit" id="txtTipsSeg">🛡️ Tips de seguridad en el transporte público</div>
         <div class="tip-row">
           <div class="tip-ico">💰</div>
-          <div class="tip-txt">Ten listo el dinero exacto para el pago antes de subir</div>
+          <div class="tip-txt" id="txtTip1">Ten listo el dinero exacto para el pago antes de subir</div>
         </div>
         <div class="tip-row">
           <div class="tip-ico">🚶</div>
-          <div class="tip-txt">Al caminar hacia la parada, hazlo de preferencia por calles transitadas</div>
+          <div class="tip-txt" id="txtTip2">Al caminar hacia la parada, hazlo de preferencia por calles transitadas</div>
         </div>
         <div class="tip-row">
           <div class="tip-ico">🎒</div>
-          <div class="tip-txt">Mantente atento a tus pertenencias; lleva tu bolsa o mochila al frente</div>
+          <div class="tip-txt" id="txtTip3">Mantente atento a tus pertenencias; lleva tu bolsa o mochila al frente</div>
         </div>
       </div>
 
       <!-- Contacto -->
       <div class="sec reveal">
-        <div class="stit">📞 Atención al usuario</div>
+        <div class="stit" id="txtAtencionUsuario">📞 Atención al usuario</div>
         <a href="tel:6649766376" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;margin-bottom:10px">
           <div style="width:42px;height:42px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">📞</div>
           <div>
             <div style="font-size:15px;font-weight:800;color:var(--g)">664 976 6376</div>
-            <div style="font-size:11.5px;color:var(--t2)">Lunes a viernes · 8:00 a.m. a 5:00 p.m.</div>
+            <div style="font-size:11.5px;color:var(--t2)" id="txtLunesViernes">Lunes a viernes · 8:00 a.m. a 5:00 p.m.</div>
           </div>
         </a>
         <div style="display:flex;align-items:center;gap:12px">
           <div style="width:42px;height:42px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">📍</div>
-          <div style="font-size:12.5px;color:#555;line-height:1.5">Blvd. Insurgentes s/n, Colonia Azteca<br>C.P. 2224, Tijuana, B.C.</div>
+          <div style="font-size:12.5px;color:#555;line-height:1.5" id="txtDireccionCompleta">Blvd. Insurgentes s/n, Colonia Azteca<br>C.P. 2224, Tijuana, B.C.</div>
         </div>
       </div>
 
       <!-- Enlaces oficiales -->
       <div class="sec reveal">
-        <div class="stit">🔗 Conoce más sobre el SITT</div>
+        <div class="stit" id="txtConoceMas">🔗 Conoce más sobre el SITT</div>
         <a href="https://sitt.tijuana.gob.mx/" target="_blank" rel="noopener" class="cll-card">
           <div class="cll-ico" style="background:var(--g)">🌐</div>
-          <div class="cll-info"><div class="cll-title">Página oficial</div><div class="cll-note">sitt.tijuana.gob.mx</div></div>
-          <span class="cll-go">Abrir ›</span>
+          <div class="cll-info"><div class="cll-title" id="txtPaginaOficial">Página oficial</div><div class="cll-note">sitt.tijuana.gob.mx</div></div>
+          <span class="cll-go" id="txtAbrir1">Abrir ›</span>
         </a>
         <a href="https://www.facebook.com/SITT.mx" target="_blank" rel="noopener" class="cll-card">
           <div class="cll-ico" style="background:#1877F2">📘</div>
-          <div class="cll-info"><div class="cll-title">Facebook</div><div class="cll-note">Noticias y avisos del servicio</div></div>
-          <span class="cll-go">Abrir ›</span>
+          <div class="cll-info"><div class="cll-title">Facebook</div><div class="cll-note" id="txtNoticiasAvisos">Noticias y avisos del servicio</div></div>
+          <span class="cll-go" id="txtAbrir2">Abrir ›</span>
         </a>
       </div>
 
@@ -539,59 +549,59 @@
             <span style="font-size:32px;animation:bounce 2s ease-in-out infinite .45s">⭐</span>
             <span style="font-size:32px;animation:bounce 2s ease-in-out infinite .6s">⭐</span>
           </div>
-          <div style="font-size:22px;font-weight:900;margin-bottom:6px;animation:fadeUp .6s ease both">¡Tu opinión importa!</div>
-          <div style="font-size:13px;opacity:.8;line-height:1.6;animation:fadeUp .6s ease .1s both">Califica el servicio del SITT y ayúdanos<br>a mejorar el transporte de Tijuana</div>
+          <div style="font-size:22px;font-weight:900;margin-bottom:6px;animation:fadeUp .6s ease both" id="txtEncHero1">¡Tu opinión importa!</div>
+          <div style="font-size:13px;opacity:.8;line-height:1.6;animation:fadeUp .6s ease .1s both" id="txtEncHero2">Califica el servicio del SITT y ayúdanos<br>a mejorar el transporte de Tijuana</div>
         </div>
       </div>
 
       <div class="enc">
         <div id="encForm">
           <div style="margin-bottom:12px">
-            <div style="font-size:16px;font-weight:700;margin-bottom:3px">📋 Encuesta de satisfacción</div>
-            <div style="font-size:12px;opacity:.75">Tu opinión mejora el transporte de Tijuana.</div>
+            <div style="font-size:16px;font-weight:700;margin-bottom:3px" id="txtEncTit">📋 Encuesta de satisfacción</div>
+            <div style="font-size:12px;opacity:.75" id="txtEncSub2">Tu opinión mejora el transporte de Tijuana.</div>
           </div>
           <div style="margin-bottom:12px">
-            <div style="font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">👤 Género</div>
+            <div style="font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px" id="txtGenero">👤 Género</div>
             <div style="display:flex;gap:10px">
               <label style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:20px;padding:8px 16px;cursor:pointer;flex:1;justify-content:center">
                 <input type="radio" name="genero" value="Hombre" id="genH" style="accent-color:var(--o);width:16px;height:16px">
-                <span style="font-size:14px;font-weight:600">👨 Hombre</span>
+                <span style="font-size:14px;font-weight:600" id="txtHombre">👨 Hombre</span>
               </label>
               <label style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);border-radius:20px;padding:8px 16px;cursor:pointer;flex:1;justify-content:center">
                 <input type="radio" name="genero" value="Mujer" id="genM" style="accent-color:var(--o);width:16px;height:16px">
-                <span style="font-size:14px;font-weight:600">👩 Mujer</span>
+                <span style="font-size:14px;font-weight:600" id="txtMujer">👩 Mujer</span>
               </label>
             </div>
           </div>
           <div class="encc" style="gap:10px">
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite">⭐</div>
-              <div class="enctl" style="margin-bottom:6px">Satisfacción</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtSatisfaccion">Satisfacción</div>
               <div class="encst" id="ct0" style="justify-content:center"></div>
             </div>
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite .2s">💺</div>
-              <div class="enctl" style="margin-bottom:6px">Comodidad</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtComodidad">Comodidad</div>
               <div class="encst" id="ct1" style="justify-content:center"></div>
             </div>
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite .4s">😊</div>
-              <div class="enctl" style="margin-bottom:6px">Trato</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtTrato">Trato</div>
               <div class="encst" id="ct2" style="justify-content:center"></div>
             </div>
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite .6s">🧹</div>
-              <div class="enctl" style="margin-bottom:6px">Limpieza</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtLimpieza">Limpieza</div>
               <div class="encst" id="ct3" style="justify-content:center"></div>
             </div>
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite .8s">⚡</div>
-              <div class="enctl" style="margin-bottom:6px">Rapidez</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtRapidez">Rapidez</div>
               <div class="encst" id="ct4" style="justify-content:center"></div>
             </div>
             <div class="enct" style="border-radius:12px;padding:10px 8px;text-align:center">
               <div style="font-size:22px;margin-bottom:4px;animation:bounce 3s ease-in-out infinite 1s">♿</div>
-              <div class="enctl" style="margin-bottom:6px">Accesibilidad</div>
+              <div class="enctl" style="margin-bottom:6px" id="txtAccesibilidadEnc">Accesibilidad</div>
               <div class="encst" id="ct5" style="justify-content:center"></div>
             </div>
           </div>
@@ -599,23 +609,23 @@
           <div class="encf">
             <div class="encqw" onclick="toggleMenu('qrEncMenu')">
               <img src="qr-encuesta.jpg" id="qrEncImg" class="encqi" alt="QR Encuesta">
-              <div class="encqt"><strong>Escanea el QR</strong>para la encuesta oficial.<div style="margin-top:4px;font-size:10px;opacity:.7">👆 Toca para compartir</div></div>
+              <div class="encqt"><strong>Escanea el QR</strong><span id="txtEscaneaQR">para la encuesta oficial.</span><div style="margin-top:4px;font-size:10px;opacity:.7" id="txtTocaCompartir">👆 Toca para compartir</div></div>
             </div>
             <div>
               <div id="qrEncMenu" style="display:none;margin-bottom:7px">
                 <div style="display:flex;gap:7px">
-                  <button onclick="compartirEnc()" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:7px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer">📤 Compartir</button>
-                  <button onclick="guardarQREnc()" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:7px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer">💾 Guardar</button>
+                  <button onclick="compartirEnc()" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:7px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer" id="txtCompartir1">📤 Compartir</button>
+                  <button onclick="guardarQREnc()" style="flex:1;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:7px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer" id="txtGuardar1">💾 Guardar</button>
                 </div>
               </div>
-              <button class="encbtn" onclick="enviarEnc()">Enviar opinión ✓</button>
+              <button class="encbtn" onclick="enviarEnc()" id="txtEnviarOpinion">Enviar opinión ✓</button>
             </div>
           </div>
         </div>
         <div class="encgr" id="encGr" style="padding:20px 10px">
           <div style="font-size:50px;animation:bounce 1s ease-in-out 3">🙌</div>
-          <div style="font-size:22px;font-weight:900;color:var(--o);margin:10px 0 6px;animation:fadeUp .5s ease both">¡Gracias por tu opinión!</div>
-          <div style="font-size:13px;opacity:.8;margin-bottom:16px;line-height:1.6">Juntos construimos un mejor<br>transporte para Tijuana 🚌</div>
+          <div style="font-size:22px;font-weight:900;color:var(--o);margin:10px 0 6px;animation:fadeUp .5s ease both" id="txtGraciasOpinion">¡Gracias por tu opinión!</div>
+          <div style="font-size:13px;opacity:.8;margin-bottom:16px;line-height:1.6" id="txtJuntosConstruimos">Juntos construimos un mejor<br>transporte para Tijuana 🚌</div>
           <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px">
             <span style="font-size:24px;animation:bounce 1.5s ease-in-out infinite">⭐</span>
             <span style="font-size:24px;animation:bounce 1.5s ease-in-out infinite .1s">⭐</span>
@@ -623,7 +633,7 @@
             <span style="font-size:24px;animation:bounce 1.5s ease-in-out infinite .3s">⭐</span>
             <span style="font-size:24px;animation:bounce 1.5s ease-in-out infinite .4s">⭐</span>
           </div>
-          <a href="https://forms.gle/7oH2N7veHtkUmhsBA" target="_blank" style="display:inline-block;background:rgba(255,255,255,.15);color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.4);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600">
+          <a href="https://forms.gle/7oH2N7veHtkUmhsBA" target="_blank" style="display:inline-block;background:rgba(255,255,255,.15);color:#fff;text-decoration:none;border:1.5px solid rgba(255,255,255,.4);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:600" id="txtIrEncuestaOficial">
             📋 Ir a la encuesta oficial completa del SITT
           </a>
         </div>
@@ -642,21 +652,21 @@
         <div style="position:absolute;bottom:-30px;left:-10px;width:80px;height:80px;border-radius:50%;background:rgba(201,168,76,.08);animation:float 5s ease-in-out infinite .5s"></div>
         <div style="position:relative;z-index:1">
           <div style="font-size:48px;margin-bottom:10px;animation:bounce 2s ease-in-out infinite">📱</div>
-          <div style="font-size:20px;font-weight:900;margin-bottom:6px">¡Comparte la app!</div>
-          <div style="font-size:13px;opacity:.8;line-height:1.6;margin-bottom:16px">Ayuda a más personas a saber cuándo viene el camión de la Ruta T101</div>
+          <div style="font-size:20px;font-weight:900;margin-bottom:6px" id="txtComparteApp">¡Comparte la app!</div>
+          <div style="font-size:13px;opacity:.8;line-height:1.6;margin-bottom:16px" id="txtAyudaMasPersonas">Ayuda a más personas a saber cuándo viene el camión de la Ruta T101</div>
           <!-- QR -->
           <div style="display:inline-block;background:#fff;border-radius:14px;padding:10px;margin-bottom:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);cursor:pointer;animation:glow 3s ease-in-out infinite" onclick="toggleMenu('qrAppMenu')">
             <img src="qr-app.jpg" id="qrAppImg" style="width:110px;height:110px;border-radius:8px;display:block" alt="QR App">
           </div>
-          <div style="font-size:11px;opacity:.6;margin-bottom:14px">👆 Toca el QR para compartir o guardar</div>
+          <div style="font-size:11px;opacity:.6;margin-bottom:14px" id="txtTocaQR">👆 Toca el QR para compartir o guardar</div>
           <!-- Botones compartir -->
           <div id="qrAppMenu" style="display:none;margin-bottom:14px;animation:fadeUp .3s ease">
             <div style="display:flex;gap:8px;justify-content:center">
-              <button onclick="compartirApp()" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)">📤 Compartir link</button>
-              <button onclick="guardarQRApp()" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)">💾 Guardar QR</button>
+              <button onclick="compartirApp()" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)" id="txtCompartirLink">📤 Compartir link</button>
+              <button onclick="guardarQRApp()" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)" id="txtGuardarQR">💾 Guardar QR</button>
             </div>
           </div>
-          <button onclick="compartirApp()" style="background:var(--o);color:#1a0a00;border:none;padding:13px 28px;border-radius:24px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(201,168,76,.4);animation:pulse 3s ease-in-out infinite">
+          <button onclick="compartirApp()" style="background:var(--o);color:#1a0a00;border:none;padding:13px 28px;border-radius:24px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(201,168,76,.4);animation:pulse 3s ease-in-out infinite" id="txtCompartirContactos">
             📤 Compartir con mis contactos
           </button>
         </div>
@@ -667,21 +677,21 @@
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <span style="font-size:28px;animation:bounce 3s ease-in-out infinite">💡</span>
           <div>
-            <div style="font-size:16px;font-weight:800;color:var(--g)">¿Tienes una idea o sugerencia?</div>
-            <div style="font-size:12px;color:var(--t2);margin-top:2px">Tu opinión nos ayuda a mejorar el servicio para todos</div>
+            <div style="font-size:16px;font-weight:800;color:var(--g)" id="txtIdeaSugerencia">¿Tienes una idea o sugerencia?</div>
+            <div style="font-size:12px;color:var(--t2);margin-top:2px" id="txtOpinionAyuda">Tu opinión nos ayuda a mejorar el servicio para todos</div>
           </div>
         </div>
 
         <!-- Tipo de sugerencia -->
         <div style="margin:14px 0 10px">
-          <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">¿Sobre qué es tu sugerencia?</div>
+          <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px" id="txtSobreQueEs">¿Sobre qué es tu sugerencia?</div>
           <div style="display:flex;flex-wrap:wrap;gap:7px" id="tiposBtns">
-            <button onclick="selTipo(this,'Horarios')" class="tipo-btn">🕐 Horarios</button>
-            <button onclick="selTipo(this,'Rutas')" class="tipo-btn">🗺️ Rutas</button>
-            <button onclick="selTipo(this,'Camiones')" class="tipo-btn">🚌 Camiones</button>
-            <button onclick="selTipo(this,'Atención')" class="tipo-btn">😊 Atención</button>
+            <button onclick="selTipo(this,'Horarios')" class="tipo-btn" id="txtTipoHorarios">🕐 Horarios</button>
+            <button onclick="selTipo(this,'Rutas')" class="tipo-btn" id="txtTipoRutas">🗺️ Rutas</button>
+            <button onclick="selTipo(this,'Camiones')" class="tipo-btn" id="txtTipoCamiones">🚌 Camiones</button>
+            <button onclick="selTipo(this,'Atención')" class="tipo-btn" id="txtTipoAtencion">😊 Atención</button>
             <button onclick="selTipo(this,'App')" class="tipo-btn">📱 App</button>
-            <button onclick="selTipo(this,'Otro')" class="tipo-btn">✏️ Otro</button>
+            <button onclick="selTipo(this,'Otro')" class="tipo-btn" id="txtTipoOtro">✏️ Otro</button>
           </div>
         </div>
 
@@ -689,19 +699,19 @@
 
         <div style="display:flex;gap:8px;margin-top:12px">
           <button onclick="enviarSheets()" id="btnSheets" style="flex:1;background:var(--g);color:#fff;border:none;border-radius:12px;padding:12px 10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(123,29,29,.3);display:flex;align-items:center;justify-content:center;gap:6px">
-            📊 Enviar
+            <span id="txtEnviar">📊 Enviar</span>
           </button>
           <button onclick="enviarWSP()" id="btnWSP" style="flex:1;background:#25D366;color:#fff;border:none;border-radius:12px;padding:12px 10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(37,211,102,.3);display:flex;align-items:center;justify-content:center;gap:6px">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L0 24l6.318-1.508A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.88 0-3.64-.49-5.16-1.345l-.37-.22-3.75.895.924-3.653-.242-.38A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-            Enviar por WhatsApp
+            <span id="txtEnviarWSP">Enviar por WhatsApp</span>
           </button>
         </div>
 
         <!-- Confirmación -->
         <div id="sugConfirm" style="display:none;margin-top:12px;background:#E8F8F0;border-radius:10px;padding:12px;text-align:center;animation:fadeUp .4s ease">
           <div style="font-size:22px;margin-bottom:4px">✅</div>
-          <div style="font-size:14px;font-weight:700;color:#0F6E56">¡Gracias por tu sugerencia!</div>
-          <div style="font-size:12px;color:#555;margin-top:2px">La tomamos en cuenta para mejorar el servicio</div>
+          <div style="font-size:14px;font-weight:700;color:#0F6E56" id="txtGraciasSugerencia">¡Gracias por tu sugerencia!</div>
+          <div style="font-size:12px;color:#555;margin-top:2px" id="txtTomamosEnCuenta">La tomamos en cuenta para mejorar el servicio</div>
         </div>
       </div>
 
@@ -710,17 +720,17 @@
         <div style="background:#fff;border-radius:14px;padding:14px 10px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07)">
           <div style="font-size:28px;animation:bounce 2.5s ease-in-out infinite">🚌</div>
           <div style="font-size:18px;font-weight:900;color:var(--g);margin-top:4px">2</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:2px">Unidades</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px" id="txtStatUnidades">Unidades</div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:14px 10px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07)">
           <div style="font-size:28px;animation:bounce 2.5s ease-in-out infinite .3s">📍</div>
           <div style="font-size:18px;font-weight:900;color:var(--g);margin-top:4px">43</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:2px">Paradas</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px" id="txtStatParadas">Paradas</div>
         </div>
         <div style="background:#fff;border-radius:14px;padding:14px 10px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.07)">
           <div style="font-size:28px;animation:bounce 2.5s ease-in-out infinite .6s">🗓️</div>
           <div style="font-size:18px;font-weight:900;color:var(--g);margin-top:4px">6</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:2px">Días/semana</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:2px" id="txtStatDias">Días/semana</div>
         </div>
       </div>
 

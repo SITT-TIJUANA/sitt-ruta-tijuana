@@ -581,19 +581,28 @@ const capaCalles=L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/
   maxZoom:20,
   minZoom:10
 }).addTo(map);
+const capaCallesOscura=L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',{
+  attribution:'© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom:20,
+  minZoom:10
+});
 const capaSatelite=L.layerGroup([
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,minZoom:10,attribution:'© Esri'}),
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,minZoom:10})
 ]);
+function capaCallesActiva(){
+  return (localStorage.getItem('sittDark')==='1')?capaCallesOscura:capaCalles;
+}
 function toggleCapaMapa(){
   const btn=document.getElementById('fabCapa');
-  if(map.hasLayer(capaCalles)){
-    map.removeLayer(capaCalles);
+  const calles=capaCallesActiva();
+  if(map.hasLayer(calles)){
+    map.removeLayer(calles);
     capaSatelite.addTo(map);
     if(btn)btn.classList.add('mfab-activo');
   }else{
     map.removeLayer(capaSatelite);
-    capaCalles.addTo(map);
+    calles.addTo(map);
     if(btn)btn.classList.remove('mfab-activo');
   }
 }
@@ -1436,12 +1445,25 @@ function toggleDarkMode(){
   localStorage.setItem('sittDark',on?'1':'0');
   const btn=document.getElementById('darkToggleBtn');
   if(btn)btn.textContent=on?'☀️':'🌙';
+  if(typeof map!=='undefined'){
+    if(on&&map.hasLayer(capaCalles)){
+      map.removeLayer(capaCalles);
+      capaCallesOscura.addTo(map);
+    }else if(!on&&map.hasLayer(capaCallesOscura)){
+      map.removeLayer(capaCallesOscura);
+      capaCalles.addTo(map);
+    }
+  }
 }
 (function initDarkMode(){
   if(localStorage.getItem('sittDark')==='1'){
     document.body.classList.add('dark');
     const btn=document.getElementById('darkToggleBtn');
     if(btn)btn.textContent='☀️';
+    if(typeof map!=='undefined'&&map.hasLayer(capaCalles)){
+      map.removeLayer(capaCalles);
+      capaCallesOscura.addTo(map);
+    }
   }
 })();
 
@@ -1677,7 +1699,94 @@ const IDIOMA_TXT={
     txtMasInfo2:'ℹ️ Más información del servicio SITT',
     txtRutaCompleta:'🗺️ Ruta completa',
     txtVerGrande:'⛶ Ver en grande',
-    txtEstaciones:'📍 Estaciones (43)'
+    txtEstaciones:'📍 Estaciones (43)',
+    txtEncHero1:'¡Tu opinión importa!',
+    txtEncHero2:'Califica el servicio del SITT y ayúdanos<br>a mejorar el transporte de Tijuana',
+    txtEncTit:'📋 Encuesta de satisfacción',
+    txtEncSub2:'Tu opinión mejora el transporte de Tijuana.',
+    txtGenero:'👤 Género',
+    txtHombre:'👨 Hombre',
+    txtMujer:'👩 Mujer',
+    txtSatisfaccion:'Satisfacción',
+    txtComodidad:'Comodidad',
+    txtTrato:'Trato',
+    txtLimpieza:'Limpieza',
+    txtRapidez:'Rapidez',
+    txtAccesibilidadEnc:'Accesibilidad',
+    txtEscaneaQR:'para la encuesta oficial.',
+    txtTocaCompartir:'👆 Toca para compartir',
+    txtCompartir1:'📤 Compartir',
+    txtGuardar1:'💾 Guardar',
+    txtEnviarOpinion:'Enviar opinión ✓',
+    txtGraciasOpinion:'¡Gracias por tu opinión!',
+    txtJuntosConstruimos:'Juntos construimos un mejor<br>transporte para Tijuana 🚌',
+    txtIrEncuestaOficial:'📋 Ir a la encuesta oficial completa del SITT',
+    txtComparteApp:'¡Comparte la app!',
+    txtAyudaMasPersonas:'Ayuda a más personas a saber cuándo viene el camión de la Ruta T101',
+    txtTocaQR:'👆 Toca el QR para compartir o guardar',
+    txtCompartirLink:'📤 Compartir link',
+    txtGuardarQR:'💾 Guardar QR',
+    txtCompartirContactos:'📤 Compartir con mis contactos',
+    txtIdeaSugerencia:'¿Tienes una idea o sugerencia?',
+    txtOpinionAyuda:'Tu opinión nos ayuda a mejorar el servicio para todos',
+    txtSobreQueEs:'¿Sobre qué es tu sugerencia?',
+    txtTipoHorarios:'🕐 Horarios',
+    txtTipoRutas:'🗺️ Rutas',
+    txtTipoCamiones:'🚌 Camiones',
+    txtTipoAtencion:'😊 Atención',
+    txtTipoOtro:'✏️ Otro',
+    txtEnviar:'📊 Enviar',
+    txtEnviarWSP:'Enviar por WhatsApp',
+    txtGraciasSugerencia:'¡Gracias por tu sugerencia!',
+    txtTomamosEnCuenta:'La tomamos en cuenta para mejorar el servicio',
+    txtStatUnidades:'Unidades',
+    txtStatParadas:'Paradas',
+    txtStatDias:'Días/semana',
+    txtInfoHeroTag:'Transporte seguro, accesible y eficiente',
+    txtInfoHeroTitle:'¡Muévete<br>con <span style="color:var(--o)">SITT</span>!',
+    txtTransporteTodos:'♿ Un transporte para todos',
+    txtMayorCapacidad:'Mayor capacidad',
+    txtMayorCapacidadTxt:'Unidades grandes para mover a más personas',
+    txtAccUniversal:'Accesibilidad universal',
+    txtAccUniversalTxt:'Diseñado para personas con discapacidad, adultos mayores y todos los usuarios',
+    txtTarifaPref:'Tarifa preferente',
+    txtTarifaPrefTxt:'Beneficios especiales para estudiantes, adultos mayores y personas con discapacidad',
+    txtSegComodidad:'Seguridad y comodidad',
+    txtSegComodidadTxt:'Choferes capacitados, unidades modernas y viajes más seguros',
+    txtPuntoSalida:'🏁 Punto de salida',
+    txtTerminalIns:'Terminal Insurgentes',
+    txtPrimeraSal:'Primera: 6:00 a.m.',
+    txtUltimaSal:'Última: 6:30 p.m.',
+    txt12Salidas:'12 salidas al día',
+    txtHorariosSalidaTit:'🕐 Horarios de salida — Lunes a Sábado',
+    txtTodosHorarios:'*Todos los horarios son de salida en Terminal Insurgentes',
+    txtMatutino2:'🌅 Matutino',
+    txtVespertino2:'🌇 Vespertino',
+    txtVerHorariosVivo:'🗺️ Ver horarios en vivo en el mapa',
+    txtPuntoNaranjaTit:'El SITT es Punto Naranja',
+    txtPuntoNaranjaTxt:'La <b>Terminal Insurgentes</b> es un espacio seguro. En caso de emergencia, acude al <b>edificio SITT</b>.',
+    txtPuntoNaranjaFrase:'El Punto es que estemos todas seguras 🧡',
+    txtTipsSeg:'🛡️ Tips de seguridad en el transporte público',
+    txtTip1:'Ten listo el dinero exacto para el pago antes de subir',
+    txtTip2:'Al caminar hacia la parada, hazlo de preferencia por calles transitadas',
+    txtTip3:'Mantente atento a tus pertenencias; lleva tu bolsa o mochila al frente',
+    txtAtencionUsuario:'📞 Atención al usuario',
+    txtLunesViernes:'Lunes a viernes · 8:00 a.m. a 5:00 p.m.',
+    txtDireccionCompleta:'Blvd. Insurgentes s/n, Colonia Azteca<br>C.P. 2224, Tijuana, B.C.',
+    txtConoceMas:'🔗 Conoce más sobre el SITT',
+    txtPaginaOficial:'Página oficial',
+    txtAbrir1:'Abrir ›',
+    txtNoticiasAvisos:'Noticias y avisos del servicio',
+    txtAbrir2:'Abrir ›',
+    txtTarifasServicio:'Tarifas de servicio',
+    txtTarifaGeneral:'TARIFA GENERAL',
+    txtTarifaPreferente:'TARIFA PREFERENTE',
+    txtQuienPaga:'¿Quién paga $7? — Con credencial vigente en mano',
+    txtEstudiantes2:'Estudiantes',
+    txtAdultosMayores2:'Adultos mayores',
+    txtDiscapacidad2:'Discapacidad',
+    txtPagoExacto:'Pago exacto en monedas',
+    txtNoBilletes:'No se aceptan billetes · No se da cambio'
   },
   en:{
     txtServicio:'Official Trunk Route',
@@ -1734,7 +1843,94 @@ const IDIOMA_TXT={
     txtMasInfo2:'ℹ️ More about the SITT service',
     txtRutaCompleta:'🗺️ Full route',
     txtVerGrande:'⛶ View full size',
-    txtEstaciones:'📍 Stops (43)'
+    txtEstaciones:'📍 Stops (43)',
+    txtEncHero1:'Your opinion matters!',
+    txtEncHero2:'Rate the SITT service and help us<br>improve transportation in Tijuana',
+    txtEncTit:'📋 Satisfaction survey',
+    txtEncSub2:'Your opinion improves transportation in Tijuana.',
+    txtGenero:'👤 Gender',
+    txtHombre:'👨 Man',
+    txtMujer:'👩 Woman',
+    txtSatisfaccion:'Satisfaction',
+    txtComodidad:'Comfort',
+    txtTrato:'Service',
+    txtLimpieza:'Cleanliness',
+    txtRapidez:'Speed',
+    txtAccesibilidadEnc:'Accessibility',
+    txtEscaneaQR:'for the official survey.',
+    txtTocaCompartir:'👆 Tap to share',
+    txtCompartir1:'📤 Share',
+    txtGuardar1:'💾 Save',
+    txtEnviarOpinion:'Submit opinion ✓',
+    txtGraciasOpinion:'Thanks for your opinion!',
+    txtJuntosConstruimos:'Together we build better<br>transportation for Tijuana 🚌',
+    txtIrEncuestaOficial:'📋 Go to the full official SITT survey',
+    txtComparteApp:'Share the app!',
+    txtAyudaMasPersonas:'Help more people know when the T101 Route bus is coming',
+    txtTocaQR:'👆 Tap the QR to share or save',
+    txtCompartirLink:'📤 Share link',
+    txtGuardarQR:'💾 Save QR',
+    txtCompartirContactos:'📤 Share with my contacts',
+    txtIdeaSugerencia:'Have an idea or suggestion?',
+    txtOpinionAyuda:'Your opinion helps us improve the service for everyone',
+    txtSobreQueEs:'What is your suggestion about?',
+    txtTipoHorarios:'🕐 Schedules',
+    txtTipoRutas:'🗺️ Routes',
+    txtTipoCamiones:'🚌 Buses',
+    txtTipoAtencion:'😊 Service',
+    txtTipoOtro:'✏️ Other',
+    txtEnviar:'📊 Send',
+    txtEnviarWSP:'Send via WhatsApp',
+    txtGraciasSugerencia:'Thanks for your suggestion!',
+    txtTomamosEnCuenta:'We take it into account to improve the service',
+    txtStatUnidades:'Buses',
+    txtStatParadas:'Stops',
+    txtStatDias:'Days/week',
+    txtInfoHeroTag:'Safe, accessible and efficient transportation',
+    txtInfoHeroTitle:'Move around<br>with <span style="color:var(--o)">SITT</span>!',
+    txtTransporteTodos:'♿ Transportation for everyone',
+    txtMayorCapacidad:'Higher capacity',
+    txtMayorCapacidadTxt:'Large buses to move more people',
+    txtAccUniversal:'Universal accessibility',
+    txtAccUniversalTxt:'Designed for people with disabilities, older adults and all users',
+    txtTarifaPref:'Reduced fare',
+    txtTarifaPrefTxt:'Special benefits for students, older adults and people with disabilities',
+    txtSegComodidad:'Safety and comfort',
+    txtSegComodidadTxt:'Trained drivers, modern buses and safer trips',
+    txtPuntoSalida:'🏁 Departure point',
+    txtTerminalIns:'Insurgentes Terminal',
+    txtPrimeraSal:'First: 6:00 a.m.',
+    txtUltimaSal:'Last: 6:30 p.m.',
+    txt12Salidas:'12 departures a day',
+    txtHorariosSalidaTit:'🕐 Departure schedule — Monday to Saturday',
+    txtTodosHorarios:'*All times are departures from Insurgentes Terminal',
+    txtMatutino2:'🌅 Morning',
+    txtVespertino2:'🌇 Afternoon',
+    txtVerHorariosVivo:'🗺️ See live schedule on the map',
+    txtPuntoNaranjaTit:'SITT is an Orange Point',
+    txtPuntoNaranjaTxt:'The <b>Insurgentes Terminal</b> is a safe space. In an emergency, go to the <b>SITT building</b>.',
+    txtPuntoNaranjaFrase:'The point is for all of us to be safe 🧡',
+    txtTipsSeg:'🛡️ Safety tips on public transportation',
+    txtTip1:'Have the exact fare ready before boarding',
+    txtTip2:'When walking to the stop, prefer busy streets',
+    txtTip3:'Keep an eye on your belongings; carry your bag in front of you',
+    txtAtencionUsuario:'📞 Customer service',
+    txtLunesViernes:'Monday to Friday · 8:00 a.m. to 5:00 p.m.',
+    txtDireccionCompleta:'Blvd. Insurgentes s/n, Colonia Azteca<br>C.P. 2224, Tijuana, B.C.',
+    txtConoceMas:'🔗 Learn more about SITT',
+    txtPaginaOficial:'Official website',
+    txtAbrir1:'Open ›',
+    txtNoticiasAvisos:'Service news and notices',
+    txtAbrir2:'Open ›',
+    txtTarifasServicio:'Service fares',
+    txtTarifaGeneral:'GENERAL FARE',
+    txtTarifaPreferente:'REDUCED FARE',
+    txtQuienPaga:'Who pays $7? — With valid ID in hand',
+    txtEstudiantes2:'Students',
+    txtAdultosMayores2:'Older adults',
+    txtDiscapacidad2:'Disability',
+    txtPagoExacto:'Exact change in coins',
+    txtNoBilletes:'Bills not accepted · No change given'
   }
 };
 function aplicarIdioma(idioma){
@@ -1829,4 +2025,94 @@ try{cargarClima();}catch(e){}
   setTimeout(function(){
     document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible');});
   },4000);
+})();
+
+// ── PANEL DE ACCESIBILIDAD ──────────────────────────────────────────────────
+function abrirPanelAccesibilidad(){
+  if(document.getElementById('accesModal'))return;
+  const tamActual=localStorage.getItem('sittTextSize')||'normal';
+  const contraste=localStorage.getItem('sittContraste')==='1';
+  const voz=localStorage.getItem('sittVoz')==='1';
+  const modal=document.createElement('div');
+  modal.id='accesModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99996;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease';
+  modal.addEventListener('click',function(e){if(e.target===modal)cerrarPanelAccesibilidad();});
+  modal.innerHTML=`
+    <div style="background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:10px 22px 26px;animation:fadeUp .3s ease">
+      <div style="display:flex;justify-content:center;margin-bottom:14px"><div style="width:38px;height:5px;border-radius:20px;background:#e0ddd6"></div></div>
+      <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:18px;text-align:center">♿ Accesibilidad</div>
+
+      <div style="margin-bottom:20px">
+        <div style="font-size:11.5px;font-weight:800;color:var(--t2);margin-bottom:10px;letter-spacing:.05em">TAMAÑO DE TEXTO</div>
+        <div style="display:flex;gap:8px">
+          <button onclick="cambiarTamanoTexto('chico')" class="acces-opt" id="accOptChico" style="font-size:13px">Chico</button>
+          <button onclick="cambiarTamanoTexto('normal')" class="acces-opt" id="accOptNormal" style="font-size:16px">Normal</button>
+          <button onclick="cambiarTamanoTexto('grande')" class="acces-opt" id="accOptGrande" style="font-size:19px">Grande</button>
+        </div>
+      </div>
+
+      <div class="acces-row">
+        <div><div class="acces-row-tit">Alto contraste</div><div class="acces-row-sub">Colores más marcados</div></div>
+        <label class="acces-switch"><input type="checkbox" id="toggleContraste" onchange="toggleAltoContraste()" ${contraste?'checked':''}><span class="acces-slider"></span></label>
+      </div>
+
+      <div class="acces-row" style="border-bottom:none;margin-bottom:20px">
+        <div><div class="acces-row-tit">🔊 Leer en voz alta</div><div class="acces-row-sub">Agrega botones de audio en el mapa</div></div>
+        <label class="acces-switch"><input type="checkbox" id="toggleVoz" onchange="toggleLeerVoz()" ${voz?'checked':''}><span class="acces-slider"></span></label>
+      </div>
+
+      <button onclick="cerrarPanelAccesibilidad()" class="shine-btn" style="width:100%;background-color:var(--g)">Listo</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  marcarTamanoActivo(tamActual);
+}
+function cerrarPanelAccesibilidad(){
+  const m=document.getElementById('accesModal');
+  if(m)m.remove();
+}
+function marcarTamanoActivo(tam){
+  ['Chico','Normal','Grande'].forEach(function(t){
+    const btn=document.getElementById('accOpt'+t);
+    if(btn)btn.classList.toggle('on',t.toLowerCase()===tam);
+  });
+}
+function cambiarTamanoTexto(tam){
+  document.body.classList.remove('text-chico','text-grande');
+  if(tam==='chico')document.body.classList.add('text-chico');
+  if(tam==='grande')document.body.classList.add('text-grande');
+  localStorage.setItem('sittTextSize',tam);
+  marcarTamanoActivo(tam);
+  setTimeout(function(){if(typeof map!=='undefined')map.invalidateSize({animate:false});},100);
+}
+function toggleAltoContraste(){
+  const chk=document.getElementById('toggleContraste');
+  const on=chk?chk.checked:false;
+  document.body.classList.toggle('alto-contraste',on);
+  localStorage.setItem('sittContraste',on?'1':'0');
+}
+function toggleLeerVoz(){
+  const chk=document.getElementById('toggleVoz');
+  const on=chk?chk.checked:false;
+  document.body.classList.toggle('leer-voz',on);
+  localStorage.setItem('sittVoz',on?'1':'0');
+}
+function leerTexto(id){
+  const el=document.getElementById(id);
+  if(!el||typeof window.speechSynthesis==='undefined')return;
+  const texto=(el.innerText||el.textContent||'').replace(/\s+/g,' ').trim();
+  if(!texto)return;
+  const idioma=localStorage.getItem('sittIdioma')||'es';
+  const utter=new SpeechSynthesisUtterance(texto);
+  utter.lang=idioma==='en'?'en-US':'es-MX';
+  utter.rate=0.95;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+(function initAccesibilidad(){
+  const tam=localStorage.getItem('sittTextSize');
+  if(tam==='chico')document.body.classList.add('text-chico');
+  if(tam==='grande')document.body.classList.add('text-grande');
+  if(localStorage.getItem('sittContraste')==='1')document.body.classList.add('alto-contraste');
+  if(localStorage.getItem('sittVoz')==='1')document.body.classList.add('leer-voz');
 })();
