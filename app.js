@@ -376,6 +376,9 @@ function openSection(sec){
   const titulos=idiomaActual==='en'?sectionTitlesEN:sectionTitles;
   document.getElementById('navTitle').textContent = titulos[sec]||'SITT T101';
   if(sec!=='mapa')detenerSeguimientoUbicacion();
+  if(sec==='info'&&typeof window._activarScrollReveal==='function'){
+    setTimeout(window._activarScrollReveal,100);
+  }
   if(sec==='mapa'){
     initMapaSheet();
     setTimeout(function(){
@@ -1803,3 +1806,27 @@ function cargarClima(){
     .catch(function(){box.textContent='🌤️ --°';});
 }
 try{cargarClima();}catch(e){}
+
+// ── ANIMACIÓN "APARECER AL BAJAR" (Información) ──────────────────────────────
+(function initScrollReveal(){
+  if(typeof IntersectionObserver==='undefined')return;
+  const obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12});
+  function activar(){
+    document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){obs.observe(el);});
+  }
+  // Al cargar y cada vez que se entra a una sección (por si el DOM cambia)
+  document.addEventListener('DOMContentLoaded',activar);
+  activar();
+  window._activarScrollReveal=activar;
+  // Red de seguridad: si algo falla, el contenido no debe quedarse invisible
+  setTimeout(function(){
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible');});
+  },4000);
+})();

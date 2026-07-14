@@ -477,3 +477,37 @@ body.map-fullscreen #mapa-sheet{display:none}
 body.map-fullscreen #mapa-fabs{bottom:20px!important;right:14px!important}
 body.map-fullscreen .fs-exit-btn{display:block;top:calc(14px + env(safe-area-inset-top))}
 body.map-fullscreen #mapa-search-float{top:calc(14px + env(safe-area-inset-top))}
+
+/* ── INFORMACIÓN: rediseño ── */
+.info-hero{position:relative;height:220px;background-image:url('bus-hero.jpg');background-size:cover;background-position:center 60%;overflow:hidden}
+.info-hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(74,16,16,.55) 0%,rgba(74,16,16,.75) 60%,var(--gd) 100%)}
+.info-hero-txt{position:absolute;left:20px;bottom:20px;z-index:2}
+.info-hero-tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--o);margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.info-hero-title{font-size:32px;font-weight:900;color:#fff;line-height:1.05;text-shadow:0 3px 14px rgba(0,0,0,.6)}
+
+.coin-chip{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#E8C877,#C9A84C);color:#4a1010;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+
+.acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acc-card{background:var(--gr);border-radius:14px;padding:14px 12px;text-align:center}
+.acc-ico{font-size:28px;margin-bottom:6px}
+.acc-tit{font-size:12.5px;font-weight:800;color:var(--g);margin-bottom:4px}
+.acc-txt{font-size:11px;color:var(--t2);line-height:1.5}
+
+.ref-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ref-chip{text-align:center;padding:9px 4px;border-radius:20px;font-size:12px;font-weight:700}
+.ref-chip.am{background:#0F6E56;color:#fff}
+.ref-chip.pm{background:var(--gl);color:var(--g)}
+
+.tip-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0ede8}
+.tip-row:last-child{border-bottom:none}
+.tip-ico{width:38px;height:38px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tip-txt{font-size:12.5px;color:#555;line-height:1.5}
+
+/* Aparecer al bajar (scroll reveal) */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+body.dark .acc-card{background:#221f1d}
+body.dark .acc-tit{color:#F5D77A}
+body.dark .tip-row{border-color:#3a3733}
+body.dark .tip-txt{color:#c8c0b4}

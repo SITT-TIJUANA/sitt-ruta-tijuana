@@ -332,41 +332,39 @@
 
   <!-- ── SECCIÓN 2: INFORMACIÓN ── -->
   <div id="sec-info" class="section-page">
-    <div class="wrap">
 
-      <!-- Nota temporal: sección en actualización -->
-      <div style="background:#FFF8E7;border:1.5px solid #f0d070;border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:20px;flex-shrink:0">🛠️</span>
-        <span style="font-size:12.5px;color:#7a5c00;line-height:1.5">Estamos actualizando esta sección — puede que veas cambios seguido en los próximos días.</span>
+    <!-- HERO -->
+    <div class="info-hero reveal">
+      <div class="info-hero-overlay"></div>
+      <div class="info-hero-txt">
+        <div class="info-hero-tag">Transporte seguro, accesible y eficiente</div>
+        <div class="info-hero-title">¡Muévete<br>con <span style="color:var(--o)">SITT</span>!</div>
       </div>
+    </div>
+
+    <div class="wrap" style="margin-top:-22px;position:relative;z-index:2">
 
       <!-- Tarifas -->
-      <div style="background:var(--g);border-radius:var(--r);padding:18px;margin-bottom:12px;color:#fff">
+      <div class="reveal" style="background:var(--g);border-radius:var(--r);padding:18px;margin-bottom:12px;color:#fff;box-shadow:0 8px 24px rgba(123,29,29,.3)">
         <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--o);margin-bottom:16px;text-align:center">💳 Tarifas de servicio</div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-
-          <!-- GENERAL -->
           <div style="text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.2)">
             <div style="font-size:36px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite">👤</div>
             <div style="font-size:12px;font-weight:700;opacity:.8;margin-bottom:6px;letter-spacing:.04em">TARIFA GENERAL</div>
             <div style="font-size:52px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 12px rgba(201,168,76,.4)">$14</div>
             <div style="font-size:12px;opacity:.6;margin-top:3px">pesos</div>
           </div>
-
-          <!-- PREFERENTE -->
           <div style="text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid rgba(201,168,76,.5)">
             <div style="font-size:36px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite .5s">⭐</div>
             <div style="font-size:12px;font-weight:700;color:var(--o);margin-bottom:6px;letter-spacing:.04em">TARIFA PREFERENTE</div>
             <div style="font-size:52px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 12px rgba(201,168,76,.4)">$7</div>
             <div style="font-size:12px;opacity:.6;margin-top:3px">pesos</div>
           </div>
-
         </div>
 
-        <!-- Quién aplica preferente -->
         <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:12px;margin-bottom:12px">
-          <div style="font-size:11px;opacity:.6;text-align:center;margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase">¿Quién paga $7? — Con identificación en mano</div>
+          <div style="font-size:11px;opacity:.6;text-align:center;margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase">¿Quién paga $7? — Con credencial vigente en mano</div>
           <div style="display:flex;justify-content:space-around;gap:6px">
             <div style="text-align:center;flex:1">
               <div style="font-size:28px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite 1s">🎓</div>
@@ -383,24 +381,52 @@
           </div>
         </div>
 
-        <!-- Pago con monedas -->
-        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.15)">
-          <span style="font-size:24px;animation:pulse 2s ease-in-out infinite">🪙</span>
-          <span style="font-size:12px;font-weight:700;line-height:1.4">Solo monedas exactas<br><span style="font-weight:400;opacity:.7">No se da cambio</span></span>
+        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;margin-bottom:10px;border:1px solid rgba(255,255,255,.15)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <span style="font-size:24px;animation:pulse 2s ease-in-out infinite">🪙</span>
+            <span style="font-size:12px;font-weight:700;line-height:1.4">Pago exacto en monedas<br><span style="font-weight:400;opacity:.7">No se aceptan billetes · No se da cambio</span></span>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <span class="coin-chip">$1</span><span class="coin-chip">$2</span><span class="coin-chip">$5</span><span class="coin-chip">$10</span>
+          </div>
         </div>
-
       </div>
 
-      
+      <!-- Accesibilidad -->
+      <div class="sec reveal">
+        <div class="stit">♿ Un transporte para todos</div>
+        <div class="acc-grid">
+          <div class="acc-card">
+            <div class="acc-ico">🚌</div>
+            <div class="acc-tit">Mayor capacidad</div>
+            <div class="acc-txt">Unidades grandes para mover a más personas</div>
+          </div>
+          <div class="acc-card">
+            <div class="acc-ico">♿</div>
+            <div class="acc-tit">Accesibilidad universal</div>
+            <div class="acc-txt">Diseñado para personas con discapacidad, adultos mayores y todos los usuarios</div>
+          </div>
+          <div class="acc-card">
+            <div class="acc-ico">🎓</div>
+            <div class="acc-tit">Tarifa preferente</div>
+            <div class="acc-txt">Beneficios especiales para estudiantes, adultos mayores y personas con discapacidad</div>
+          </div>
+          <div class="acc-card">
+            <div class="acc-ico">🛡️</div>
+            <div class="acc-tit">Seguridad y comodidad</div>
+            <div class="acc-txt">Choferes capacitados, unidades modernas y viajes más seguros</div>
+          </div>
+        </div>
+      </div>
 
       <!-- Info Terminal -->
-      <div class="sec">
+      <div class="sec reveal">
         <div class="stit">🏁 Punto de salida</div>
         <div style="display:flex;align-items:center;gap:10px">
           <div style="font-size:28px">🚌</div>
           <div>
             <div style="font-size:14px;font-weight:700;color:var(--g)">Terminal Insurgentes</div>
-            <div style="font-size:12px;color:var(--t2);margin-top:2px">Blvd. Insurgentes · Col. Azteca · Tijuana, B.C.</div>
+            <div style="font-size:12px;color:var(--t2);margin-top:2px">Blvd. Insurgentes s/n · Col. Azteca · C.P. 2224 · Tijuana, B.C.</div>
           </div>
         </div>
         <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
@@ -410,8 +436,29 @@
         </div>
       </div>
 
+      <!-- Horarios de referencia -->
+      <div class="sec reveal">
+        <div class="stit">🕐 Horarios de salida — Lunes a Sábado</div>
+        <div style="font-size:11px;color:var(--t2);margin-bottom:10px">*Todos los horarios son de salida en Terminal Insurgentes</div>
+        <div class="tg-label">🌅 Matutino</div>
+        <div class="ref-grid">
+          <span class="ref-chip am">6:00 a.m.</span><span class="ref-chip am">7:00 a.m.</span>
+          <span class="ref-chip am">8:00 a.m.</span><span class="ref-chip am">9:00 a.m.</span>
+          <span class="ref-chip am">10:00 a.m.</span><span class="ref-chip am">11:00 a.m.</span>
+        </div>
+        <div class="tg-label" style="margin-top:12px">🌇 Vespertino</div>
+        <div class="ref-grid">
+          <span class="ref-chip pm">12:00 p.m.</span><span class="ref-chip pm">1:00 p.m.</span>
+          <span class="ref-chip pm">2:30 p.m.</span><span class="ref-chip pm">4:00 p.m.</span>
+          <span class="ref-chip pm">5:00 p.m.</span><span class="ref-chip pm">6:30 p.m.</span>
+        </div>
+        <button class="shine-btn" style="width:100%;background-color:var(--g);margin-top:14px" onclick="openSection('mapa');setTimeout(()=>{const t=document.querySelectorAll('.mtab')[3];if(t)mapaSwitchTab(3,t);},650)">
+          🗺️ Ver horarios en vivo en el mapa
+        </button>
+      </div>
+
       <!-- Punto Naranja -->
-      <div style="background:#fff;border-radius:var(--r);border:2px solid #E8630A;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px">
+      <div style="background:#fff;border-radius:var(--r);border:2px solid #E8630A;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px" class="reveal">
         <div style="font-size:40px;flex-shrink:0">🟠</div>
         <div>
           <div style="font-size:14px;font-weight:800;color:#E8630A;margin-bottom:3px">El SITT es Punto Naranja</div>
@@ -420,7 +467,55 @@
         </div>
       </div>
 
-      <div class="note">🛈 Ubicación estimada por horario. Con GPS instalado se mostraría la ubicación real.</div>
+      <!-- Tips de seguridad -->
+      <div class="sec reveal">
+        <div class="stit">🛡️ Tips de seguridad en el transporte público</div>
+        <div class="tip-row">
+          <div class="tip-ico">💰</div>
+          <div class="tip-txt">Ten listo el dinero exacto para el pago antes de subir</div>
+        </div>
+        <div class="tip-row">
+          <div class="tip-ico">🚶</div>
+          <div class="tip-txt">Al caminar hacia la parada, hazlo de preferencia por calles transitadas</div>
+        </div>
+        <div class="tip-row">
+          <div class="tip-ico">🎒</div>
+          <div class="tip-txt">Mantente atento a tus pertenencias; lleva tu bolsa o mochila al frente</div>
+        </div>
+      </div>
+
+      <!-- Contacto -->
+      <div class="sec reveal">
+        <div class="stit">📞 Atención al usuario</div>
+        <a href="tel:6649766376" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;margin-bottom:10px">
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">📞</div>
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--g)">664 976 6376</div>
+            <div style="font-size:11.5px;color:var(--t2)">Lunes a viernes · 8:00 a.m. a 5:00 p.m.</div>
+          </div>
+        </a>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">📍</div>
+          <div style="font-size:12.5px;color:#555;line-height:1.5">Blvd. Insurgentes s/n, Colonia Azteca<br>C.P. 2224, Tijuana, B.C.</div>
+        </div>
+      </div>
+
+      <!-- Enlaces oficiales -->
+      <div class="sec reveal">
+        <div class="stit">🔗 Conoce más sobre el SITT</div>
+        <a href="https://sitt.tijuana.gob.mx/" target="_blank" rel="noopener" class="cll-card">
+          <div class="cll-ico" style="background:var(--g)">🌐</div>
+          <div class="cll-info"><div class="cll-title">Página oficial</div><div class="cll-note">sitt.tijuana.gob.mx</div></div>
+          <span class="cll-go">Abrir ›</span>
+        </a>
+        <a href="https://www.facebook.com/SITT.mx" target="_blank" rel="noopener" class="cll-card">
+          <div class="cll-ico" style="background:#1877F2">📘</div>
+          <div class="cll-info"><div class="cll-title">Facebook</div><div class="cll-note">Noticias y avisos del servicio</div></div>
+          <span class="cll-go">Abrir ›</span>
+        </a>
+      </div>
+
+      <div class="note reveal">🛈 Ubicación estimada por horario. Con GPS instalado se mostraría la ubicación real.</div>
 
     </div>
   </div>
