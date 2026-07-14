@@ -37,12 +37,12 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 }
 /* Header de splash */
 .splash-header{
-  padding:22px 22px 0;
+  padding:calc(22px + env(safe-area-inset-top)) 22px 0;
   display:flex;align-items:center;gap:12px;
   animation:fadeDown .7s ease both;
 }
 @keyframes fadeDown{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
-.splash-corner-widgets{position:absolute;top:16px;right:16px;z-index:30;display:flex;align-items:center;gap:8px;animation:fadeDown .7s ease .2s both}
+.splash-corner-widgets{position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;z-index:30;display:flex;align-items:center;gap:8px;animation:fadeDown .7s ease .2s both}
 .splash-weather{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 11px;font-size:11px;font-weight:700;color:#fff}
 .splash-lang-btn{background:rgba(201,168,76,.2);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.5);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--o);cursor:pointer}
 .splash-lang-btn:active{transform:scale(.94)}
@@ -142,7 +142,7 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
   position:sticky;top:0;z-index:100;
   background:var(--g);
   border-bottom:2px solid var(--o);
-  padding:10px 16px;
+  padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
   display:flex;align-items:center;gap:10px;
   box-shadow:0 2px 12px rgba(0,0,0,.3);
 }
@@ -475,4 +475,5 @@ body.map-fullscreen .app-nav{display:none}
 body.map-fullscreen #sec-mapa{position:fixed;inset:0;z-index:9000;height:100vh;width:100vw}
 body.map-fullscreen #mapa-sheet{display:none}
 body.map-fullscreen #mapa-fabs{bottom:20px!important;right:14px!important}
-body.map-fullscreen .fs-exit-btn{display:block}
+body.map-fullscreen .fs-exit-btn{display:block;top:calc(14px + env(safe-area-inset-top))}
+body.map-fullscreen #mapa-search-float{top:calc(14px + env(safe-area-inset-top))}
