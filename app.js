@@ -575,11 +575,11 @@ function toggleCapaMapa(){
   if(map.hasLayer(capaCalles)){
     map.removeLayer(capaCalles);
     capaSatelite.addTo(map);
-    if(btn)btn.innerHTML='🗺️';
+    if(btn)btn.classList.add('mfab-activo');
   }else{
     map.removeLayer(capaSatelite);
     capaCalles.addTo(map);
-    if(btn)btn.innerHTML='🛰️';
+    if(btn)btn.classList.remove('mfab-activo');
   }
 }
 L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#ddd',weight:6,opacity:.6}).addTo(map);
@@ -587,19 +587,7 @@ L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#7B1D1D',weight:4,opacity:.9}).ad
 const trA=L.polyline([],{color:'#1D9E75',weight:6,opacity:.95}).addTo(map);
 const trB=L.polyline([],{color:'#378ADD',weight:6,opacity:.95}).addTo(map);
 
-const clusterParadas=L.markerClusterGroup({
-  maxClusterRadius:55,
-  disableClusteringAtZoom:16,
-  showCoverageOnHover:false,
-  iconCreateFunction:function(cluster){
-    const n=cluster.getChildCount();
-    return L.divIcon({
-      html:'<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7B1D1D,#5c1515);border:2.5px solid #C9A84C;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4)">'+n+'</div>',
-      className:'',
-      iconSize:[36,36]
-    });
-  }
-});
+const gruposParadas=L.layerGroup();
 const sMarkers=STOPS.map((s,i)=>{
   const isT=s.name.startsWith('TERMINAL');
   const size=isT?26:20;
@@ -607,10 +595,23 @@ const sMarkers=STOPS.map((s,i)=>{
   const ic=L.divIcon({className:'',html:'<div style="position:relative;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+(isT?'#7B1D1D':'#fff')+';border:'+(isT?'3px solid #C9A84C':'2px solid #7B1D1D')+';box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:'+(isT?'13px':'11px')+'">'+emoji+'<span style="position:absolute;bottom:-4px;right:-4px;background:#7B1D1D;color:#fff;font-size:8px;font-weight:800;border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;border:1.3px solid #fff">'+s.n+'</span></div>',iconAnchor:[size/2,size/2]});
   const m=L.marker([s.lat,s.lng],{icon:ic});
   m.on('click',function(){mostrarInfoEstacion(i);});
-  clusterParadas.addLayer(m);
+  gruposParadas.addLayer(m);
   return m;
 });
-map.addLayer(clusterParadas);
+map.addLayer(gruposParadas);
+
+// Alejado: solo se ve la línea de la ruta, sin marcar las 43 paradas (se ve muy saturado).
+// Al acercarte lo suficiente, las paradas aparecen solas.
+const ZOOM_MIN_PARADAS=14;
+function actualizarVisibilidadParadas(){
+  if(map.getZoom()>=ZOOM_MIN_PARADAS){
+    if(!map.hasLayer(gruposParadas))map.addLayer(gruposParadas);
+  }else{
+    if(map.hasLayer(gruposParadas))map.removeLayer(gruposParadas);
+  }
+}
+map.on('zoomend',actualizarVisibilidadParadas);
+actualizarVisibilidadParadas();
 
 function calcularRumbo(lat1,lng1,lat2,lng2){
   const toRad=d=>d*Math.PI/180,toDeg=r=>r*180/Math.PI;
@@ -746,18 +747,22 @@ if(window._msgB)setEl('stB',window._msgB);
 
 function renderTrips(){
   const gAM=document.getElementById('tgAM'),gPM=document.getElementById('tgPM');
+  const banner=document.getElementById('horarioTerminadoBanner');
   if(!gAM||!gPM)return;
   gAM.innerHTML='';gPM.innerHTML='';
   const MEDIODIA=720; // 12:00 p.m.
+  let ultimoFin=0;
   function pintar(deps,durs,claseUnidad,etiqueta){
     deps.forEach((d,i)=>{
       const dur=durs[i],on=simMin>=d&&simMin<=(d+dur),past=simMin>(d+dur);
+      if(d+dur>ultimoFin)ultimoFin=d+dur;
       const html='<div class="tp'+(on?' cur':past?' past':'')+'"><span class="td '+claseUnidad+'"></span>'+hhmm(d)+' <small>'+etiqueta+'</small></div>';
       if(d<MEDIODIA)gAM.innerHTML+=html;else gPM.innerHTML+=html;
     });
   }
   pintar(DA,DUA,'da','T-023');
   pintar(DB,DUB,'db','T-015');
+  if(banner)banner.style.display=(simMin>ultimoFin)?'flex':'none';
 }
 
 function renderStationsList(){

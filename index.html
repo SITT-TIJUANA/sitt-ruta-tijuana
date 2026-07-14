@@ -17,8 +17,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SITT Tijuana – Ruta T101</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -51,7 +49,7 @@
       <!-- Escudo -->
       <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;animation:fadeUp .8s ease .1s both;position:relative">
         <div class="logo-shine-wrap">
-          <img src="logo-sitt.png" style="width:290px;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(201,168,76,.55));cursor:pointer;position:relative;z-index:1" alt="Escudo SITT">
+          <img src="logo-sitt.png" style="width:320px;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(201,168,76,.55));cursor:pointer;position:relative;z-index:1" alt="Escudo SITT">
           <div class="logo-shine"></div>
         </div>
       </div>
@@ -172,10 +170,10 @@
 
       <!-- Botones flotantes (FABs) -->
       <div id="mapa-fabs">
-        <button class="mfab" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
-        <button class="mfab" onclick="verRuta()" aria-label="Ver ruta completa">🗺️</button>
-        <button class="mfab" onclick="toggleFullscreenMap()" aria-label="Pantalla completa">⛶</button>
-        <button class="mfab" id="fabCapa" onclick="toggleCapaMapa()" aria-label="Vista satélite">🛰️</button>
+        <button class="mfab mfab-verde" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
+        <button class="mfab mfab-azul" onclick="verRuta()" aria-label="Ver ruta completa">🗺️</button>
+        <button class="mfab mfab-gris" onclick="toggleFullscreenMap()" aria-label="Pantalla completa">⛶</button>
+        <button class="mfab mfab-tierra" id="fabCapa" onclick="toggleCapaMapa()" aria-label="Vista satélite">🛰️</button>
         <button class="mfab pr" id="fabLocate" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
       </div>
       <button class="fs-exit-btn" onclick="toggleFullscreenMap()">✕ Salir de pantalla completa</button>
@@ -294,6 +292,9 @@
         <div id="mapaTab3" style="display:none">
           <div class="sec" style="margin-bottom:12px">
             <div class="stit">🕐 Horarios — Lunes a Sábado</div>
+            <div id="horarioTerminadoBanner" style="display:none;align-items:center;gap:8px;background:#f4f4f2;border:1.5px solid var(--b);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12.5px;color:var(--t2);font-weight:700">
+              🌙 Servicio terminado por hoy — el primer camión de mañana sale a las 6:00 a.m.
+            </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:10.5px;color:var(--t2)">
               <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--gr);border:1px solid var(--b)"></span>Ya pasó</span>
               <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--g)"></span>Ahorita</span>
@@ -631,7 +632,6 @@
 </div><!-- /app -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
