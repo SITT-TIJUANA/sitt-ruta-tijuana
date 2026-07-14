@@ -561,25 +561,56 @@ let uLat=null, uLng=null;
 // ── MAPA ───────────────────────────────────────────────────────────────────
 const map=L.map('map',{zoomControl:false}).setView([32.505,-116.975],13);
 map.attributionControl.setPrefix(false);
-L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
+const capaCalles=L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',{
   attribution:'© <a href="https://stadiamaps.com/">Stadia Maps</a> © <a href="https://openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom:20,
   minZoom:10
 }).addTo(map);
+const capaSatelite=L.layerGroup([
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,minZoom:10,attribution:'© Esri'}),
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:20,minZoom:10})
+]);
+function toggleCapaMapa(){
+  const btn=document.getElementById('fabCapa');
+  if(map.hasLayer(capaCalles)){
+    map.removeLayer(capaCalles);
+    capaSatelite.addTo(map);
+    if(btn)btn.innerHTML='🗺️';
+  }else{
+    map.removeLayer(capaSatelite);
+    capaCalles.addTo(map);
+    if(btn)btn.innerHTML='🛰️';
+  }
+}
 L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#ddd',weight:6,opacity:.6}).addTo(map);
 L.polyline(STOPS.map(s=>[s.lat,s.lng]),{color:'#7B1D1D',weight:4,opacity:.9}).addTo(map);
 const trA=L.polyline([],{color:'#1D9E75',weight:6,opacity:.95}).addTo(map);
 const trB=L.polyline([],{color:'#378ADD',weight:6,opacity:.95}).addTo(map);
 
+const clusterParadas=L.markerClusterGroup({
+  maxClusterRadius:55,
+  disableClusteringAtZoom:16,
+  showCoverageOnHover:false,
+  iconCreateFunction:function(cluster){
+    const n=cluster.getChildCount();
+    return L.divIcon({
+      html:'<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7B1D1D,#5c1515);border:2.5px solid #C9A84C;color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4)">'+n+'</div>',
+      className:'',
+      iconSize:[36,36]
+    });
+  }
+});
 const sMarkers=STOPS.map((s,i)=>{
   const isT=s.name.startsWith('TERMINAL');
   const size=isT?26:20;
   const emoji=iconoParada(s.name);
   const ic=L.divIcon({className:'',html:'<div style="position:relative;width:'+size+'px;height:'+size+'px;border-radius:50%;background:'+(isT?'#7B1D1D':'#fff')+';border:'+(isT?'3px solid #C9A84C':'2px solid #7B1D1D')+';box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:'+(isT?'13px':'11px')+'">'+emoji+'<span style="position:absolute;bottom:-4px;right:-4px;background:#7B1D1D;color:#fff;font-size:8px;font-weight:800;border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;border:1.3px solid #fff">'+s.n+'</span></div>',iconAnchor:[size/2,size/2]});
-  const m=L.marker([s.lat,s.lng],{icon:ic}).addTo(map);
+  const m=L.marker([s.lat,s.lng],{icon:ic});
   m.on('click',function(){mostrarInfoEstacion(i);});
+  clusterParadas.addLayer(m);
   return m;
 });
+map.addLayer(clusterParadas);
 
 function calcularRumbo(lat1,lng1,lat2,lng2){
   const toRad=d=>d*Math.PI/180,toDeg=r=>r*180/Math.PI;
@@ -1564,3 +1595,94 @@ function dibujarRutaHaciaParada(idx){
     }
   },280);
 }
+
+// ── IDIOMA (ES/EN) — por ahora traduce la pantalla de inicio ────────────────
+const IDIOMA_TXT={
+  es:{
+    txtServicio:'Ruta Troncal Oficial',
+    pill1:'🚌 2 Unidades',
+    pill2:'📅 Lunes a Sábado',
+    pill3:'📍 43 paradas',
+    txtMainTitle:'¿Dónde viene el camión?',
+    txtMainSub:'Mapa en vivo · Paradas · Horario de llegada',
+    txtInfoTitle:'Información',
+    txtInfoSub:'Tarifas · Horarios',
+    txtEncTitle:'Encuesta',
+    txtEncSub:'Califica el servicio',
+    txtCompTitle:'Compartir',
+    txtCompSub:'Comparte la app',
+    txtSalir:'🚪 Salir de la aplicación'
+  },
+  en:{
+    txtServicio:'Official Trunk Route',
+    pill1:'🚌 2 Buses',
+    pill2:'📅 Mon – Sat',
+    pill3:'📍 43 stops',
+    txtMainTitle:"Where's my bus?",
+    txtMainSub:'Live map · Stops · Arrival time',
+    txtInfoTitle:'Info',
+    txtInfoSub:'Fares · Schedules',
+    txtEncTitle:'Survey',
+    txtEncSub:'Rate the service',
+    txtCompTitle:'Share',
+    txtCompSub:'Share the app',
+    txtSalir:'🚪 Exit app'
+  }
+};
+function aplicarIdioma(idioma){
+  const dict=IDIOMA_TXT[idioma]||IDIOMA_TXT.es;
+  Object.keys(dict).forEach(function(id){
+    const el=document.getElementById(id);
+    if(el)el.textContent=dict[id];
+  });
+  const btn=document.getElementById('langToggleBtn');
+  if(btn)btn.textContent=idioma==='es'?'🌐 ES':'🌐 EN';
+  document.documentElement.lang=idioma;
+}
+function toggleIdioma(){
+  const cur=localStorage.getItem('sittIdioma')||'es';
+  const nuevo=cur==='es'?'en':'es';
+  localStorage.setItem('sittIdioma',nuevo);
+  aplicarIdioma(nuevo);
+  ocultarLangTip();
+}
+function ocultarLangTip(){
+  const tip=document.getElementById('langTip');
+  if(tip)tip.classList.remove('show');
+  localStorage.setItem('sittLangTipSeen','1');
+}
+(function initIdioma(){
+  const idioma=localStorage.getItem('sittIdioma')||'es';
+  aplicarIdioma(idioma);
+  if(!localStorage.getItem('sittLangTipSeen')){
+    setTimeout(function(){
+      const tip=document.getElementById('langTip');
+      if(tip)tip.classList.add('show');
+    },1600);
+    setTimeout(ocultarLangTip,9000);
+  }
+})();
+
+// ── CLIMA DE TIJUANA (Open-Meteo, gratis, sin API key) ───────────────────────
+function iconoClima(code){
+  if(code===0)return'☀️';
+  if(code<=3)return'⛅';
+  if(code===45||code===48)return'🌫️';
+  if(code>=51&&code<=67)return'🌧️';
+  if(code>=71&&code<=77)return'❄️';
+  if(code>=80&&code<=82)return'🌦️';
+  if(code>=95)return'⛈️';
+  return'🌤️';
+}
+function cargarClima(){
+  const box=document.getElementById('weatherWidget');
+  if(!box||typeof fetch==='undefined')return;
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=32.5149&longitude=-117.0382&current=temperature_2m,weather_code&timezone=America/Tijuana')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      const t=Math.round(data.current.temperature_2m);
+      box.textContent=iconoClima(data.current.weather_code)+' '+t+'°';
+    })
+    .catch(function(){box.textContent='🌤️ --°';});
+}
+try{cargarClima();}catch(e){}

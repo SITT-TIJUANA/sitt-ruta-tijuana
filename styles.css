@@ -41,6 +41,14 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
   animation:fadeDown .7s ease both;
 }
 @keyframes fadeDown{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+.splash-corner-widgets{position:absolute;top:16px;right:16px;z-index:30;display:flex;align-items:center;gap:8px;animation:fadeDown .7s ease .2s both}
+.splash-weather{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 11px;font-size:11px;font-weight:700;color:#fff}
+.splash-lang-btn{background:rgba(201,168,76,.2);backdrop-filter:blur(8px);border:1px solid rgba(201,168,76,.5);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:800;color:var(--o);cursor:pointer}
+.splash-lang-btn:active{transform:scale(.94)}
+.lang-tip{position:absolute;top:calc(100% + 8px);right:0;background:#fff;color:#4a1010;font-size:11px;font-weight:700;padding:7px 12px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.3);animation:langTipBounce 1.8s ease-in-out infinite;opacity:0;pointer-events:none}
+.lang-tip.show{opacity:1;animation:langTipBounce 1.8s ease-in-out infinite}
+.lang-tip::after{content:'';position:absolute;bottom:100%;right:14px;border:6px solid transparent;border-bottom-color:#fff}
+@keyframes langTipBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .splash-logo{height:52px;background:rgba(255,255,255,.92);border-radius:12px;padding:5px 9px;box-shadow:0 4px 20px rgba(0,0,0,.4)}
 .splash-header-text{color:#fff}
 .splash-eyebrow{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,168,76,.8);margin-bottom:2px}
@@ -224,9 +232,12 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .ruta-img-placeholder{border:2px dashed var(--b);border-radius:14px;padding:28px 16px;text-align:center;background:#faf9f7}
 .ruta-img-placeholder img{width:100%;border-radius:12px;display:block}
 .ruta-ampliar-btn{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.65);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:8px 14px;font-size:12px;font-weight:800;cursor:pointer}
-.tp{font-size:11px;padding:4px 9px;border-radius:20px;border:1px solid var(--b);background:var(--gr);color:var(--t2);display:flex;align-items:center;gap:4px}
-.tp.past{opacity:.3}
-.tp.cur{background:var(--gl);border-color:var(--g);color:var(--g);font-weight:700}
+.tp{font-size:12px;padding:5px 10px;border-radius:20px;border:1.5px solid var(--b);background:#fff;color:var(--t);font-weight:800;display:flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.tp.past{opacity:.6;background:var(--gr);border-color:var(--gr);color:var(--t2);font-weight:600;text-decoration:line-through;box-shadow:none}
+.tp.cur{background:linear-gradient(135deg,var(--g),#5c1515);border-color:var(--g);color:#fff;font-weight:800;box-shadow:0 3px 10px rgba(123,29,29,.4)}
+.logo-shine-wrap{position:relative;overflow:hidden;border-radius:12px;display:inline-block}
+.logo-shine{position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.5) 48%,rgba(255,235,180,.75) 50%,rgba(255,255,255,.5) 52%,transparent 70%);transform:skewX(-15deg);animation:logoShineSweep 4.5s ease-in-out infinite;pointer-events:none;z-index:2}
+@keyframes logoShineSweep{0%{left:-60%}35%{left:130%}100%{left:130%}}
 .td{width:6px;height:6px;border-radius:50%}
 .da{background:var(--v)}
 .db{background:var(--a)}

@@ -17,6 +17,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>SITT Tijuana – Ruta T101</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -37,25 +39,32 @@
       <div style="font-size:10px;color:var(--o);font-weight:700;letter-spacing:.08em;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:5px 10px">Pasajeros de Tijuana</div>
     </div>
 
+    <div class="splash-corner-widgets">
+      <div class="splash-weather" id="weatherWidget">🌤️ --°</div>
+      <div style="position:relative">
+        <button class="splash-lang-btn" id="langToggleBtn" onclick="toggleIdioma()">🌐 ES</button>
+        <div class="lang-tip" id="langTip">Tap here for English 👆</div>
+      </div>
+    </div>
+
     <div class="splash-center">
-      <!-- Escudo + SITT -->
-      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;animation:fadeUp .8s ease .1s both">
-        <img src="logo-sitt.png" style="width:240px;height:auto;object-fit:contain;filter:drop-shadow(0 4px 20px rgba(201,168,76,.5));cursor:pointer" alt="Escudo SITT">
-        <div style="margin-top:10px;text-align:center">
-          <div style="font-size:36px;font-weight:900;letter-spacing:.1em;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.6)">SITT</div>
-          <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(201,168,76,.85);margin-top:2px">Sistema de Transporte Integral de Tijuana</div>
+      <!-- Escudo -->
+      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;animation:fadeUp .8s ease .1s both;position:relative">
+        <div class="logo-shine-wrap">
+          <img src="logo-sitt.png" style="width:290px;height:auto;object-fit:contain;filter:drop-shadow(0 4px 24px rgba(201,168,76,.55));cursor:pointer;position:relative;z-index:1" alt="Escudo SITT">
+          <div class="logo-shine"></div>
         </div>
       </div>
       <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--o),transparent);margin-bottom:16px"></div>
-      <div class="splash-service">Ruta Troncal Oficial</div>
+      <div class="splash-service" id="txtServicio">Ruta Troncal Oficial</div>
       <div class="splash-route">Ruta T101</div>
       <div class="splash-subtitle">"Insurgentes – Puerta México"</div>
       <div class="splash-clock" id="clock">--:--</div>
       <div class="splash-date" id="dateLabel">--</div>
       <div class="splash-pills">
-        <span class="splash-pill">🚌 2 Unidades</span>
-        <span class="splash-pill">📅 Lunes a Sábado</span>
-        <span class="splash-pill">📍 43 paradas</span>
+        <span class="splash-pill" id="pill1">🚌 2 Unidades</span>
+        <span class="splash-pill" id="pill2">📅 Lunes a Sábado</span>
+        <span class="splash-pill" id="pill3">📍 43 paradas</span>
       </div>
     </div>
 
@@ -66,8 +75,8 @@
         <div style="display:flex;align-items:center;gap:14px">
           <div style="font-size:40px;animation:bounce 2s ease-in-out infinite">🗺️</div>
           <div style="text-align:left">
-            <div style="font-size:18px;font-weight:900;letter-spacing:.01em">¿Dónde viene el camión?</div>
-            <div style="font-size:12px;opacity:.75;margin-top:3px">Mapa en vivo · Paradas · Horario de llegada</div>
+            <div style="font-size:18px;font-weight:900;letter-spacing:.01em" id="txtMainTitle">¿Dónde viene el camión?</div>
+            <div style="font-size:12px;opacity:.75;margin-top:3px" id="txtMainSub">Mapa en vivo · Paradas · Horario de llegada</div>
           </div>
           <div style="margin-left:auto;font-size:22px;animation:pulse 2s ease-in-out infinite">→</div>
         </div>
@@ -78,26 +87,26 @@
 
         <button class="splash-btn-sm" onclick="openSection('info')">
           <div style="font-size:30px;margin-bottom:6px;animation:bounce 3s ease-in-out infinite .3s">📋</div>
-          <div style="font-size:12px;font-weight:800">Información</div>
-          <div style="font-size:10px;opacity:.65;margin-top:2px">Tarifas · Horarios</div>
+          <div style="font-size:12px;font-weight:800" id="txtInfoTitle">Información</div>
+          <div style="font-size:10px;opacity:.65;margin-top:2px" id="txtInfoSub">Tarifas · Horarios</div>
         </button>
 
         <button class="splash-btn-sm" onclick="openSection('encuesta')">
           <div style="font-size:30px;margin-bottom:6px;animation:bounce 3s ease-in-out infinite .6s">⭐</div>
-          <div style="font-size:12px;font-weight:800">Encuesta</div>
-          <div style="font-size:10px;opacity:.65;margin-top:2px">Califica el servicio</div>
+          <div style="font-size:12px;font-weight:800" id="txtEncTitle">Encuesta</div>
+          <div style="font-size:10px;opacity:.65;margin-top:2px" id="txtEncSub">Califica el servicio</div>
         </button>
 
         <button class="splash-btn-sm" onclick="openSection('compartir')">
           <div style="font-size:30px;margin-bottom:6px;animation:bounce 3s ease-in-out infinite .9s">📤</div>
-          <div style="font-size:12px;font-weight:800">Compartir</div>
-          <div style="font-size:10px;opacity:.65;margin-top:2px">Comparte la app</div>
+          <div style="font-size:12px;font-weight:800" id="txtCompTitle">Compartir</div>
+          <div style="font-size:10px;opacity:.65;margin-top:2px" id="txtCompSub">Comparte la app</div>
         </button>
 
       </div>
 
       <!-- BOTÓN SALIR -->
-      <button class="splash-exit" onclick="salirApp()">
+      <button class="splash-exit" onclick="salirApp()" id="txtSalir">
         🚪 Salir de la aplicación
       </button>
 
@@ -166,6 +175,7 @@
         <button class="mfab" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
         <button class="mfab" onclick="verRuta()" aria-label="Ver ruta completa">🗺️</button>
         <button class="mfab" onclick="toggleFullscreenMap()" aria-label="Pantalla completa">⛶</button>
+        <button class="mfab" id="fabCapa" onclick="toggleCapaMapa()" aria-label="Vista satélite">🛰️</button>
         <button class="mfab pr" id="fabLocate" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
       </div>
       <button class="fs-exit-btn" onclick="toggleFullscreenMap()">✕ Salir de pantalla completa</button>
@@ -284,6 +294,11 @@
         <div id="mapaTab3" style="display:none">
           <div class="sec" style="margin-bottom:12px">
             <div class="stit">🕐 Horarios — Lunes a Sábado</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:10.5px;color:var(--t2)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--gr);border:1px solid var(--b)"></span>Ya pasó</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--g)"></span>Ahorita</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid var(--b)"></span>Por venir</span>
+            </div>
             <div class="tg-label">🌅 Matutino</div>
             <div class="tg" id="tgAM"></div>
             <div class="tg-label" style="margin-top:12px">🌇 Vespertino</div>
@@ -616,6 +631,7 @@
 </div><!-- /app -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
