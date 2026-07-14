@@ -121,7 +121,7 @@
 
   <!-- NAV BAR -->
   <div class="app-nav">
-    <button class="app-nav-back" onclick="goBack()">← Inicio</button>
+    <button class="app-nav-back" onclick="goBack()" id="txtNavInicio">← Inicio</button>
     <div class="app-nav-title" id="navTitle">SITT T101</div>
     <button class="app-nav-dark" id="darkToggleBtn" onclick="toggleDarkMode()" aria-label="Modo oscuro">🌙</button>
     <div class="app-nav-time" id="navClock">--:--</div>
@@ -146,37 +146,37 @@
         </button>
         <span class="msf-chev">›</span>
         <select id="esel" style="display:none">
-          <option value="">¿Cuándo llega a mi parada?</option>
+          <option value="" id="eselDefault">¿Cuándo llega a mi parada?</option>
         </select>
       </div>
 
       <!-- Resultados de búsqueda, flotando bajo el buscador -->
       <div id="mapa-search-results">
-        <button class="msr-close" onclick="closeSearchResults()"><span>✕</span> Cerrar</button>
+        <button class="msr-close" onclick="closeSearchResults()"><span>✕</span> <span id="txtCerrar1">Cerrar</span></button>
         <div style="font-size:12px;color:var(--t2);margin-bottom:7px;padding-right:22px" id="etaLbl"></div>
         <div class="ecds">
           <div class="ecd" id="etaCA"><div class="ecu">T-01-023</div><div class="ect" id="etaTA">–</div><div class="ecl" id="etaMA">–</div></div>
           <div class="ecd" id="etaCB"><div class="ecu">T-01-015</div><div class="ect" id="etaTB">–</div><div class="ecl" id="etaMB">–</div></div>
         </div>
-        <div style="margin-top:8px;background:#FFF3E0;border-radius:10px;border-left:4px solid #f0a500;padding:8px 10px;font-size:11px;color:#7a5c00;line-height:1.5">
+        <div style="margin-top:8px;background:#FFF3E0;border-radius:10px;border-left:4px solid #f0a500;padding:8px 10px;font-size:11px;color:#7a5c00;line-height:1.5" id="txtVariacion">
           ⏱️ Variación de <b>hasta 15 min</b> · 👉 llega <b>10-15 min antes</b>
         </div>
       </div>
 
       <!-- Badge en vivo flotante -->
       <div id="mapa-live-badge">
-        <span class="live-dot" style="width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite"></span>En vivo
+        <span class="live-dot" style="width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 2s infinite"></span><span id="txtEnVivo">En vivo</span>
       </div>
 
       <!-- Botones flotantes (FABs) -->
       <div id="mapa-fabs">
-        <button class="mfab mfab-verde" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar">🔄</button>
-        <button class="mfab mfab-azul" onclick="verRuta()" aria-label="Ver ruta completa">🗺️</button>
-        <button class="mfab mfab-gris" onclick="toggleFullscreenMap()" aria-label="Pantalla completa">⛶</button>
+        <button class="mfab mfab-verde" onclick="autoRefresh();this.style.transform='rotate(360deg)';setTimeout(()=>this.style.transform='',600)" style="transition:transform .6s ease" aria-label="Actualizar" id="fabActualizar">🔄</button>
+        <button class="mfab mfab-azul" onclick="verRuta()" aria-label="Ver ruta completa" id="fabVerRuta">🗺️</button>
+        <button class="mfab mfab-gris" onclick="toggleFullscreenMap()" aria-label="Pantalla completa" id="fabPantallaCompleta">⛶</button>
         <button class="mfab mfab-tierra" id="fabCapa" onclick="toggleCapaMapa()" aria-label="Vista satélite">🛰️</button>
         <button class="mfab pr" id="fabLocate" onclick="locateUser()" aria-label="Mi ubicación">📍</button>
       </div>
-      <button class="fs-exit-btn" onclick="toggleFullscreenMap()">✕ Salir de pantalla completa</button>
+      <button class="fs-exit-btn" onclick="toggleFullscreenMap()" id="txtSalirPantallaCompleta">✕ Salir de pantalla completa</button>
     </div>
 
     <!-- BOTTOM SHEET ARRASTRABLE -->
@@ -185,31 +185,31 @@
       <!-- TABS NAVEGACIÓN -->
       <div id="mapa-tabs">
         <div class="tabs-glider" id="tabsGlider"></div>
-        <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span>Camiones</button>
-        <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span>Simulador</button>
-        <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span>Llegar</button>
-        <button class="mtab" onclick="mapaSwitchTab(3,this)"><span class="mtab-ico">🕐</span>Horarios</button>
-        <button class="mtab" onclick="mapaSwitchTab(4,this)"><span class="mtab-ico">🗺️</span>Ruta</button>
+        <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span><span id="txtTabCamiones">Camiones</span></button>
+        <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span><span id="txtTabSimulador">Simulador</span></button>
+        <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span><span id="txtTabLlegar">Llegar</span></button>
+        <button class="mtab" onclick="mapaSwitchTab(3,this)"><span class="mtab-ico">🕐</span><span id="txtTabHorarios">Horarios</span></button>
+        <button class="mtab" onclick="mapaSwitchTab(4,this)"><span class="mtab-ico">🗺️</span><span id="txtTabRuta">Ruta</span></button>
       </div>
       <!-- CONTENIDO DE TABS -->
       <div id="mapa-content">
         <div id="mapaTab0">
-          <div class="note" style="margin-bottom:12px">⚠️ Ubicación estimada por horario — No es GPS en tiempo real</div>
+          <div class="note" style="margin-bottom:12px" id="txtNotaGPS">⚠️ Ubicación estimada por horario — No es GPS en tiempo real</div>
           <div id="locCard" style="display:none"></div>
           <div class="bgrid">
             <!-- T-01-023 -->
             <div id="cA">
               <div class="bc" style="border-radius:16px;height:100%">
                 <div class="bch"><span style="font-size:20px">🚌</span>
-                  <div><div class="bcn">T-01-023</div><div class="bci">Unidad A</div></div>
+                  <div><div class="bcn">T-01-023</div><div class="bci" id="txtUnidadA">Unidad A</div></div>
                   <span class="bdg er" id="bdgA">En ruta</span>
                 </div>
-                <div class="bsn">Parada actual</div><div class="bss" id="stA">–</div>
-                <div class="bnx">Siguiente: <span id="nxA">–</span></div>
+                <div class="bsn" id="txtParadaActual1">Parada actual</div><div class="bss" id="stA">–</div>
+                <div class="bnx"><span id="txtSiguiente1">Siguiente:</span> <span id="nxA">–</span></div>
                 <div><div class="bpb"><div class="bpf fa" id="pgA" style="width:0%"></div></div>
-                <div class="bpl"><span>Terminal Insurgentes</span><span id="pglA"></span></div></div>
+                <div class="bpl"><span id="txtTerminal1">Terminal Insurgentes</span><span id="pglA"></span></div></div>
                 <div style="display:flex;gap:6px;margin-top:10px">
-                  <button class="tbtn shine-btn green" style="flex:2" onclick="trackBus('A')">📍 Ver en mapa →</button>
+                  <button class="tbtn shine-btn green" style="flex:2" onclick="trackBus('A')" id="txtVerMapa1">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;flex:1;font-size:13px" onclick="refreshBus('A')">🔄</button>
                   <button class="tbtn" style="background:#25D366;flex:1;font-size:13px" onclick="compartirViaje('A')" aria-label="Compartir viaje">📤</button>
                 </div>
@@ -219,15 +219,15 @@
             <div id="cB">
               <div class="bc" style="border-radius:16px;height:100%">
                 <div class="bch"><span style="font-size:20px">🚌</span>
-                  <div><div class="bcn">T-01-015</div><div class="bci">Unidad B</div></div>
+                  <div><div class="bcn">T-01-015</div><div class="bci" id="txtUnidadB">Unidad B</div></div>
                   <span class="bdg er" id="bdgB">En ruta</span>
                 </div>
-                <div class="bsn">Parada actual</div><div class="bss" id="stB">–</div>
-                <div class="bnx">Siguiente: <span id="nxB">–</span></div>
+                <div class="bsn" id="txtParadaActual2">Parada actual</div><div class="bss" id="stB">–</div>
+                <div class="bnx"><span id="txtSiguiente2">Siguiente:</span> <span id="nxB">–</span></div>
                 <div><div class="bpb"><div class="bpf fb" id="pgB" style="width:0%"></div></div>
-                <div class="bpl"><span>Terminal Insurgentes</span><span id="pglB"></span></div></div>
+                <div class="bpl"><span id="txtTerminal2">Terminal Insurgentes</span><span id="pglB"></span></div></div>
                 <div style="display:flex;gap:6px;margin-top:10px">
-                  <button class="tbtn shine-btn blue" style="flex:2" onclick="trackBus('B')">📍 Ver en mapa →</button>
+                  <button class="tbtn shine-btn blue" style="flex:2" onclick="trackBus('B')" id="txtVerMapa2">📍 Ver en mapa →</button>
                   <button class="tbtn" style="background:#E6F1FB;color:#185FA5;border:1.5px solid #378ADD;flex:1;font-size:13px" onclick="refreshBus('B')">🔄</button>
                   <button class="tbtn" style="background:#25D366;flex:1;font-size:13px" onclick="compartirViaje('B')" aria-label="Compartir viaje">📤</button>
                 </div>
@@ -241,10 +241,10 @@
           <div style="background:#fff;border-radius:16px;border:.5px solid var(--b);padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <div>
-                <div style="font-size:15px;font-weight:800;color:var(--g)">🕐 Hora actual del camión</div>
-                <div style="font-size:11px;color:var(--t2);margin-top:2px">Se actualiza solo · Mueve la barra para explorar otras horas</div>
+                <div style="font-size:15px;font-weight:800;color:var(--g)" id="txtHoraActualCamion">🕐 Hora actual del camión</div>
+                <div style="font-size:11px;color:var(--t2);margin-top:2px" id="txtSeActualizaSolo">Se actualiza solo · Mueve la barra para explorar otras horas</div>
               </div>
-              <button onclick="window._userMovedSlider=false;jumpNow();" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px">
+              <button onclick="window._userMovedSlider=false;jumpNow();" style="background:#E8F8F0;color:#0F6E56;border:1.5px solid #1D9E75;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px" id="txtHoraActualBtn">
                 🔄 Hora actual
               </button>
             </div>
@@ -279,11 +279,11 @@
           <div id="comoLlegarHeader"></div>
           <div id="comoLlegarPrompt" style="text-align:center;padding:34px 16px">
             <div style="font-size:44px;margin-bottom:10px">📍</div>
-            <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:6px">Encuentra cómo llegar</div>
-            <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6">Toca el botón de ubicación en el mapa<br>para ver tus opciones de viaje</div>
+            <div style="font-size:16px;font-weight:800;color:var(--g);margin-bottom:6px" id="txtEncuentraLlegar">Encuentra cómo llegar</div>
+            <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6" id="txtTocaUbicacion">Toca el botón de ubicación en el mapa<br>para ver tus opciones de viaje</div>
             <button onclick="locateUser()" class="btn-big g" style="margin:0 auto;max-width:260px">
               <div class="btn-ico">📍</div>
-              <div><div class="btn-tit g">Usar mi ubicación</div><div class="btn-sub">Ver Uber, DiDi y Google Maps</div></div>
+              <div><div class="btn-tit g" id="txtUsarUbicacion">Usar mi ubicación</div><div class="btn-sub" id="txtVerUberDidi">Ver Uber, DiDi y Google Maps</div></div>
             </button>
           </div>
           <div id="comoLlegarOpts" style="display:none"></div>
@@ -291,38 +291,38 @@
 
         <div id="mapaTab3" style="display:none">
           <div class="sec" style="margin-bottom:12px">
-            <div class="stit">🕐 Horarios — Lunes a Sábado</div>
+            <div class="stit" id="txtHorariosTitulo">🕐 Horarios — Lunes a Sábado</div>
             <div id="horarioTerminadoBanner" style="display:none;align-items:center;gap:8px;background:#f4f4f2;border:1.5px solid var(--b);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:12.5px;color:var(--t2);font-weight:700">
-              🌙 Servicio terminado por hoy — el primer camión de mañana sale a las 6:00 a.m.
+              <span id="txtServicioTerminado">🌙 Servicio terminado por hoy — el primer camión de mañana sale a las 6:00 a.m.</span>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:10.5px;color:var(--t2)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid var(--g)"></span>Ya pasó</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--g)"></span>Ahorita</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#1D9E75"></span>Por venir</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid var(--g)"></span><span id="txtYaPaso">Ya pasó</span></span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:var(--g)"></span><span id="txtAhorita">Ahorita</span></span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#1D9E75"></span><span id="txtPorVenir">Por venir</span></span>
             </div>
-            <div class="tg-label">🌅 Matutino</div>
+            <div class="tg-label" id="txtMatutino">🌅 Matutino</div>
             <div class="tg" id="tgAM"></div>
-            <div class="tg-label" style="margin-top:12px">🌇 Vespertino</div>
+            <div class="tg-label" style="margin-top:12px" id="txtVespertino">🌇 Vespertino</div>
             <div class="tg" id="tgPM"></div>
           </div>
-          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()">
+          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()" id="txtMasInfo1">
             ℹ️ Más información del servicio SITT
           </button>
         </div><!-- end mapaTab3 -->
 
         <div id="mapaTab4" style="display:none">
           <div class="sec" style="margin-bottom:12px;position:relative">
-            <div class="stit">🗺️ Ruta completa</div>
+            <div class="stit" id="txtRutaCompleta">🗺️ Ruta completa</div>
             <div id="rutaImgWrap" class="ruta-img-placeholder" style="padding:0;border:none;background:none;position:relative">
               <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" loading="lazy" style="cursor:pointer" onclick="preguntarAmpliarRuta()">
-              <button class="ruta-ampliar-btn" onclick="ampliarImagenRuta()">⛶ Ver en grande</button>
+              <button class="ruta-ampliar-btn" onclick="ampliarImagenRuta()" id="txtVerGrande">⛶ Ver en grande</button>
             </div>
           </div>
           <div class="sec" style="margin-bottom:12px">
-            <div class="stit">📍 Estaciones (43)</div>
+            <div class="stit" id="txtEstaciones">📍 Estaciones (43)</div>
             <div id="stationsListInfo"></div>
           </div>
-          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()">
+          <button class="shine-btn" style="width:100%;background-color:var(--g)" onclick="irAInformacion()" id="txtMasInfo2">
             ℹ️ Más información del servicio SITT
           </button>
         </div><!-- end mapaTab4 -->

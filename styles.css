@@ -238,9 +238,11 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .logo-shine-wrap{position:relative;overflow:hidden;border-radius:12px;display:inline-block}
 .logo-shine{position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.5) 48%,rgba(255,235,180,.75) 50%,rgba(255,255,255,.5) 52%,transparent 70%);transform:skewX(-15deg);animation:logoShineSweep 4.5s ease-in-out infinite;pointer-events:none;z-index:2}
 @keyframes logoShineSweep{0%{left:-60%}35%{left:130%}100%{left:130%}}
-.td{width:6px;height:6px;border-radius:50%}
-.da{background:var(--v)}
-.db{background:var(--a)}
+.tp-unidad{font-weight:800;margin-left:1px}
+.tp-unidad.da{color:var(--v)}
+.tp-unidad.db{color:var(--a)}
+.tp.past .tp-unidad{color:inherit;opacity:.8}
+.tp.cur .tp-unidad{color:rgba(255,255,255,.85)}
 .esel{width:100%;padding:12px;border-radius:8px;border:2px solid var(--g);font-size:15px;color:var(--t);background:#fff;cursor:pointer;margin-bottom:10px;font-family:inherit}
 .ecds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ecd{background:var(--gr);border-radius:10px;padding:12px;text-align:center}

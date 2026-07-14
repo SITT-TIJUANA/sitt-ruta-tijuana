@@ -267,7 +267,9 @@ function actualizarBotonBusqueda(idx){
   const lbl=document.getElementById('stopSearchLabel');
   if(!lbl)return;
   const s=(typeof STOPS!=='undefined')?STOPS[idx]:null;
-  lbl.textContent=s?(s.n+'. '+s.name):'¿Cuándo llega a mi parada?';
+  const idiomaActual=localStorage.getItem('sittIdioma')||'es';
+  const porDefecto=idiomaActual==='en'?'When does my bus arrive?':'¿Cuándo llega a mi parada?';
+  lbl.textContent=s?(s.n+'. '+s.name):porDefecto;
   lbl.style.color=s?'#2a2a2a':'#555';
 }
 
@@ -353,8 +355,16 @@ const sectionTitles = {
   encuesta: '⭐ Encuesta',
   compartir: '📤 Compartir App'
 };
+const sectionTitlesEN = {
+  mapa: '🗺️ Map & Location',
+  info: '📋 Information',
+  encuesta: '⭐ Survey',
+  compartir: '📤 Share App'
+};
 
+let sectionActual=null;
 function openSection(sec){
+  sectionActual=sec;
   document.getElementById('splash').classList.add('hide');
   setTimeout(function(){
     document.getElementById('splash').style.display='none';
@@ -362,7 +372,9 @@ function openSection(sec){
   },600);
   document.querySelectorAll('.section-page').forEach(function(s){s.classList.remove('active');});
   document.getElementById('sec-'+sec).classList.add('active');
-  document.getElementById('navTitle').textContent = sectionTitles[sec]||'SITT T101';
+  const idiomaActual=localStorage.getItem('sittIdioma')||'es';
+  const titulos=idiomaActual==='en'?sectionTitlesEN:sectionTitles;
+  document.getElementById('navTitle').textContent = titulos[sec]||'SITT T101';
   if(sec!=='mapa')detenerSeguimientoUbicacion();
   if(sec==='mapa'){
     initMapaSheet();
@@ -757,7 +769,7 @@ function renderTrips(){
     deps.forEach((d,i)=>{
       const dur=durs[i],on=simMin>=d&&simMin<=(d+dur),past=simMin>(d+dur);
       if(d+dur>ultimoFin)ultimoFin=d+dur;
-      const html='<div class="tp'+(on?' cur':past?' past':'')+'"><span class="td '+claseUnidad+'"></span>'+hhmm(d)+' <small>'+etiqueta+'</small></div>';
+      const html='<div class="tp'+(on?' cur':past?' past':'')+'">'+hhmm(d)+' <small class="tp-unidad '+claseUnidad+'">'+etiqueta+'</small></div>';
       if(d<MEDIODIA)gAM.innerHTML+=html;else gPM.innerHTML+=html;
     });
   }
@@ -1617,7 +1629,49 @@ const IDIOMA_TXT={
     txtEncSub:'Califica el servicio',
     txtCompTitle:'Compartir',
     txtCompSub:'Comparte la app',
-    txtSalir:'🚪 Salir de la aplicación'
+    txtSalir:'🚪 Salir de la aplicación',
+    txtNavInicio:'← Inicio',
+    stopSearchLabel:'¿Cuándo llega a mi parada?',
+    eselDefault:'¿Cuándo llega a mi parada?',
+    txtCerrar1:'Cerrar',
+    txtVariacion:'⏱️ Variación de <b>hasta 15 min</b> · 👉 llega <b>10-15 min antes</b>',
+    txtEnVivo:'En vivo',
+    txtSalirPantallaCompleta:'✕ Salir de pantalla completa',
+    txtTabCamiones:'Camiones',
+    txtTabSimulador:'Simulador',
+    txtTabLlegar:'Llegar',
+    txtTabHorarios:'Horarios',
+    txtTabRuta:'Ruta',
+    txtNotaGPS:'⚠️ Ubicación estimada por horario — No es GPS en tiempo real',
+    txtUnidadA:'Unidad A',
+    txtUnidadB:'Unidad B',
+    txtParadaActual1:'Parada actual',
+    txtParadaActual2:'Parada actual',
+    txtSiguiente1:'Siguiente:',
+    txtSiguiente2:'Siguiente:',
+    txtTerminal1:'Terminal Insurgentes',
+    txtTerminal2:'Terminal Insurgentes',
+    txtVerMapa1:'📍 Ver en mapa →',
+    txtVerMapa2:'📍 Ver en mapa →',
+    txtHoraActualCamion:'🕐 Hora actual del camión',
+    txtSeActualizaSolo:'Se actualiza solo · Mueve la barra para explorar otras horas',
+    txtHoraActualBtn:'🔄 Hora actual',
+    txtEncuentraLlegar:'Encuentra cómo llegar',
+    txtTocaUbicacion:'Toca el botón de ubicación en el mapa<br>para ver tus opciones de viaje',
+    txtUsarUbicacion:'Usar mi ubicación',
+    txtVerUberDidi:'Ver Uber, DiDi y Google Maps',
+    txtHorariosTitulo:'🕐 Horarios — Lunes a Sábado',
+    txtServicioTerminado:'🌙 Servicio terminado por hoy — el primer camión de mañana sale a las 6:00 a.m.',
+    txtYaPaso:'Ya pasó',
+    txtAhorita:'Ahorita',
+    txtPorVenir:'Por venir',
+    txtMatutino:'🌅 Matutino',
+    txtVespertino:'🌇 Vespertino',
+    txtMasInfo1:'ℹ️ Más información del servicio SITT',
+    txtMasInfo2:'ℹ️ Más información del servicio SITT',
+    txtRutaCompleta:'🗺️ Ruta completa',
+    txtVerGrande:'⛶ Ver en grande',
+    txtEstaciones:'📍 Estaciones (43)'
   },
   en:{
     txtServicio:'Official Trunk Route',
@@ -1632,18 +1686,72 @@ const IDIOMA_TXT={
     txtEncSub:'Rate the service',
     txtCompTitle:'Share',
     txtCompSub:'Share the app',
-    txtSalir:'🚪 Exit app'
+    txtSalir:'🚪 Exit app',
+    txtNavInicio:'← Home',
+    stopSearchLabel:'When does my bus arrive?',
+    eselDefault:'When does my bus arrive?',
+    txtCerrar1:'Close',
+    txtVariacion:'⏱️ Varies by <b>up to 15 min</b> · 👉 arrives <b>10-15 min early</b>',
+    txtEnVivo:'Live',
+    txtSalirPantallaCompleta:'✕ Exit full screen',
+    txtTabCamiones:'Buses',
+    txtTabSimulador:'Simulator',
+    txtTabLlegar:'Get there',
+    txtTabHorarios:'Schedule',
+    txtTabRuta:'Route',
+    txtNotaGPS:'⚠️ Estimated location by schedule — Not real-time GPS',
+    txtUnidadA:'Unit A',
+    txtUnidadB:'Unit B',
+    txtParadaActual1:'Current stop',
+    txtParadaActual2:'Current stop',
+    txtSiguiente1:'Next:',
+    txtSiguiente2:'Next:',
+    txtTerminal1:'Insurgentes Terminal',
+    txtTerminal2:'Insurgentes Terminal',
+    txtVerMapa1:'📍 View on map →',
+    txtVerMapa2:'📍 View on map →',
+    txtHoraActualCamion:'🕐 Current bus time',
+    txtSeActualizaSolo:'Updates automatically · Drag the bar to explore other times',
+    txtHoraActualBtn:'🔄 Current time',
+    txtEncuentraLlegar:'Find how to get there',
+    txtTocaUbicacion:'Tap the location button on the map<br>to see your travel options',
+    txtUsarUbicacion:'Use my location',
+    txtVerUberDidi:'See Uber, DiDi & Google Maps',
+    txtHorariosTitulo:'🕐 Schedule — Monday to Saturday',
+    txtServicioTerminado:'🌙 Service ended for today — the first bus tomorrow leaves at 6:00 a.m.',
+    txtYaPaso:'Already left',
+    txtAhorita:'Right now',
+    txtPorVenir:'Upcoming',
+    txtMatutino:'🌅 Morning',
+    txtVespertino:'🌇 Afternoon',
+    txtMasInfo1:'ℹ️ More about the SITT service',
+    txtMasInfo2:'ℹ️ More about the SITT service',
+    txtRutaCompleta:'🗺️ Full route',
+    txtVerGrande:'⛶ View full size',
+    txtEstaciones:'📍 Stops (43)'
   }
 };
 function aplicarIdioma(idioma){
   const dict=IDIOMA_TXT[idioma]||IDIOMA_TXT.es;
   Object.keys(dict).forEach(function(id){
     const el=document.getElementById(id);
-    if(el)el.textContent=dict[id];
+    if(el)el.innerHTML=dict[id];
+  });
+  const fabTxt=idioma==='en'
+    ?{fabActualizar:'Refresh',fabVerRuta:'View full route',fabPantallaCompleta:'Full screen'}
+    :{fabActualizar:'Actualizar',fabVerRuta:'Ver ruta completa',fabPantallaCompleta:'Pantalla completa'};
+  Object.keys(fabTxt).forEach(function(id){
+    const el=document.getElementById(id);
+    if(el)el.setAttribute('aria-label',fabTxt[id]);
   });
   const btn=document.getElementById('langToggleBtn');
   if(btn)btn.textContent=idioma==='es'?'🌐 ES':'🌐 EN';
   document.documentElement.lang=idioma;
+  const navTitle=document.getElementById('navTitle');
+  if(navTitle&&typeof sectionActual!=='undefined'&&sectionActual){
+    const titulos=idioma==='en'?sectionTitlesEN:sectionTitles;
+    navTitle.textContent=titulos[sectionActual]||navTitle.textContent;
+  }
 }
 function toggleIdioma(){
   const cur=localStorage.getItem('sittIdioma')||'es';
