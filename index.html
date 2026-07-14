@@ -345,48 +345,51 @@
     <div class="wrap" style="margin-top:-22px;position:relative;z-index:2">
 
       <!-- Tarifas -->
-      <div class="reveal" style="background:var(--g);border-radius:var(--r);padding:18px;margin-bottom:12px;color:#fff;box-shadow:0 8px 24px rgba(123,29,29,.3)">
-        <div style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--o);margin-bottom:16px;text-align:center">💳 Tarifas de servicio</div>
+      <div class="reveal tarifas-card">
+        <div class="tarifas-shine"></div>
+        <div style="font-size:12.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--o);margin-bottom:18px;text-align:center;position:relative;display:flex;align-items:center;justify-content:center;gap:8px">
+          <span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>💳 Tarifas de servicio<span style="width:24px;height:1px;background:rgba(201,168,76,.5)"></span>
+        </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-          <div style="text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid rgba(255,255,255,.2)">
-            <div style="font-size:36px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite">👤</div>
-            <div style="font-size:12px;font-weight:700;opacity:.8;margin-bottom:6px;letter-spacing:.04em">TARIFA GENERAL</div>
-            <div style="font-size:52px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 12px rgba(201,168,76,.4)">$14</div>
-            <div style="font-size:12px;opacity:.6;margin-top:3px">pesos</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;position:relative">
+          <div class="tarifa-box">
+            <div class="tarifa-badge">👤</div>
+            <div style="font-size:11.5px;font-weight:800;opacity:.85;margin:8px 0 4px;letter-spacing:.05em">TARIFA GENERAL</div>
+            <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 16px rgba(201,168,76,.5)">$14</div>
+            <div style="font-size:11.5px;opacity:.6;margin-top:3px">pesos</div>
           </div>
-          <div style="text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid rgba(201,168,76,.5)">
-            <div style="font-size:36px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite .5s">⭐</div>
-            <div style="font-size:12px;font-weight:700;color:var(--o);margin-bottom:6px;letter-spacing:.04em">TARIFA PREFERENTE</div>
-            <div style="font-size:52px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 12px rgba(201,168,76,.4)">$7</div>
-            <div style="font-size:12px;opacity:.6;margin-top:3px">pesos</div>
+          <div class="tarifa-box pref">
+            <div class="tarifa-badge gold">⭐</div>
+            <div style="font-size:11.5px;font-weight:800;color:var(--o);margin:8px 0 4px;letter-spacing:.05em">TARIFA PREFERENTE</div>
+            <div style="font-size:48px;font-weight:900;color:var(--o);line-height:1;text-shadow:0 2px 16px rgba(201,168,76,.5)">$7</div>
+            <div style="font-size:11.5px;opacity:.6;margin-top:3px">pesos</div>
           </div>
         </div>
 
-        <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:12px;margin-bottom:12px">
-          <div style="font-size:11px;opacity:.6;text-align:center;margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase">¿Quién paga $7? — Con credencial vigente en mano</div>
-          <div style="display:flex;justify-content:space-around;gap:6px">
+        <div style="border-top:1px solid rgba(201,168,76,.25);padding-top:14px;margin-bottom:14px;position:relative">
+          <div style="font-size:10.5px;opacity:.7;text-align:center;margin-bottom:12px;letter-spacing:.06em;text-transform:uppercase">¿Quién paga $7? — Con credencial vigente en mano</div>
+          <div style="display:flex;justify-content:space-around;gap:8px">
             <div style="text-align:center;flex:1">
-              <div style="font-size:28px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite 1s">🎓</div>
-              <div style="font-size:11px;font-weight:600;opacity:.9">Estudiantes</div>
+              <div class="quien-badge">🎓</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Estudiantes</div>
             </div>
             <div style="text-align:center;flex:1">
-              <div style="font-size:28px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite 1.5s">👴</div>
-              <div style="font-size:11px;font-weight:600;opacity:.9">Adultos mayores</div>
+              <div class="quien-badge">👴</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Adultos mayores</div>
             </div>
             <div style="text-align:center;flex:1">
-              <div style="font-size:28px;margin-bottom:4px;animation:pulse 3s ease-in-out infinite 2s">♿</div>
-              <div style="font-size:11px;font-weight:600;opacity:.9">Discapacidad</div>
+              <div class="quien-badge">♿</div>
+              <div style="font-size:11px;font-weight:700;opacity:.9;margin-top:6px">Discapacidad</div>
             </div>
           </div>
         </div>
 
-        <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;margin-bottom:10px;border:1px solid rgba(255,255,255,.15)">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <span style="font-size:24px;animation:pulse 2s ease-in-out infinite">🪙</span>
-            <span style="font-size:12px;font-weight:700;line-height:1.4">Pago exacto en monedas<br><span style="font-weight:400;opacity:.7">No se aceptan billetes · No se da cambio</span></span>
+        <div style="background:rgba(0,0,0,.18);border-radius:14px;padding:14px;border:1px solid rgba(201,168,76,.3);position:relative">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <div class="quien-badge gold" style="width:44px;height:44px;font-size:22px">🪙</div>
+            <span style="font-size:12.5px;font-weight:700;line-height:1.5">Pago exacto en monedas<br><span style="font-weight:400;opacity:.75">No se aceptan billetes · No se da cambio</span></span>
           </div>
-          <div style="display:flex;gap:8px;justify-content:center">
+          <div style="display:flex;gap:9px;justify-content:center">
             <span class="coin-chip">$1</span><span class="coin-chip">$2</span><span class="coin-chip">$5</span><span class="coin-chip">$10</span>
           </div>
         </div>

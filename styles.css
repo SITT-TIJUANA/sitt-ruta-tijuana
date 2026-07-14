@@ -511,3 +511,13 @@ body.dark .acc-card{background:#221f1d}
 body.dark .acc-tit{color:#F5D77A}
 body.dark .tip-row{border-color:#3a3733}
 body.dark .tip-txt{color:#c8c0b4}
+
+/* Tarjeta de tarifas mejorada */
+.tarifas-card{position:relative;overflow:hidden;background:linear-gradient(160deg,#8B2727 0%,#6b1717 55%,#4a1010 100%);border-radius:22px;padding:20px 18px;margin-bottom:12px;color:#fff;box-shadow:0 10px 30px rgba(123,29,29,.4);border:1px solid rgba(201,168,76,.3)}
+.tarifas-shine{position:absolute;top:-60%;left:-30%;width:160%;height:220%;background:linear-gradient(115deg,transparent 42%,rgba(201,168,76,.13) 48%,rgba(255,238,190,.22) 50%,rgba(201,168,76,.13) 52%,transparent 58%);animation:shineSweep 5s ease-in-out infinite alternate;pointer-events:none}
+.tarifa-box{position:relative;text-align:center;padding:18px 8px 14px;border-radius:16px;background:rgba(0,0,0,.15);border:1.5px solid rgba(255,255,255,.15)}
+.tarifa-box.pref{border-color:rgba(201,168,76,.55);background:rgba(201,168,76,.08)}
+.tarifa-badge{width:52px;height:52px;margin:0 auto;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.tarifa-badge.gold{background:rgba(201,168,76,.2);box-shadow:inset 0 0 0 1px rgba(201,168,76,.4),0 0 16px rgba(201,168,76,.25)}
+.quien-badge{width:40px;height:40px;margin:0 auto;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:19px}
+.quien-badge.gold{background:rgba(201,168,76,.18)}
