@@ -963,11 +963,14 @@ document.getElementById('btnPlay').addEventListener('click',function(){
 // ── TRACK ──────────────────────────────────────────────────────────────────
 function trackBus(u){
   const s=u==='A'?getBus(simMin,DA,DUA):getBus(simMin,DB,DUB);
-  if(s.on)map.setView([s.lat,s.lng],16,{animate:true});
-  else map.setView([STOPS[0].lat,STOPS[0].lng],14,{animate:true});
-  // Scroll al mapa
-  const mapEl=document.getElementById('map');
-  if(mapEl)mapEl.scrollIntoView({behavior:'smooth',block:'center'});
+  if(typeof mapaSheetSet==='function')mapaSheetSet('collapsed');
+  setTimeout(function(){
+    if(typeof map!=='undefined'){
+      map.invalidateSize({animate:false});
+      if(s.on)map.setView([s.lat,s.lng],16,{animate:true});
+      else map.setView([STOPS[0].lat,STOPS[0].lng],14,{animate:true});
+    }
+  },280);
 }
 function verRuta(){map.fitBounds(L.latLngBounds(STOPS.map(s=>[s.lat,s.lng])),{padding:[20,20],animate:true});}
 

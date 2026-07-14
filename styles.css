@@ -4,7 +4,8 @@
   --b:#e0ddd6;--gr:#f4f4f2;--t:#1a1a1a;--t2:#666;--r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--t);overflow-x:hidden}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--t);overflow-x:hidden;touch-action:manipulation}
+#mapa-map-wrap #map{touch-action:pan-x pan-y pinch-zoom}
 
 /* ── SPLASH SCREEN ── */
 #splash{
