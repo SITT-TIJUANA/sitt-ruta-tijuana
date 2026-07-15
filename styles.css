@@ -556,3 +556,32 @@ body.leer-voz .voz-btn{display:flex}
 .coin-chip.img img{width:38px;height:38px;object-fit:contain}
 .acc-ico img.acc-img{width:34px;height:34px;object-fit:contain}
 .tip-ico img.tip-img{width:20px;height:20px;object-fit:contain}
+
+/* ── Ícono de comentario con tooltip (Compartir) ── */
+.comment-ico-wrap{position:relative;flex-shrink:0}
+.comment-ico-btn{width:44px;height:44px;border-radius:50%;background:var(--gl);border:none;display:flex;align-items:center;justify-content:center;color:var(--g);cursor:pointer;transition:transform .2s ease}
+.comment-ico-btn:hover,.comment-ico-btn.tap{transform:scale(1.15);color:#378ADD}
+.comment-ico-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(0);transform-origin:bottom center;background:#fff;border:1px solid #e0ddd6;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:var(--t);white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .25s ease;z-index:5;pointer-events:none}
+.comment-ico-btn:hover+.comment-ico-tip,.comment-ico-wrap.tap .comment-ico-tip{transform:translateX(-50%) scale(1)}
+
+/* ── Botón de correo (reemplaza WhatsApp en Compartir) ── */
+.mail-btn{background:linear-gradient(135deg,#7B1D1D,#5c1515);color:#fff;border:none;border-radius:12px;padding:12px 10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(123,29,29,.35);display:flex;align-items:center;justify-content:center;gap:6px}
+.mail-btn:active{transform:scale(.97)}
+.mail-ico{font-size:16px}
+.mail-txt::after{content:attr(data-content)}
+.mail-btn:hover .mail-txt::after{content:attr(data-hover-content)}
+.mail-btn:active .mail-txt::after{content:attr(data-active-content)}
+
+/* ── Botón circular expandible (Facebook / sitio web) ── */
+.expand-btn{display:flex;align-items:center;justify-content:flex-start;width:46px;height:46px;border:none;border-radius:50%;cursor:pointer;position:relative;overflow:hidden;transition:width .3s,border-radius .3s;box-shadow:2px 2px 10px rgba(0,0,0,.2);text-decoration:none;flex-shrink:0}
+.expand-btn .exp-sign{width:100%;transition:width .3s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.expand-btn .exp-sign svg{width:22px;height:22px}
+.expand-btn .exp-text{position:absolute;right:0;width:0%;opacity:0;color:#fff;font-size:12.5px;font-weight:700;white-space:nowrap;transition:all .3s}
+.expand-btn:hover,.expand-btn.tap{width:150px;border-radius:40px}
+.expand-btn:hover .exp-sign,.expand-btn.tap .exp-sign{width:30%;padding-left:10px}
+.expand-btn:hover .exp-text,.expand-btn.tap .exp-text{opacity:1;width:70%;padding-right:12px}
+.expand-btn:active{transform:translate(1px,1px)}
+
+/* ── Botón circular rojo (Atención al usuario) ── */
+.call-btn{display:flex;justify-content:center;align-items:center;width:46px;height:46px;border-radius:50%;border:none;background-color:#FF2849;flex-shrink:0;transition:background-color .2s}
+.call-btn:hover,.call-btn:active{background-color:#e52441}

@@ -1265,15 +1265,13 @@ function enviarSheets(){
   },800);
 }
 
-function enviarWSP(){
+function enviarCorreo(){
   if(!validarSug())return;
   const texto=getSugTexto();
   const tipo=tipoSeleccionado||'General';
-  // Anónimo — no pide nombre
-  const msg='🚌 *Sugerencia SITT T101*%0A%0A'
-    +'📂 *Categoría:* '+encodeURIComponent(tipo)+'%0A'
-    +'💬 '+encodeURIComponent(texto);
-  window.open('https://wa.me/526121425724?text='+msg,'_blank');
+  const asunto=encodeURIComponent('Sugerencia SITT T101 — '+tipo);
+  const cuerpo=encodeURIComponent('Categoría: '+tipo+'\n\n'+texto);
+  window.location.href='mailto:jairpalma2910@gmail.com?subject='+asunto+'&body='+cuerpo;
   setTimeout(function(){mostrarConfirm();},500);
 }
 
@@ -1786,7 +1784,8 @@ const IDIOMA_TXT={
     txtAdultosMayores2:'Adultos mayores',
     txtDiscapacidad2:'Discapacidad',
     txtPagoExacto:'Pago exacto en monedas',
-    txtNoBilletes:'No se aceptan billetes · No se da cambio'
+    txtNoBilletes:'No se aceptan billetes · No se da cambio',
+    txtSitioWebBtn:'Sitio web'
   },
   en:{
     txtServicio:'Official Trunk Route',
@@ -1930,7 +1929,8 @@ const IDIOMA_TXT={
     txtAdultosMayores2:'Older adults',
     txtDiscapacidad2:'Disability',
     txtPagoExacto:'Exact change in coins',
-    txtNoBilletes:'Bills not accepted · No change given'
+    txtNoBilletes:'Bills not accepted · No change given',
+    txtSitioWebBtn:'Website'
   }
 };
 function aplicarIdioma(idioma){
