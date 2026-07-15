@@ -548,3 +548,11 @@ body.alto-contraste .tp{border-width:2px!important}
 /* Botones de leer en voz alta: ocultos hasta que se activen */
 .voz-btn{display:none;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--gl);color:var(--g);border:none;font-size:14px;cursor:pointer;flex-shrink:0}
 body.leer-voz .voz-btn{display:flex}
+
+/* Íconos reales dentro de las insignias */
+.quien-badge img{width:26px;height:26px;object-fit:contain}
+.tarifa-badge img{width:32px;height:32px;object-fit:contain}
+.coin-chip.img{background:none;box-shadow:none;width:auto;height:auto}
+.coin-chip.img img{width:38px;height:38px;object-fit:contain}
+.acc-ico img.acc-img{width:34px;height:34px;object-fit:contain}
+.tip-ico img.tip-img{width:20px;height:20px;object-fit:contain}
