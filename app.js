@@ -1,4 +1,3 @@
-
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function moverGliderTabs(btn){
   var glider=document.getElementById('tabsGlider');
