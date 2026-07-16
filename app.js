@@ -1061,7 +1061,10 @@ function prepararInfoUbicacion(lat,lng,ajustarVista){
   window._camRaw=camRaw;window._llegaHora=llegaHora;window._metros=metros;
   window._busEtaA=aA;window._busEtaB=aB;
 
-  if(uMark)uMark.bindPopup('<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small>').openPopup();
+  if(uMark){
+    uMark.bindPopup('<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small>',{autoPan:false});
+    if(ajustarVista)uMark.openPopup();
+  }
 
   // Trazar ruta punteada hacia la parada + burbuja de tiempo, estilo Maps
   if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
