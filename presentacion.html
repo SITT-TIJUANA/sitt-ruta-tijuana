@@ -166,6 +166,19 @@
   @media(max-height:700px){
     #marca,#salir{display:none}
   }
+
+  body.modo-limpio #marca,
+  body.modo-limpio #pie{
+    opacity:0;pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  body.modo-limpio #salir{
+    opacity:.35;
+  }
+  body.modo-limpio #salir:hover,
+  body.modo-limpio #salir:active{
+    opacity:1;
+  }
 </style>
 </head>
 <body>
@@ -177,7 +190,7 @@
     <div class="txt"><b>Modo presentación</b>Vista real de teléfono</div>
   </div>
 
-  <button id="salir" onclick="if(document.fullscreenElement){document.exitFullscreen()}else{document.documentElement.requestFullscreen().catch(()=>{})}">⛶ Pantalla completa</button>
+  <button id="salir" onclick="toggleModoLimpio()">⛶ Ampliar</button>
 
   <div id="cargando"><div class="aro"></div></div>
 
@@ -223,16 +236,26 @@
 // Escala el teléfono completo para que siempre quepa en la pantalla,
 // sin importar si es una laptop chica o una tele gigante.
 function ajustarEscala(){
-  const disponibleAlto=window.innerHeight-64;   // margen arriba/abajo
-  const disponibleAncho=window.innerWidth-64;   // margen a los lados
-  const altoNatural=844+14*2+50; // teléfono + padding + pie de texto aprox
+  const limpio=document.body.classList.contains('modo-limpio');
+  const disponibleAlto=window.innerHeight-(limpio?24:64);
+  const disponibleAncho=window.innerWidth-(limpio?24:64);
+  const altoNatural=844+14*2+(limpio?0:50); // teléfono + padding + pie de texto (si se ve)
   const anchoNatural=390+14*2;
-  const escala=Math.min(1.35, disponibleAlto/altoNatural, disponibleAncho/anchoNatural);
+  const escala=Math.min(1.6, disponibleAlto/altoNatural, disponibleAncho/anchoNatural);
   document.getElementById('escala').style.transform='scale('+Math.max(escala,0.35)+')';
 }
 window.addEventListener('resize',ajustarEscala);
 window.addEventListener('orientationchange',ajustarEscala);
 ajustarEscala();
+
+// Botón "Ampliar": no depende de la API de pantalla completa (no funciona en iPhone),
+// simplemente oculta todo lo que no sea el teléfono y lo agranda al máximo posible.
+function toggleModoLimpio(){
+  document.body.classList.toggle('modo-limpio');
+  const btn=document.getElementById('salir');
+  btn.textContent=document.body.classList.contains('modo-limpio')?'⛶ Salir':'⛶ Ampliar';
+  ajustarEscala();
+}
 </script>
 
 </body>
