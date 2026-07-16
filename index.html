@@ -185,12 +185,14 @@
       <div id="mapa-sheet-handle"><div class="handle-bar"></div><div class="handle-label"><span id="handleLabelText">Ocultar</span><span class="handle-arrow">⌃</span></div></div>
       <!-- TABS NAVEGACIÓN -->
       <div id="mapa-tabs">
-        <div class="tabs-glider" id="tabsGlider"></div>
-        <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span><span id="txtTabCamiones">Camiones</span></button>
-        <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span><span id="txtTabSimulador">Simulador</span></button>
-        <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span><span id="txtTabLlegar">Llegar</span></button>
-        <button class="mtab" onclick="mapaSwitchTab(3,this)"><span class="mtab-ico">🕐</span><span id="txtTabHorarios">Horarios</span></button>
-        <button class="mtab" onclick="mapaSwitchTab(4,this)"><span class="mtab-ico">🗺️</span><span id="txtTabRuta">Ruta</span></button>
+        <div id="mapa-tabs-track" data-active="0">
+          <div class="tabs-glider" id="tabsGlider"></div>
+          <button class="mtab on" onclick="mapaSwitchTab(0,this)"><span class="mtab-ico">🚌</span><span id="txtTabCamiones">Camiones</span></button>
+          <button class="mtab" onclick="mapaSwitchTab(1,this)"><span class="mtab-ico">⏱️</span><span id="txtTabSimulador">Simulador</span></button>
+          <button class="mtab" onclick="mapaSwitchTab(2,this)"><span class="mtab-ico">🚕</span><span id="txtTabLlegar">Llegar</span></button>
+          <button class="mtab" onclick="mapaSwitchTab(3,this)"><span class="mtab-ico">🕐</span><span id="txtTabHorarios">Horarios</span></button>
+          <button class="mtab" onclick="mapaSwitchTab(4,this)"><span class="mtab-ico">🗺️</span><span id="txtTabRuta">Ruta</span></button>
+        </div>
       </div>
       <!-- CONTENIDO DE TABS -->
       <div id="mapa-content">

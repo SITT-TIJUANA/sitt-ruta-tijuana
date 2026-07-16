@@ -1,28 +1,13 @@
+
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
-function moverGliderTabs(btn){
-  if(!btn)return;
-  // Medir en el momento exacto es delicado (el navegador puede no haber
-  // terminado de acomodar el diseño todavía). Con doble requestAnimationFrame
-  // nos aseguramos de medir SIEMPRE después de que ya terminó de dibujar.
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){
-      var glider=document.getElementById('tabsGlider');
-      var container=document.getElementById('mapa-tabs');
-      if(!glider||!container)return;
-      var cRect=container.getBoundingClientRect();
-      var bRect=btn.getBoundingClientRect();
-      if(bRect.width<1)return; // el tab no está visible todavía, no midas basura
-      glider.style.width=bRect.width+'px';
-      glider.style.transform='translateX('+(bRect.left-cRect.left)+'px)';
-    });
-  });
+// El brillo dorado ya no se mide con JavaScript (eso fallaba según el momento
+// exacto en que se calculaba). Ahora es puro CSS: nada más le decimos qué
+// tab está activo, y el propio CSS lo mueve por porcentaje exacto — no puede
+// desalinearse porque no depende de medir nada en ningún momento.
+function moverGliderTabs(idx){
+  var track=document.getElementById('mapa-tabs-track');
+  if(track)track.dataset.active=idx;
 }
-// Si la ventana cambia de tamaño (laptop: maximizar, mover de monitor, etc.)
-// la posición del tab activo ya calculada se queda vieja — la recalculamos.
-window.addEventListener('resize',function(){
-  var activo=document.querySelector('.mtab.on');
-  if(activo)moverGliderTabs(activo);
-});
 function mapaSwitchTab(idx,btn){
   [0,1,2,3,4].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
@@ -30,7 +15,7 @@ function mapaSwitchTab(idx,btn){
   });
   document.querySelectorAll('.mtab').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  moverGliderTabs(btn);
+  moverGliderTabs(idx);
   // Si el sheet está colapsado, ábrelo a la mitad al tocar un tab
   var sheet=document.getElementById('mapa-sheet');
   if(sheet&&sheet.dataset.state==='collapsed'&&typeof mapaSheetSet==='function'){
@@ -395,10 +380,11 @@ function openSection(sec){
   }
   if(sec==='mapa'){
     initMapaSheet();
-    setTimeout(function(){
-      var activo=document.querySelector('.mtab.on');
-      if(activo)moverGliderTabs(activo);
-    },60);
+    var tabActivo=document.querySelector('.mtab.on');
+    if(tabActivo){
+      var idxActivo=Array.prototype.indexOf.call(document.querySelectorAll('.mtab'),tabActivo);
+      if(idxActivo>=0)moverGliderTabs(idxActivo);
+    }
     setTimeout(function(){
       if(typeof map!=='undefined')map.invalidateSize({animate:false});
     },50);
