@@ -1,12 +1,21 @@
 // ── MAPA TABS ──────────────────────────────────────────────────────────────
 function moverGliderTabs(btn){
-  var glider=document.getElementById('tabsGlider');
-  var container=document.getElementById('mapa-tabs');
-  if(!glider||!container||!btn)return;
-  var cRect=container.getBoundingClientRect();
-  var bRect=btn.getBoundingClientRect();
-  glider.style.width=bRect.width+'px';
-  glider.style.transform='translateX('+(bRect.left-cRect.left)+'px)';
+  if(!btn)return;
+  // Medir en el momento exacto es delicado (el navegador puede no haber
+  // terminado de acomodar el diseño todavía). Con doble requestAnimationFrame
+  // nos aseguramos de medir SIEMPRE después de que ya terminó de dibujar.
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      var glider=document.getElementById('tabsGlider');
+      var container=document.getElementById('mapa-tabs');
+      if(!glider||!container)return;
+      var cRect=container.getBoundingClientRect();
+      var bRect=btn.getBoundingClientRect();
+      if(bRect.width<1)return; // el tab no está visible todavía, no midas basura
+      glider.style.width=bRect.width+'px';
+      glider.style.transform='translateX('+(bRect.left-cRect.left)+'px)';
+    });
+  });
 }
 // Si la ventana cambia de tamaño (laptop: maximizar, mover de monitor, etc.)
 // la posición del tab activo ya calculada se queda vieja — la recalculamos.
