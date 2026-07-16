@@ -9,6 +9,12 @@ function moverGliderTabs(btn){
   glider.style.width=bRect.width+'px';
   glider.style.transform='translateX('+(bRect.left-cRect.left)+'px)';
 }
+// Si la ventana cambia de tamaño (laptop: maximizar, mover de monitor, etc.)
+// la posición del tab activo ya calculada se queda vieja — la recalculamos.
+window.addEventListener('resize',function(){
+  var activo=document.querySelector('.mtab.on');
+  if(activo)moverGliderTabs(activo);
+});
 function mapaSwitchTab(idx,btn){
   [0,1,2,3,4].forEach(function(i){
     var t=document.getElementById('mapaTab'+i);
@@ -2174,4 +2180,21 @@ function leerTexto(id){
   if(tam==='grande')document.body.classList.add('text-grande');
   if(localStorage.getItem('sittContraste')==='1')document.body.classList.add('alto-contraste');
   if(localStorage.getItem('sittVoz')==='1')document.body.classList.add('leer-voz');
+})();
+
+// ── BLOQUEO DE DOBLE-TOQUE PARA ZOOM (Safari en navegador, no instalada) ────
+// El viewport y el CSS ya bloquean el zoom en la mayoría de los casos, pero
+// Safari en modo navegador (no como app instalada) a veces ignora eso y
+// permite el zoom con doble-toque. Esto lo bloquea manualmente, dejando
+// intacto el zoom propio del mapa (pellizco o doble-toque DENTRO del mapa).
+(function bloquearDobleToqueZoom(){
+  let ultimoToque=0;
+  document.addEventListener('touchend',function(e){
+    const enElMapa=e.target.closest&&e.target.closest('#mapa-map-wrap');
+    const ahora=Date.now();
+    if(!enElMapa&&(ahora-ultimoToque)<=300){
+      e.preventDefault();
+    }
+    ultimoToque=ahora;
+  },{passive:false});
 })();
