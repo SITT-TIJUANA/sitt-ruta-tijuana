@@ -712,6 +712,18 @@ function getBus(now,deps,durs){
 }
 
 function hhmm(m){const h=Math.floor(m/60)%24,mm=m%60,ap=h<12?'a.m.':'p.m.',hh=h===0?12:h>12?h-12:h;return hh+':'+(mm.toString().padStart(2,'0'))+' '+ap;}
+// Estimado de tiempo en carro: la distancia en línea recta no es la distancia real
+// de calles, así que le aplicamos un factor de ruta + velocidad urbana promedio con tráfico.
+function estimarTiempoAuto(metrosLinea){
+  const factorRuta=1.35,velKmh=28;
+  const metrosRuta=metrosLinea*factorRuta;
+  return Math.max(1,Math.round((metrosRuta/1000)/velKmh*60));
+}
+function fmtMinutos(min){
+  if(min<60)return min+' min';
+  const h=Math.floor(min/60),m=min%60;
+  return h+' hora'+(h>1?'s':'')+(m>0?' '+m+' min':'');
+}
 function plain(m){m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mm=m%60,ap=h<12?'AM':'PM',hh=h===0?12:h>12?h-12:h;return hh+':'+(mm.toString().padStart(2,'0'))+' '+ap;}
 
 function setEl(id,val,prop){const e=document.getElementById(id);if(e){if(prop)e[prop]=val;else e.textContent=val;}}
@@ -1152,6 +1164,10 @@ function renderComoLlegar(){
         '<div class="cll-walkico">🚶</div>'+
         '<div><div class="cll-walktime">'+camStr+' caminando</div>'+
         '<div class="cll-arr">Llegarías ahí a las <b>'+window._llegaHora+'</b></div></div>'+
+      '</div>'+
+      '<div class="cll-carrow">'+
+        '<div class="cll-carico">🚗</div>'+
+        '<div class="cll-cartime">~'+fmtMinutos(estimarTiempoAuto(window._metros))+' en carro</div>'+
       '</div>'+
       '<div class="cll-stopnote">📍 Esta es tu parada más cercana a donde estás ahora:</div>'+
       '<div class="cll-stopname">'+near.n+'. '+near.name+' <span class="cll-dist">· '+window._metros+' m</span></div>'+
@@ -1635,7 +1651,7 @@ function trazarRutaAEstacion(idx){
   dibujarRutaHaciaParada(idx);
 }
 
-function mostrarInfoRutaEstacion(nombre,camStr,llegaHora){
+function mostrarInfoRutaEstacion(nombre,camStr,llegaHora,autoMin){
   let box=document.getElementById('rutaEstacionInfo');
   if(!box){
     box=document.createElement('div');
@@ -1646,8 +1662,9 @@ function mostrarInfoRutaEstacion(nombre,camStr,llegaHora){
   }
   box.innerHTML=
     '<button class="msr-close" onclick="detenerUbicacionCompleta()"><span>✕</span> Cerrar</button>'+
-    '<div style="font-size:14px;font-weight:800;color:#2f6fd6;margin-bottom:4px">🚶 '+camStr+' caminando</div>'+
-    '<div style="font-size:12px;color:#444">a <b>'+nombre+'</b> · llegarías a las <b>'+llegaHora+'</b></div>';
+    '<div style="font-size:14px;font-weight:800;color:#2f6fd6;margin-bottom:2px">🚶 '+camStr+' caminando</div>'+
+    '<div style="font-size:12px;color:#444;margin-bottom:6px">a <b>'+nombre+'</b> · llegarías a las <b>'+llegaHora+'</b></div>'+
+    (autoMin?'<div style="font-size:12.5px;color:#555;padding-top:6px;border-top:1px solid #eee">🚗 ~'+fmtMinutos(autoMin)+' si vas en carro</div>':'');
 }
 
 function dibujarRutaHaciaParada(idx){
@@ -1669,7 +1686,7 @@ function dibujarRutaHaciaParada(idx){
   const midLat=(uLat+s.lat)/2,midLng=(uLng+s.lng)/2;
   window._routeBubble=L.marker([midLat,midLng],{icon:L.divIcon({className:'',html:'<div class="walk-bubble">'+camStr+'</div>',iconAnchor:[26,14]}),interactive:false}).addTo(map);
   window._targetMarker=L.marker([s.lat,s.lng],{icon:L.divIcon({className:'',html:'<div class="target-pin"><div class="target-pulse"></div><div class="target-flag">🚩</div></div>',iconSize:[46,46],iconAnchor:[23,40]}),zIndexOffset:600,interactive:false}).addTo(map);
-  mostrarInfoRutaEstacion(s.n+'. '+s.name,camStr,hhmm(simMin+camRaw));
+  mostrarInfoRutaEstacion(s.n+'. '+s.name,camStr,hhmm(simMin+camRaw),estimarTiempoAuto(metros));
   cerrarInfoEstacion();
   const tabs=document.querySelectorAll('.mtab');
   if(tabs[0])mapaSwitchTab(0,tabs[0]);

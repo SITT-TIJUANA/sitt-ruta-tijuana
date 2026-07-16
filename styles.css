@@ -378,6 +378,9 @@ body{font-family:"Segoe UI",system-ui,sans-serif;background:#0f0f0f;color:var(--
 .cll-walkico{font-size:26px;background:rgba(255,255,255,.18);width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cll-walktime{font-size:21px;font-weight:900;line-height:1.15}
 .cll-arr{font-size:13px;opacity:.92;margin-top:2px}
+.cll-carrow{display:flex;align-items:center;gap:10px;margin-bottom:14px;background:rgba(255,255,255,.12);border-radius:12px;padding:8px 12px}
+.cll-carico{font-size:19px}
+.cll-cartime{font-size:13.5px;font-weight:700}
 .cll-stopnote{font-size:12px;opacity:.85;margin-bottom:4px}
 .cll-stopname{font-size:15.5px;font-weight:800;background:rgba(255,255,255,.16);border-radius:10px;padding:9px 11px}
 .cll-dist{font-weight:600;opacity:.85;font-size:13px}
