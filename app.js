@@ -1508,7 +1508,7 @@ function ampliarImagenRuta(){
   modal.id='rutaLightbox';
   modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
   modal.innerHTML=`
-    <button onclick="cerrarImagenRuta()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;z-index:2">✕ Cerrar</button>
+    <button onclick="cerrarImagenRuta()" style="position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:9px 16px;font-size:13px;font-weight:800;cursor:pointer;z-index:2">✕ Cerrar</button>
     <img src="ruta-mapa.png" alt="Mapa de la Ruta T101" style="max-width:100%;max-height:90vh;border-radius:10px;object-fit:contain;position:relative;z-index:1">
   `;
   modal.addEventListener('click',function(e){if(e.target===modal)cerrarImagenRuta();});
