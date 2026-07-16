@@ -1028,6 +1028,22 @@ function detenerSeguimientoUbicacion(){
   }
 }
 
+// El usuario pidió explícitamente quitar su ubicación del mapa por completo.
+// A diferencia de detenerSeguimientoUbicacion() (que solo para el GPS al cambiar de sección),
+// esta apaga y borra todo: marcador, círculo, ruta trazada, y la info del tab "Llegar".
+function detenerUbicacionCompleta(){
+  detenerSeguimientoUbicacion();
+  if(uMark){map.removeLayer(uMark);uMark=null;}
+  if(uCirc){map.removeLayer(uCirc);uCirc=null;}
+  if(window._routeLine){map.removeLayer(window._routeLine);window._routeLine=null;}
+  if(window._routeBubble){map.removeLayer(window._routeBubble);window._routeBubble=null;}
+  uLat=null;uLng=null;
+  window._nearStop=null;window._userLL=null;
+  const infoBox=document.getElementById('rutaEstacionInfo');
+  if(infoBox)infoBox.remove();
+  if(typeof renderComoLlegar==='function')renderComoLlegar();
+}
+
 // Ícono de "vas caminando" en tu posición real (se mueve solo con el GPS)
 function actualizarMarcadorUsuario(lat,lng,accuracy){
   if(uMark)map.removeLayer(uMark);
@@ -1062,7 +1078,13 @@ function prepararInfoUbicacion(lat,lng,ajustarVista){
   window._busEtaA=aA;window._busEtaB=aB;
 
   if(uMark){
-    uMark.bindPopup('<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small>',{autoPan:false});
+    uMark.bindPopup(
+      '<div style="text-align:center">'+
+        '<b>📍 Estás aquí</b><br>'+near.n+'. '+near.name+'<br><small>'+metros+'m</small><br>'+
+        '<button onclick="detenerUbicacionCompleta()" style="margin-top:8px;background:var(--g);color:#fff;border:none;border-radius:14px;padding:6px 14px;font-size:11px;font-weight:800;cursor:pointer">✕ Quitar mi ubicación</button>'+
+      '</div>',
+      {autoPan:false,closeButton:false}
+    );
     if(ajustarVista)uMark.openPopup();
   }
 
