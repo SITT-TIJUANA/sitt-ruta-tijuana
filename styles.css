@@ -586,3 +586,9 @@ body.leer-voz .voz-btn{display:flex}
 /* ── Botón circular rojo (Atención al usuario) ── */
 .call-btn{display:flex;justify-content:center;align-items:center;width:46px;height:46px;border-radius:50%;border:none;background-color:#FF2849;flex-shrink:0;transition:background-color .2s}
 .call-btn:hover,.call-btn:active{background-color:#e52441}
+
+/* Estación destino resaltada cuando trazas una ruta hacia ella */
+.target-pin{position:relative;width:46px;height:46px;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+.target-pulse{position:absolute;bottom:8px;width:32px;height:32px;border-radius:50%;background:rgba(66,133,244,.4);animation:targetPulse 1.6s ease-out infinite}
+.target-flag{position:relative;font-size:28px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+@keyframes targetPulse{0%{transform:scale(.35);opacity:.9}100%{transform:scale(1.9);opacity:0}}
